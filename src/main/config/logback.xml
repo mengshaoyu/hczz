@@ -1,0 +1,117 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- log4j.properties转换成logback.xml可以使用转换工具  http://logback.qos.ch/translator/ -->
+<!-- For professional support please see                                              -->
+<!--    http://www.qos.ch/shop/products/professionalSupport                           -->
+<!--                                                                                  -->
+
+<configuration>
+  <appender name="Console" class="ch.qos.logback.core.ConsoleAppender">
+    <encoder>
+      <pattern>[%level] [%d{yyyy-MM-dd HH:mm:ss}] [%class.%method] %line [%msg]%n %ex</pattern>
+    </encoder>
+  </appender>
+  
+	<!-- 时间滚动输出 level为 DEBUG 日志 -->
+	<appender name="log—debug"
+		class="ch.qos.logback.core.rolling.RollingFileAppender">
+		<filter class="ch.qos.logback.classic.filter.LevelFilter">
+			<level>DEBUG</level>
+			<onMatch>ACCEPT</onMatch>
+			<onMismatch>DENY</onMismatch>
+		</filter>
+		<rollingPolicy
+			class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+			<FileNamePattern>
+				/syzlogs/Skynet_debug.%d{yyyy-MM-dd}.log
+			</FileNamePattern>
+			<MaxHistory>30</MaxHistory>
+		</rollingPolicy>
+		<encoder>
+			<pattern>
+				[%level] [%d{yyyy-MM-dd HH:mm:ss}] [%class.%method] [%line] [%msg]%n %ex
+			</pattern>
+		</encoder>
+	</appender>
+
+	<!-- 时间滚动输出 level为 ERROR 日志 -->
+	<appender name="log—error"
+		class="ch.qos.logback.core.rolling.RollingFileAppender">
+		<filter class="ch.qos.logback.classic.filter.LevelFilter">
+			<level>ERROR</level>
+			<onMatch>ACCEPT</onMatch>
+			<onMismatch>DENY</onMismatch>
+		</filter>
+		<rollingPolicy
+			class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+			<FileNamePattern>
+				/syzlogs/Skynet_error.%d{yyyy-MM-dd}.log
+			</FileNamePattern>
+			<MaxHistory>30</MaxHistory>
+		</rollingPolicy>
+		<encoder>
+			<pattern>
+				[%level] [%d{yyyy-MM-dd HH:mm:ss}] [%class.%method] [%line] [%msg]%n %ex
+			</pattern>
+		</encoder>
+	</appender>
+
+	<!-- 时间滚动输出 level为 WARN 日志 -->
+	<appender name="log—warn"
+		class="ch.qos.logback.core.rolling.RollingFileAppender">
+		<filter class="ch.qos.logback.classic.filter.LevelFilter">
+			<level>WARN</level>
+			<onMatch>ACCEPT</onMatch>
+			<onMismatch>DENY</onMismatch>
+		</filter>
+		<rollingPolicy
+			class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+			<FileNamePattern>
+				/syzlogs/Skynet_warn.%d{yyyy-MM-dd}.log
+			</FileNamePattern>
+			<MaxHistory>30</MaxHistory>
+		</rollingPolicy>
+		<encoder>
+			<pattern>
+				[%level] [%d{yyyy-MM-dd HH:mm:ss}] [%class.%method] [%line] [%msg]%n %ex
+			</pattern>
+		</encoder>
+	</appender>
+
+	<!-- 时间滚动输出 level为 info 日志 -->
+	<appender name="log—info"
+		class="ch.qos.logback.core.rolling.RollingFileAppender">
+		<filter class="ch.qos.logback.classic.filter.LevelFilter">
+			<level>INFO</level>
+			<onMatch>ACCEPT</onMatch>
+			<onMismatch>DENY</onMismatch>
+		</filter>
+		<rollingPolicy
+			class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+			<FileNamePattern>
+				/syzlogs/Skynet_info.%d{yyyy-MM-dd}.log
+			</FileNamePattern>
+			<MaxHistory>30</MaxHistory>
+		</rollingPolicy>
+		<encoder>
+			<pattern>
+				[%level] [%d{yyyy-MM-dd HH:mm:ss}] [%class.%method] [%line] [%msg]%n %ex
+			</pattern>
+		</encoder>
+	</appender>
+
+  <!-- 指定切面类 -->
+  <logger name="com.shield.spring.LogAspect" level="warn" />
+  
+  <logger name="com.shield.frame" level="warn"/>
+  
+  <!-- 生产环境请用warn级别 -->
+  <logger name="jdbc.sqltiming" level="info"/>
+    
+  <root level="warn">
+    <appender-ref ref="Console"/>
+    <appender-ref ref="log—error"/>
+    <!-- 生产环境请用warn级别 -->
+    <appender-ref ref="log—info"/>
+    <!-- <appender-ref ref="log—debug"/> -->
+  </root>
+</configuration>

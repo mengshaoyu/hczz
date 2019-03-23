@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.shield.hczz.base.persistence.ClueApplyMapper">
+  <resultMap id="BaseResultMap" type="com.shield.hczz.base.domain.ClueApply">
+    <id column="UUID" jdbcType="VARCHAR" property="uuid" />
+    <result column="CASE_ID" jdbcType="VARCHAR" property="caseId" />
+    <result column="CLUE_ID" jdbcType="VARCHAR" property="clueId" />
+    <result column="CLUE_CONTENT" jdbcType="VARCHAR" property="clueContent" />
+    <result column="UPLOADER" jdbcType="VARCHAR" property="uploader" />
+    <result column="WRITE_TIME" jdbcType="TIMESTAMP" property="writeTime" />
+    <result column="CREATE_BY" jdbcType="VARCHAR" property="createBy" />
+    <result column="CREATE_DT" jdbcType="TIMESTAMP" property="createDt" />
+    <result column="UPDATE_DT" jdbcType="TIMESTAMP" property="updateDt" />
+    <result column="UPDATE_BY" jdbcType="VARCHAR" property="updateBy" />
+    <result column="DELETE_BY" jdbcType="VARCHAR" property="deleteBy" />
+    <result column="ACT_BY_TYPE" jdbcType="VARCHAR" property="actByType" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    UUID, CASE_ID, CLUE_ID, CLUE_CONTENT, RESULT_DESC, RESULT_DATE, CREATE_BY, CREATE_DT, 
+    UPDATE_DT, UPDATE_BY, DELETE_BY, ACT_BY_TYPE
+  </sql>
+
+  
+  <!-- 同步线索库：配侦信息 -->
+  <insert id="synchroClue" parameterType="hashMap">
+  	insert into DB_CLUE_APPLY 
+      select sys_guid(),t.case_no,t.clue_id,t.clue_name,t.create_by uploader,t.create_dt write_time,
+      '1'create_dy,sysdate create_dt,sysdate upload_dt,'1' upload_dy,''delete_dy,'b' ACT_BY_TYPE from pz_t_clue_info t 
+      where t.pz_id=#{applyId,jdbcType=VARCHAR}
+  </insert>
+  
+
+  	<update id="updateFlowAuxi" parameterType="hashMap">
+         update pz_t_clue_info c set c.CLUE_AUXILIARY =#{pzResultCreateBy,jdbcType=VARCHAR} where
+          c.clue_id =#{clueId,jdbcType=VARCHAR}
+	</update>
+
+  <update id="updateResultByPz" parameterType="hashMap">
+  	update PZ_T_RESULT t set t.is_normal_pz_clue=1 where t.pz_id=#{pzid,jdbcType=VARCHAR}
+  </update>
+
+
+</mapper>

@@ -1,0 +1,145 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<definitions xmlns="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:activiti="http://activiti.org/bpmn" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:omgdc="http://www.omg.org/spec/DD/20100524/DC" xmlns:omgdi="http://www.omg.org/spec/DD/20100524/DI" typeLanguage="http://www.w3.org/2001/XMLSchema" expressionLanguage="http://www.w3.org/1999/XPath" targetNamespace="http://www.activiti.org/test">
+  <process id="hczz_request_v1" name="合成作战流程V1" isExecutable="true">
+    <userTask id="HCZZ_1001" name="待提报" activiti:assignee="${user}"></userTask>
+    <userTask id="HCZZ_1002" name="待本单位审批" activiti:candidateUsers="${users}"></userTask>
+    <userTask id="HCZZ_1010" name="退帧补充" activiti:assignee="${user}"></userTask>
+    <sequenceFlow id="HCZZ_1002_2" name="退回" sourceRef="HCZZ_1002" targetRef="HCZZ_1010">
+      <conditionExpression xsi:type="tFormalExpression"><![CDATA[${sp==2}]]></conditionExpression>
+    </sequenceFlow>
+    <userTask id="HCZZ_1003" name="待值班长签收" activiti:candidateUsers="${zbzusers}"></userTask>
+    <sequenceFlow id="HCZZ_1002_1" name="通过" sourceRef="HCZZ_1002" targetRef="HCZZ_1003">
+      <conditionExpression xsi:type="tFormalExpression"><![CDATA[${sp==1}]]></conditionExpression>
+    </sequenceFlow>
+    <userTask id="HCZZ_1004" name="待值班长审批" activiti:candidateUsers="${zbzusers}"></userTask>
+    <sequenceFlow id="HCZZ_1003_1" sourceRef="HCZZ_1003" targetRef="HCZZ_1004"></sequenceFlow>
+    <sequenceFlow id="HCZZ_1004_2" name="退回" sourceRef="HCZZ_1004" targetRef="HCZZ_1010">
+      <conditionExpression xsi:type="tFormalExpression"><![CDATA[${sp==2}]]></conditionExpression>
+    </sequenceFlow>
+    <userTask id="HCZZ_1005" name="待分配" activiti:candidateUsers="${zbzusers}"></userTask>
+    <sequenceFlow id="HCZZ_1004_1" name="通过" sourceRef="HCZZ_1004" targetRef="HCZZ_1005">
+      <conditionExpression xsi:type="tFormalExpression"><![CDATA[${sp==1}]]></conditionExpression>
+    </sequenceFlow>
+    <userTask id="HCZZ_1006" name="待反馈" activiti:assignee="${user}">
+      <multiInstanceLoopCharacteristics isSequential="false" activiti:collection="users" activiti:elementVariable="user">
+        <completionCondition>${nrOfCompletedInstances/nrOfInstances==1}</completionCondition>
+      </multiInstanceLoopCharacteristics>
+    </userTask>
+    <sequenceFlow id="HCZZ_1005_1" sourceRef="HCZZ_1005" targetRef="HCZZ_1006"></sequenceFlow>
+    <userTask id="HCZZ_1008" name="待核实" activiti:assignee="${user}"></userTask>
+    <sequenceFlow id="HCZZ_1006_1" sourceRef="HCZZ_1006" targetRef="HCZZ_1007"></sequenceFlow>
+    <endEvent id="end" name="完结"></endEvent>
+    <sequenceFlow id="HCZZ_1007_1" sourceRef="HCZZ_1008" targetRef="end"></sequenceFlow>
+    <sequenceFlow id="HCZZ_1001_1" name="提报" sourceRef="HCZZ_1001" targetRef="HCZZ_1002"></sequenceFlow>
+    <sequenceFlow id="HCZZ_1010_1" name="重新提报" sourceRef="HCZZ_1010" targetRef="HCZZ_1002"></sequenceFlow>
+    <startEvent id="start" name="Start"></startEvent>
+    <sequenceFlow id="flow1" sourceRef="start" targetRef="HCZZ_1001"></sequenceFlow>
+    <userTask id="HCZZ_1007" name="待生成反馈报告" activiti:assignee="${zbr}"></userTask>
+    <sequenceFlow id="flow2" sourceRef="HCZZ_1007" targetRef="HCZZ_1008"></sequenceFlow>
+  </process>
+  <bpmndi:BPMNDiagram id="BPMNDiagram_hczz_request_v1">
+    <bpmndi:BPMNPlane bpmnElement="hczz_request_v1" id="BPMNPlane_hczz_request_v1">
+      <bpmndi:BPMNShape bpmnElement="HCZZ_1001" id="BPMNShape_HCZZ_1001">
+        <omgdc:Bounds height="55.0" width="105.0" x="190.0" y="179.0"></omgdc:Bounds>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="HCZZ_1002" id="BPMNShape_HCZZ_1002">
+        <omgdc:Bounds height="55.0" width="105.0" x="190.0" y="341.0"></omgdc:Bounds>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="HCZZ_1010" id="BPMNShape_HCZZ_1010">
+        <omgdc:Bounds height="55.0" width="105.0" x="390.0" y="265.0"></omgdc:Bounds>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="HCZZ_1003" id="BPMNShape_HCZZ_1003">
+        <omgdc:Bounds height="55.0" width="105.0" x="190.0" y="457.0"></omgdc:Bounds>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="HCZZ_1004" id="BPMNShape_HCZZ_1004">
+        <omgdc:Bounds height="55.0" width="105.0" x="390.0" y="457.0"></omgdc:Bounds>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="HCZZ_1005" id="BPMNShape_HCZZ_1005">
+        <omgdc:Bounds height="55.0" width="105.0" x="604.0" y="457.0"></omgdc:Bounds>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="HCZZ_1006" id="BPMNShape_HCZZ_1006">
+        <omgdc:Bounds height="55.0" width="105.0" x="604.0" y="341.0"></omgdc:Bounds>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="HCZZ_1008" id="BPMNShape_HCZZ_1008">
+        <omgdc:Bounds height="55.0" width="105.0" x="604.0" y="70.0"></omgdc:Bounds>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="end" id="BPMNShape_end">
+        <omgdc:Bounds height="35.0" width="35.0" x="437.0" y="80.0"></omgdc:Bounds>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="start" id="BPMNShape_start">
+        <omgdc:Bounds height="35.0" width="35.0" x="225.0" y="80.0"></omgdc:Bounds>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="HCZZ_1007" id="BPMNShape_HCZZ_1007">
+        <omgdc:Bounds height="55.0" width="105.0" x="604.0" y="230.0"></omgdc:Bounds>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge bpmnElement="HCZZ_1002_2" id="BPMNEdge_HCZZ_1002_2">
+        <omgdi:waypoint x="242.0" y="341.0"></omgdi:waypoint>
+        <omgdi:waypoint x="317.0" y="292.0"></omgdi:waypoint>
+        <omgdi:waypoint x="390.0" y="292.0"></omgdi:waypoint>
+        <bpmndi:BPMNLabel>
+          <omgdc:Bounds height="14.0" width="24.0" x="292.0" y="300.0"></omgdc:Bounds>
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="HCZZ_1002_1" id="BPMNEdge_HCZZ_1002_1">
+        <omgdi:waypoint x="242.0" y="396.0"></omgdi:waypoint>
+        <omgdi:waypoint x="242.0" y="457.0"></omgdi:waypoint>
+        <bpmndi:BPMNLabel>
+          <omgdc:Bounds height="14.0" width="24.0" x="214.0" y="420.0"></omgdc:Bounds>
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="HCZZ_1003_1" id="BPMNEdge_HCZZ_1003_1">
+        <omgdi:waypoint x="295.0" y="484.0"></omgdi:waypoint>
+        <omgdi:waypoint x="390.0" y="484.0"></omgdi:waypoint>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="HCZZ_1004_2" id="BPMNEdge_HCZZ_1004_2">
+        <omgdi:waypoint x="442.0" y="457.0"></omgdi:waypoint>
+        <omgdi:waypoint x="442.0" y="320.0"></omgdi:waypoint>
+        <bpmndi:BPMNLabel>
+          <omgdc:Bounds height="14.0" width="24.0" x="414.0" y="396.0"></omgdc:Bounds>
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="HCZZ_1004_1" id="BPMNEdge_HCZZ_1004_1">
+        <omgdi:waypoint x="495.0" y="484.0"></omgdi:waypoint>
+        <omgdi:waypoint x="604.0" y="484.0"></omgdi:waypoint>
+        <bpmndi:BPMNLabel>
+          <omgdc:Bounds height="14.0" width="24.0" x="533.0" y="461.0"></omgdc:Bounds>
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="HCZZ_1005_1" id="BPMNEdge_HCZZ_1005_1">
+        <omgdi:waypoint x="656.0" y="457.0"></omgdi:waypoint>
+        <omgdi:waypoint x="656.0" y="396.0"></omgdi:waypoint>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="HCZZ_1006_1" id="BPMNEdge_HCZZ_1006_1">
+        <omgdi:waypoint x="656.0" y="341.0"></omgdi:waypoint>
+        <omgdi:waypoint x="656.0" y="285.0"></omgdi:waypoint>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="HCZZ_1007_1" id="BPMNEdge_HCZZ_1007_1">
+        <omgdi:waypoint x="604.0" y="97.0"></omgdi:waypoint>
+        <omgdi:waypoint x="472.0" y="97.0"></omgdi:waypoint>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="HCZZ_1001_1" id="BPMNEdge_HCZZ_1001_1">
+        <omgdi:waypoint x="242.0" y="234.0"></omgdi:waypoint>
+        <omgdi:waypoint x="242.0" y="341.0"></omgdi:waypoint>
+        <bpmndi:BPMNLabel>
+          <omgdc:Bounds height="14.0" width="24.0" x="214.0" y="247.0"></omgdc:Bounds>
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="HCZZ_1010_1" id="BPMNEdge_HCZZ_1010_1">
+        <omgdi:waypoint x="442.0" y="320.0"></omgdi:waypoint>
+        <omgdi:waypoint x="374.0" y="368.0"></omgdi:waypoint>
+        <omgdi:waypoint x="295.0" y="368.0"></omgdi:waypoint>
+        <bpmndi:BPMNLabel>
+          <omgdc:Bounds height="14.0" width="48.0" x="345.0" y="350.0"></omgdc:Bounds>
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="flow1" id="BPMNEdge_flow1">
+        <omgdi:waypoint x="242.0" y="115.0"></omgdi:waypoint>
+        <omgdi:waypoint x="242.0" y="179.0"></omgdi:waypoint>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="flow2" id="BPMNEdge_flow2">
+        <omgdi:waypoint x="656.0" y="230.0"></omgdi:waypoint>
+        <omgdi:waypoint x="656.0" y="125.0"></omgdi:waypoint>
+      </bpmndi:BPMNEdge>
+    </bpmndi:BPMNPlane>
+  </bpmndi:BPMNDiagram>
+</definitions>

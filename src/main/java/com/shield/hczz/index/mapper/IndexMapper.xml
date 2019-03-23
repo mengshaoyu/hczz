@@ -1,0 +1,495 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.shield.hczz.index.mapper.IndexMapper">
+	<resultMap id="BaseResultMap" type="com.shield.hczz.index.dao.UserModel">
+		<result column="USER_ID" property="userId" jdbcType="INTEGER" />
+		<result column="USERNAME" property="userName" jdbcType="VARCHAR" />
+		<result column="GENDER" property="gender" jdbcType="VARCHAR" />
+		<result column="AGE" property="age" jdbcType="INTEGER" />
+		<result column="LOGIN_ACCOUNT" property="loginAccount" jdbcType="VARCHAR" />
+		<result column="LOGIN_PWD" property="loginPwd" jdbcType="VARCHAR" />
+		<result column="ID_NO" property="idNo" jdbcType="VARCHAR" />
+		<result column="MOBILE_PHONE" property="mobilePhone" jdbcType="VARCHAR" />
+		<result column="EMIAL" property="emial" jdbcType="VARCHAR" />
+		<result column="CUR_STATE" property="curState" jdbcType="VARCHAR" />
+		<result column="LOGIN_AMOUNT" property="loginAmount" jdbcType="INTEGER" />
+		<result column="DEPT_ID" property="deptId" jdbcType="INTEGER" />
+		<result column="DEPT_NAME" property="deptName" jdbcType="VARCHAR" />
+		<result column="USER_NO" property="userNo" jdbcType="VARCHAR" />
+		<result column="ADDRESS" property="address" jdbcType="VARCHAR" />
+		<result column="REMARK" property="remark" jdbcType="VARCHAR" />
+		<result column="POLICE_TYPE" property="policeType" jdbcType="VARCHAR" />
+		<result column="CREATE_BY" property="createBy" jdbcType="VARCHAR" />
+		<result column="CREATE_DT" property="createDt" jdbcType="DATE" />
+		<result column="UPDATE_DT" property="updateBy" jdbcType="VARCHAR" />
+		<result column="UPDATE_BY" property="updateDt" jdbcType="DATE" />
+		<result column="DELETE_BY" property="deleteBy" jdbcType="VARCHAR" />
+		<result column="ACT_BY_TYPE" property="actByType" jdbcType="VARCHAR" />
+	</resultMap>
+	
+	<select id="selectAccept" parameterType="java.lang.String" resultType="java.util.Map">
+		select c.accept_unit,p.pz_apply_grade from case_info c,(select i.case_id,i.pz_apply_grade from pz_t_apply i where i.pz_apply_id = #{pzId}) p  where c.case_id = p.case_id
+	</select>
+	
+	<select id="selectDept" parameterType="java.lang.String" resultType="java.lang.String">
+		select dept_name from au_t_dept where dept_no = #{deptId}
+	</select>
+	
+	<select id="selectDeptName" parameterType="java.lang.String" resultType="java.lang.String">
+		select dept_name from au_t_dept where dept_no = #{deptNo}
+	</select>
+	
+	<select id="selectDeptById" parameterType="java.lang.String" resultType="java.lang.String">
+		select dept_no from au_t_dept where dept_name like '%'||#{deptName}||'%'
+	</select>
+	
+	<select id="selectAtt" parameterType="java.lang.String" resultType="java.util.Map">
+		select
+			 *  
+	    from 
+	    	fdi_t_attach i 
+	    where  
+	   		i.bus_id = #{resultId}
+	</select>
+	
+	<update id="addClue" parameterType="java.util.Map" >
+		update 
+			pz_t_clue_info  
+		set 
+			CLUE_SUMUP = #{clueSumup}
+		where 
+			CLUE_ID = (
+						select 
+							CLUE_ID
+						from 
+							pz_t_clue_info 
+						where 
+							PZ_ID = #{pzId}
+						and
+							CLUE_AUXILIARY = #{clueAuxiliary}
+						)
+	</update>
+	
+	<select id="selectCodeBycodeValue" parameterType="java.lang.String" resultType="java.lang.String">
+		select 
+			j.VALUE_DESC 
+		from 
+			sy_t_codevalue j 
+		where 
+			j.type_id = '1007' 
+		and j.code_value = #{codeValue}
+	</select>
+	
+	<select id="selectNameByCode" resultType="java.lang.String">
+		select 
+			VALUE_DESC
+		from 
+			SY_T_CODEVALUE  
+		where 
+			TYPE_ID = #{typeId}
+		and 
+			CODE_VALUE = #{codeValue}
+	</select>
+	
+	<select id="selectCodeByName" resultType="java.lang.String">
+		select 
+			CODE_VALUE
+		from 
+			SY_T_CODEVALUE  
+		where 
+			TYPE_ID = #{typeId}
+		and 
+			VALUE_DESC = #{valueDesc}
+	</select>
+	
+	<select id="select"  resultType="com.shield.hczz.index.dao.UserModel">
+		select  i.*,k.dept_name as DEPT_NAME from AU_T_USER i left join AU_T_DEPT k on i.dept_id = k.dept_id where 1 = 1
+		<include refid="select"/> 
+	</select>
+	
+	<select id="selectById"  resultType="java.util.Map">
+		select  i.*,k.dept_name as DEPT_NAME from AU_T_USER i left join AU_T_DEPT k on i.dept_id = k.dept_id where i.USER_ID = #{userId}
+	</select>
+	
+	<select id="selectCount"  resultType="java.lang.Integer">
+		select  count(*) from AU_T_USER i where 1 = 1
+		<include refid="select"/> 
+	</select>
+	
+	<update id="update" parameterType="java.util.Map">
+		update 
+			AU_T_USER
+		set
+		<include refid="update"/>
+		where 
+			USER_ID = #{userModel.userId}
+	</update>
+	
+	<select id="selectUnFinish" parameterType="java.lang.String" resultType="java.lang.Integer">
+		select 
+			count(*) 
+    	from 
+    		pz_t_apply a
+        where 
+        	a.delete_by is null 
+        and 
+        	a.flow_id 
+		in
+			(select 
+				i.proc_id 
+			from 
+				pz_v_flow_wait i 
+			where 
+				i.user_id = #{userId} 
+			) 
+	</select>
+	
+	<select id="decide" resultType="java.util.Map">
+		select 
+			i.user_id,i.username,k.role_Id,k.rolename
+		from 
+			AU_T_USER i 
+		inner join 
+			AU_T_USER_ROLE j 
+		on 
+			i.user_id = j.user_id 
+		left join 
+			AU_T_ROLE k 
+		on 
+			j.role_id = k.role_id  
+		where i.user_id = #{userId}
+	</select>
+	
+	<select id="waitingTask" resultType="java.lang.Integer" parameterType="java.util.Map">
+		select 
+			count(*) 
+    	from 
+    		pz_t_apply a
+        where 
+        	a.delete_by is null 
+        and 
+        	a.flow_id 
+		in
+			(select 
+				i.proc_id 
+			from 
+				pz_v_flow_wait i 
+			where 
+				i.user_id = #{userId}
+			<if test="taskKey1 != null and taskKey1  != '' ">
+				and i.task_key = #{taskKey1}
+			</if>
+			) 
+		union all
+		select 
+			count(*) 
+    	from 
+    		pz_t_apply a
+        where 
+        	a.delete_by is null 
+        and 
+        	a.flow_id 
+		in
+			(select 
+				i.proc_id 
+			from 
+				pz_v_flow_wait i 
+			where 
+				i.user_id = #{userId}
+			and 
+				i.task_key = #{taskKey2}
+			) 
+	</select>
+	
+	<select id="selectUserStart" parameterType="java.util.Map" resultType="java.lang.Integer">
+		select 
+			count(*) 
+		from 
+			act_ru_task i 
+		where 
+			i.proc_inst_id_ in(
+								select 
+									t.flow_id 
+								from 
+									PZ_T_APPLY t  
+								where 
+									t.create_by = #{userId}
+								<![CDATA[ 
+								and
+									t.create_dt <= #{newDate}
+								and 
+									t.create_dt >= #{oldDate}
+								]]>  
+								) 
+			and 
+				i.task_def_key_ 
+			not in(
+					<if test="taskKey1 != null and taskKey1  != '' ">
+						#{taskKey1},
+					</if>
+					<if test="taskKey2 != null and taskKey2  != '' ">
+						#{taskKey2},
+					</if>
+					<if test="taskKey3 != null and taskKey3  != '' ">
+						#{taskKey3}
+					</if>
+				  )
+	</select>
+	
+	<select id="selectDeptStart" parameterType="java.util.Map" resultType="java.lang.Integer">
+			select 
+				count(*) 
+			from 
+				act_ru_task i 
+			where 
+				i.proc_inst_id_ in (
+									select 
+										t.flow_id 
+									from 
+										PZ_T_APPLY t  
+									where 
+										t.create_by 
+									in 
+										(
+											select 
+												i.user_id 
+											from 
+												AU_T_USER i 
+											where 
+												i.dept_id = #{deptId}
+										)
+									<![CDATA[ 
+									and
+										t.create_dt <= #{newDate}
+									and 
+										t.create_dt >= #{oldDate}
+									]]>  
+									) 
+			and 
+				i.task_def_key_  not in(
+					<if test="taskKey1 != null and taskKey1  != '' ">
+						#{taskKey1},
+					</if>
+					<if test="taskKey2 != null and taskKey2  != '' ">
+						#{taskKey2},
+					</if>
+					<if test="taskKey3 != null and taskKey3  != '' ">
+						#{taskKey3}
+					</if>
+				  )
+	</select>
+	
+	<select id="selectEnd" resultType="java.lang.Integer" parameterType="java.util.Map">
+		select 
+			count(*) 
+		from 
+			ACT_HI_ACTINST i 
+		where 
+			i.proc_inst_id_ 
+		in(
+			select 
+				t.flow_id 
+			from 
+				PZ_T_APPLY t  
+			where 
+			1=1
+			<if test="userId != null and userId  != '' ">
+				and t.create_by = #{userId}
+			</if>
+			<if test="deptId != null and deptId  != '' ">
+				and t.create_by in (
+					select 
+						k.user_id 
+					from 
+						AU_T_USER k 
+					where 
+						k.dept_id = #{deptId}
+					)
+			</if>
+			<![CDATA[ 
+			and t.create_dt <= #{newDate}
+			and t.create_dt >= #{oldDate}
+			]]>  
+			)
+		and i.act_id_ = 'end'
+	</select>
+	
+	<select id="selectClue" parameterType="java.util.Map" resultType="java.lang.Integer">
+			select 
+				count(distinct i.clue_id） 
+			from 
+				pz_t_result i 
+			where
+			1=1 
+			<if test="userId != null and userId  != '' ">
+				and i.create_by = #{userId} 
+			</if>
+			<if test="deptId != null and deptId  != '' ">
+				and i.create_by in (select k.user_id from au_t_user k where k.dept_id = #{deptId})
+			</if>
+		<![CDATA[ 
+			and	i.create_dt <= #{newDate}
+			and	i.create_dt >= #{oldDate}
+		]]> 
+		
+	</select>
+	
+	<select id="selectFk" resultType="java.util.Map" >
+		select 
+			* 
+		from 
+			act_ru_task i 
+		where 
+			i.task_def_key_ = #{taskKey} 
+		and 
+			i.proc_inst_id_ = #{procId} 
+	</select>
+	
+	<select id="selectPzZhuBan" parameterType="java.lang.String" resultType="java.util.Map">
+		select 
+			* 
+		from 
+			PZ_T_APPLY i 
+		where 
+			i.pz_apply_id = #{pzId} 
+	</select>
+	
+	<select id="clueInfo" resultType="java.util.Map">
+		select 
+			* 
+		from 
+			pz_t_clue_info i 
+		where 
+			i.pz_id = #{pzid}
+	</select>
+	
+	
+	<sql id="select">
+		<if test="userModel.userId != null and userModel.userId  != '' ">
+			and i.USER_ID = #{userModel.userId}
+		</if>
+		<if test="userModel.userName != null and  userModel.userName != ''">
+			and i.USERNAME = #{userModel.userName}
+		</if>
+		<if test="userModel.gender != null and  userModel.gender != ''">
+			and i.GENDER = #{userModel.gender}
+		</if>
+		<if test="userModel.age != null and  userModel.age != ''">
+			and i.AGE = #{userModel.age}
+		</if>
+		<if test="userModel.loginAccount != null and  userModel.loginAccount != ''">
+			and i.LOGIN_ACCOUNT = #{userModel.loginAccount}
+		</if>
+		<if test="userModel.loginPwd != null and  userModel.loginPwd != ''">
+			and i.LOGIN_PWD = #{userModel.loginPwd}
+		</if>
+		<if test="userModel.idNo != null and  userModel.idNo != ''">
+			and i.ID_NO = #{userModel.idNo}
+		</if>
+		<if test="userModel.mobilePhone != null and  userModel.mobilePhone != ''">
+			and i.MOBILE_PHONE = #{userModel.mobilePhone}
+		</if>
+		<if test="userModel.emial != null and userModel.emial  != ''">
+			and i.EMIAL = #{userModel.emial}
+		</if>
+		<if test="userModel.curState != null and  userModel.curState != ''">
+			and i.CUR_STATE = #{userModel.curState}
+		</if>
+		<if test="userModel.loginAmount != null and userModel.loginAmount  != ''">
+			and i.LOGIN_AMOUNT = #{userModel.loginAmount}
+		</if>
+		<if test="userModel.deptId != null and userModel.deptId  != ''">
+			and i.DEPT_ID = #{userModel.deptId}
+		</if>
+		<if test="userModel.userNo != null and userModel.userNo  != ''">
+			and i.USER_NO = #{userModel.userNo}
+		</if>
+		<if test="userModel.address != null and userModel.address  != ''">
+			and i.ADDRESS = #{userModel.address}
+		</if>
+		<if test="userModel.remark != null and userModel.remark  != ''">
+			and i.REMARK = #{userModel.remark}
+		</if>
+		<if test="userModel.policeType != null and  userModel.policeType != ''">
+			and i.POLICE_TYPE = #{userModel.policeType}
+		</if>
+		<if test="userModel.createBy != null and  userModel.createBy != ''">
+			and i.CREATE_BY = #{userModel.createBy}
+		</if>
+		<if test="userModel.createDt != null and  userModel.createDt != ''">
+			and i.CREATE_DT = #{userModel.createDt}
+		</if>
+		<if test="userModel.updateDt != null and userModel.updateDt  != ''">
+			and i.UPDATE_DT = #{userModel.updateDt}
+		</if>
+		<if test="userModel.updateBy != null and userModel.updateBy  != ''">
+			and i.UPDATE_BY = #{userModel.updateBy}
+		</if>
+		<if test="userModel.deleteBy != null and  userModel.deleteBy != ''">
+			and i.DELETE_BY = #{userModel.deleteBy}
+		</if>
+		<if test="userModel.actByType != null and  userModel.actByType != ''">
+			and i.ACT_BY_TYPE = #{userModel.actByType}
+		</if>
+	</sql>
+	<sql id="update">
+		<if test="userModel.userName != null and  userModel.userName != ''">
+			USERNAME = #{userModel.userName},
+		</if>
+		<if test="userModel.gender != null and  userModel.gender != ''">
+			GENDER = #{userModel.gender},
+		</if>
+		<if test="userModel.age != null and  userModel.age != ''">
+			AGE = #{userModel.age},
+		</if>
+		<if test="userModel.loginAccount != null and  userModel.loginAccount != ''">
+			LOGIN_ACCOUNT = #{userModel.loginAccount},
+		</if>
+		<if test="userModel.loginPwd != null and  userModel.loginPwd != ''">
+			LOGIN_PWD = #{userModel.loginPwd},
+		</if>
+		<if test="userModel.idNo != null and  userModel.idNo != ''">
+			ID_NO = #{userModel.idNo},
+		</if>
+		<if test="userModel.mobilePhone != null and  userModel.mobilePhone != ''">
+			MOBILE_PHONE = #{userModel.mobilePhone},
+		</if>
+		<if test="userModel.emial != null and userModel.emial  != ''">
+			EMIAL = #{userModel.emial},
+		</if>
+		<if test="userModel.curState != null and  userModel.curState != ''">
+			CUR_STATE = #{userModel.curState},
+		</if>
+		<if test="userModel.loginAmount != null and userModel.loginAmount  != ''">
+			LOGIN_AMOUNT = #{userModel.loginAmount},
+		</if>
+		<if test="userModel.deptId != null and userModel.deptId  != ''">
+			DEPT_ID = #{userModel.deptId},
+		</if>
+		<if test="userModel.userNo != null and userModel.userNo  != ''">
+			USER_NO = #{userModel.userNo},
+		</if>
+		<if test="userModel.address != null and userModel.address  != ''">
+			ADDRESS = #{userModel.address},
+		</if>
+		<if test="userModel.remark != null and userModel.remark  != ''">
+			REMARK = #{userModel.remark},
+		</if>
+		<if test="userModel.policeType != null and  userModel.policeType != ''">
+			POLICE_TYPE = #{userModel.policeType},
+		</if>
+		<if test="userModel.updateBy != null and userModel.updateBy  != ''">
+			UPDATE_BY = #{userModel.updateBy},
+		</if>
+		<if test="userModel.deleteBy != null and  userModel.deleteBy != ''">
+			DELETE_BY = #{userModel.deleteBy},
+		</if>
+		<if test="userModel.actByType != null and  userModel.actByType != ''">
+			ACT_BY_TYPE = #{userModel.actByType},
+		</if>
+		<if test="userModel.updateDt != null and userModel.updateDt  != ''">
+			UPDATE_DT = #{userModel.updateDt}
+		</if>
+	</sql>
+	
+</mapper>

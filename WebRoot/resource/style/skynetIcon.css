@@ -1,0 +1,137 @@
+@CHARSET "UTF-8";
+
+.iconCls-default {
+	background-image: none !important;
+}
+
+.iconCls-10 {
+	background: url('../image/icon/iconCls_10.gif') no-repeat center center;
+}
+
+.iconCls-11 {
+	background: url('../image/icon/iconCls_11.gif') no-repeat center center;
+}
+
+.iconCls-12 {
+	background: url('../image/icon/iconCls_12.jpg') no-repeat center center;
+}
+
+.iconCls-13 {
+	background: url('../image/icon/iconCls_13.jpg') no-repeat center center;
+}
+
+.iconCls-14 {
+	background: url('../image/icon/iconCls_14.jpg') no-repeat center center;
+}
+
+.iconCls-15 {
+	background: url('../image/icon/iconCls_15.jpg') no-repeat center center;
+}
+
+.iconCls-16 {
+	background: url('../image/icon/iconCls_16.jpg') no-repeat center center;
+}
+
+.iconCls-17 {
+	background: url('../image/icon/iconCls_17.jpg') no-repeat center center;
+}
+
+.iconCls-18 {
+	background: url('../image/icon/iconCls_18.jpg') no-repeat center center;
+}
+
+.iconCls-19 {
+	background: url('../image/icon/iconCls_19.jpg') no-repeat center center;
+}
+
+.iconCls-20 {
+	background: url('../image/icon/iconCls_20.jpg') no-repeat center center;
+}
+
+.iconCls-21 {
+	background: url('../image/icon/iconCls_21.jpg') no-repeat center center;
+}
+
+.iconCls-22 {
+	background: url('../image/icon/iconCls_22.jpg') no-repeat center center;
+}
+
+.iconCls-23 {
+	background: url('../image/icon/iconCls_23.jpg') no-repeat center center;
+}
+
+.icon-role {
+	background: url('../image/icon/role.png') no-repeat center center;
+}
+
+.icon-excel {
+	background: url('../image/icon/excel.png') no-repeat center center;
+}
+
+.icon-rekey {
+	background: url('../image/icon/rekey.png') no-repeat center center;
+}
+
+.icon-power {
+	background: url('../image/icon/power.png') no-repeat center center;
+}
+/**浜哄憳**/
+.icon-user {
+	background: url('../image/icon/user.png') no-repeat center center;
+}
+/**鎴垮瓙**/
+.icon-home {
+	background: url('../image/icon/home.png') no-repeat center center;
+}
+/**鎵虫墜*/
+.icon-setting {
+	background: url('../image/icon/setting.png') no-repeat center center;
+}
+/**涔� */
+.icon-syszd {
+	background: url('../image/icon/syszd.png') no-repeat center center;
+}
+/**榻胯疆*/
+.icon-param {
+	background: url('../image/icon/param.png') no-repeat center center;
+}
+/**鏌ヨ*/
+.icon-query {
+	background: url('../image/icon/query.png') no-repeat center center;
+}
+/**excel瀵煎叆*/
+.icon-xls-imp {
+	background: url('../image/icon/xls_imp.png') no-repeat center center;
+}
+/**excel瀵煎嚭*/
+.icon-xls-exp {
+	background: url('../image/icon/xls_exp.png') no-repeat center center;
+}
+/**excel*/
+.icon-xls {
+	background: url('../image/icon/xls.png') no-repeat center center;
+}
+/**鍥炴敹绔�*/
+.icon-exclamation {
+	background: url('../image/icon/exclamation.png') no-repeat center center;
+}
+/**鎵妸*/
+.icon-clear {
+	background: url('../image/icon/clear.png') no-repeat center center;
+}
+/**娓呯┖*/
+.icon-broom {
+	background: url('../image/icon/broom.png') no-repeat center center;
+}
+/**鍙栨秷*/
+.icon-canceling {
+	background: url('../image/icon/canceling.png') no-repeat center center;
+}
+/**璀﹀憡*/
+.icon-warning {
+	background: url('../image/icon/warning.png') no-repeat center center;
+}
+
+.icon-doc {
+	background: url('../image/icon/icon_doc.png') no-repeat center center;
+}

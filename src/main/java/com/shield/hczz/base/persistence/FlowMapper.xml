@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.shield.hczz.base.persistence.FlowMapper">
+	<select id="getStartFlow" parameterType="com.shield.hczz.flow.qvo.FlowQO"
+		resultType="com.shield.hczz.flow.qvo.FlowVO">
+		select
+		f.flow_id,f.next_id,f.is_start,f.start_role,f.flow_status,f.flow_desc,f.rebut_id,
+		f.flow_diff,f.is_specified,f.repare_users,f.repare_roles,f.flow_type,f.remark,v.value_desc
+		statusDesc
+		from pz_t_flow f
+		left join (select code_value,value_desc from
+		sy_t_codevalue where type_id
+		= '1004') v
+		on v.code_value = f.flow_status
+		where f.delete_by is null
+		and f.is_start = '1'
+		<if test="flowDiff != null and flowDiff != ''">
+			and f.flow_diff = #{flowDiff}
+		</if>
+		<if test="roles != null and roles != ''">
+			and f.start_role in (${roles})
+		</if>
+	</select>
+	<select id="getById" parameterType="java.lang.String"
+		resultType="com.shield.hczz.flow.qvo.FlowVO">
+		select
+		f.flow_id,f.next_id,f.is_start,f.start_role,f.flow_status,f.flow_desc,f.rebut_id,
+		f.flow_diff,f.is_specified,f.repare_users,f.repare_roles,f.flow_type,f.remark,v.value_desc
+		statusDesc
+		from pz_t_flow f
+		left join (select code_value,value_desc from
+		sy_t_codevalue where type_id
+		= '1004') v
+		on v.code_value = f.flow_status
+		where f.delete_by is null
+		and f.flow_id =
+		#{_parameter,jdbcType=VARCHAR}
+	</select>
+	<select id="getApprovers" parameterType="java.util.Map"
+		resultType="com.shield.frame.base.domain.User">
+		select u.*
+		from AU_T_USER u
+		left join au_t_user_role ur on ur.user_id = u.user_id
+		left join au_t_role r on r.role_id = ur.role_id
+		where u.delete_by is null
+		and r.role_id = #{roleId,jdbcType=VARCHAR}
+	</select>
+</mapper>

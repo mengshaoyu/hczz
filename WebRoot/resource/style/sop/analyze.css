@@ -1,0 +1,135 @@
+
+.work-panel {
+	margin: 0 auto 20px auto;
+    width: 94%;
+    border: 1px solid #f5f5f5;
+    padding: 10px;
+    box-shadow:0 0 2px 2px #f5f5f5;
+}
+
+.date-condition {
+	height: 32px;
+	margin-bottom:20px;
+}
+.date-condition .date-condition-item{
+	display: inline-block;
+	border: 1px solid #f5f5f5;
+	cursor: pointer;
+	margin-right: 10px;
+	line-height: 30px;
+	padding: 0 15px;
+	height: 30px;
+}
+.date-condition .date-condition-select{
+	height: 30px;
+	width:160px;
+	line-height: 30px;
+	border: 1px solid #f5f5f5;
+	padding-left:5px;
+	box-sizing:border-box;
+	font-size:12px;
+}
+.date-condition .date-condition-item:hover{
+    background: #4381e6;
+    color:#FFF;
+}
+.date-content{
+	width: 100%;
+	height: 380px;
+}
+.hcbztj-pie-td{
+	height: 360px;
+	width: 40%;
+	border:1px solid #f5f5f5;
+	box-sizing:border-box;
+}
+.hcbztj-pie {
+	height: 96%;
+	width: 96%;
+	padding:2%;
+}
+
+.hcbztj-table {
+    
+}
+#pjtj-table-content{
+	width: 100%;
+    border: 1px solid #f5f5f5;
+}
+#hcbztj-table-content{
+	width: 98%;
+	height:381px;
+	border: 1px solid #f5f5f5;
+	box-sizing:border-box;
+	
+}
+#pjtj-table-content td,#hcbztj-table-content td{
+	height:50px;
+	text-align: center;
+	font-size: 14px;
+	color: #444;
+}
+#pjtj-table-content .table-td:hover,#hcbztj-table-content .table-td:hover{
+    background: #e2e2e2;
+}
+.tr-background{
+	background: #f5f5f5;
+}
+.table-th{
+	background: #f5f5f5;
+}
+#pjtj-table-content .td-bold,#hcbztj-table-content .td-bold{
+	font-weight: bold;
+}
+.pjtj-li{
+	float: left;
+	height: 100px;
+	width: 180px;
+	margin:5px 10px 15px 0;
+	text-align: center;
+	color:#FFF;
+}
+.pjtj-li.first{
+	background:#f73723;
+}
+.pjtj-li.first:hover{
+    background:#e60404;
+}
+.pjtj-li.second{
+    background:#3b7fc2;
+}
+.pjtj-li.second:hover{
+    background:#2f6eac;
+}
+.pjtj-li.third{
+    background:#f39747;
+}
+.pjtj-li.third:hover{
+    background:#d88339;
+}
+.pjtj-li.fourth{
+    background:#53da93;
+}
+.pjtj-li.fourth:hover{
+    background:#3bb073;
+}
+.pjtj-li.fifth{
+    background:#35b773;
+}
+.pjtj-li.fifth:hover{
+    background:#26965b;
+}
+.pjtj-li p{
+	font-size: 22px;
+	font-weight: 700;
+	padding: 25px 0 10px 0;
+}
+.pjtj-li span{
+	font-size: 14px;
+}
+.clear-both{
+	clear: both;
+	height: 0;
+	width: 0;
+    overflow: hidden;	
+}

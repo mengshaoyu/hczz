@@ -1,0 +1,61 @@
+﻿
+------AU_T_FUNCTION
+
+delete from AU_T_FUNCTION  t where t.FUNCTION_ID='1002021005';
+commit;
+
+---任务详情界面按钮控制
+insert into AU_T_FUNCTION (FUNCTION_ID, FUNCTIONNAME, URL, DESCPT, IS_TOOLBAR, TOOBAR_TITLE, JS_METHOD, ICON_CSS, TOOLBAR_ORDER, OPEN_METHOD, HASAUDATA, CREATE_BY, CREATE_DT, UPDATE_DT, UPDATE_BY, DELETE_BY, ACT_BY_TYPE)
+values (1002021005, '核实', ' ', '核实', '3', '核实', 'openEvaWin', '', 4, '2', null, 'admin', sysdate, sysdate, 'admin', null, 'b');
+
+commit;
+
+---控制任务详情界面的权限
+
+insert into AU_T_PERMISSION_FUNCTION (PK, PERMISSION_ID, FUNCTION_ID, CREATE_BY, CREATE_DT, UPDATE_DT, UPDATE_BY, DELETE_BY, ACT_BY_TYPE)
+values (SQ_PERMISSION_FUNCTION.nextval, 10020210, 1002021005, 'admin', sysdate,sysdate, 'admin', null, 'b');
+
+commit;
+
+--20171102 添加查看评价和评定按钮
+delete from AU_T_FUNCTION  t where t.FUNCTION_ID in ('1002020909','1002020910');
+
+delete from AU_T_PERMISSION where PERMISSION_ID in (10020212,10020213);
+
+insert into AU_T_FUNCTION (FUNCTION_ID, FUNCTIONNAME, URL, DESCPT, IS_TOOLBAR, TOOBAR_TITLE, JS_METHOD, ICON_CSS, TOOLBAR_ORDER, OPEN_METHOD, HASAUDATA, CREATE_BY, CREATE_DT, UPDATE_DT, UPDATE_BY, DELETE_BY, ACT_BY_TYPE)
+values (1002020909, '查看评价',  ' ', '查看评价', '2', '查看评价', 'showEvaluate', '', 9, '2', null, 'admin', sysdate, sysdate, 'admin', null, 'b');
+insert into AU_T_FUNCTION (FUNCTION_ID, FUNCTIONNAME, URL, DESCPT, IS_TOOLBAR, TOOBAR_TITLE, JS_METHOD, ICON_CSS, TOOLBAR_ORDER, OPEN_METHOD, HASAUDATA, CREATE_BY, CREATE_DT, UPDATE_DT, UPDATE_BY, DELETE_BY, ACT_BY_TYPE)
+values (1002020910, '评定',  ' ', '评定', '2', '评定', 'evaluate2', '', 10, '2', null, 'admin', sysdate, sysdate, 'admin', null, 'b');
+insert into AU_T_PERMISSION (PERMISSION_ID, AUTHORITY_NAME, PARENT_ID, SORT_ORDER, DOMAIN_NAME, CREATE_BY, CREATE_DT, UPDATE_DT, UPDATE_BY, DELETE_BY, ACT_BY_TYPE)
+values (10020212, '查看评价', 100202, 11, null, 'admin', sysdate,sysdate, 'admin', null, 'b');
+insert into AU_T_PERMISSION (PERMISSION_ID, AUTHORITY_NAME, PARENT_ID, SORT_ORDER, DOMAIN_NAME, CREATE_BY, CREATE_DT, UPDATE_DT, UPDATE_BY, DELETE_BY, ACT_BY_TYPE)
+values (10020213, '评定', 100202, 12, null, 'admin', sysdate,sysdate, 'admin', null, 'b');
+insert into AU_T_PERMISSION_FUNCTION (PK, PERMISSION_ID, FUNCTION_ID, CREATE_BY, CREATE_DT, UPDATE_DT, UPDATE_BY, DELETE_BY, ACT_BY_TYPE)
+values (SQ_PERMISSION_FUNCTION.nextval, 10020212, 1002020909, 'admin', sysdate,sysdate, 'admin', null, 'b');
+insert into AU_T_PERMISSION_FUNCTION (PK, PERMISSION_ID, FUNCTION_ID, CREATE_BY, CREATE_DT, UPDATE_DT, UPDATE_BY, DELETE_BY, ACT_BY_TYPE)
+values (SQ_PERMISSION_FUNCTION.nextval, 10020213, 1002020910, 'admin', sysdate,sysdate, 'admin', null, 'b');
+
+--预置查看评价权限
+insert into AU_T_ROLE_PERMISSION (PK, PERMISSION_ID, ROLE_ID, CREATE_BY, CREATE_DT, UPDATE_DT, UPDATE_BY, DELETE_BY, ACT_BY_TYPE)
+values (SQ_ROLE_PERMISSION.nextval, 10020212, 1000, '1', sysdate,sysdate, '1', null, 'b');
+insert into AU_T_ROLE_PERMISSION (PK, PERMISSION_ID, ROLE_ID, CREATE_BY, CREATE_DT, UPDATE_DT, UPDATE_BY, DELETE_BY, ACT_BY_TYPE)
+values (SQ_ROLE_PERMISSION.nextval, 10020212, 1001, '1', sysdate,sysdate, '1', null, 'b');
+insert into AU_T_ROLE_PERMISSION (PK, PERMISSION_ID, ROLE_ID, CREATE_BY, CREATE_DT, UPDATE_DT, UPDATE_BY, DELETE_BY, ACT_BY_TYPE)
+values (SQ_ROLE_PERMISSION.nextval, 10020212, 1002, '1', sysdate,sysdate, '1', null, 'b');
+insert into AU_T_ROLE_PERMISSION (PK, PERMISSION_ID, ROLE_ID, CREATE_BY, CREATE_DT, UPDATE_DT, UPDATE_BY, DELETE_BY, ACT_BY_TYPE)
+values (SQ_ROLE_PERMISSION.nextval, 10020212, 1003, '1', sysdate,sysdate, '1', null, 'b');
+insert into AU_T_ROLE_PERMISSION (PK, PERMISSION_ID, ROLE_ID, CREATE_BY, CREATE_DT, UPDATE_DT, UPDATE_BY, DELETE_BY, ACT_BY_TYPE)
+values (SQ_ROLE_PERMISSION.nextval, 10020212, 1004, '1', sysdate,sysdate, '1', null, 'b');
+insert into AU_T_ROLE_PERMISSION (PK, PERMISSION_ID, ROLE_ID, CREATE_BY, CREATE_DT, UPDATE_DT, UPDATE_BY, DELETE_BY, ACT_BY_TYPE)
+values (SQ_ROLE_PERMISSION.nextval, 10020212, 1005, '1', sysdate,sysdate, '1', null, 'b');
+insert into AU_T_ROLE_PERMISSION (PK, PERMISSION_ID, ROLE_ID, CREATE_BY, CREATE_DT, UPDATE_DT, UPDATE_BY, DELETE_BY, ACT_BY_TYPE)
+values (SQ_ROLE_PERMISSION.nextval, 10020212, 1006, '1', sysdate,sysdate, '1', null, 'b');
+--预置评定权限
+insert into AU_T_ROLE_PERMISSION (PK, PERMISSION_ID, ROLE_ID, CREATE_BY, CREATE_DT, UPDATE_DT, UPDATE_BY, DELETE_BY, ACT_BY_TYPE)
+values (SQ_ROLE_PERMISSION.nextval, 10020213, 1005, '1', sysdate,sysdate, '1', null, 'b');
+insert into AU_T_ROLE_PERMISSION (PK, PERMISSION_ID, ROLE_ID, CREATE_BY, CREATE_DT, UPDATE_DT, UPDATE_BY, DELETE_BY, ACT_BY_TYPE)
+values (SQ_ROLE_PERMISSION.nextval, 10020213, 1006, '1', sysdate,sysdate, '1', null, 'b');
+
+commit;
+
+

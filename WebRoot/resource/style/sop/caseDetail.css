@@ -1,0 +1,272 @@
+.outerborder{
+	margin :0 10px 0 10px;
+	box-shadow : 0 0 5px 3px #d1d1d1;
+}
+.outertitle{
+	font-size : 16px;
+	color : #4d4d4d;
+    font-weight : 700;
+    height: 60px;
+    line-height: 60px;
+    margin-left: 20px;
+    border-bottom: 1px solid #dddddd;
+    width:97%;
+}
+.panelTitle{
+	font-size : 16px;
+	color : #4d4d4d;
+	font-weight : 700;
+	border-bottom : 0px;
+	border-top: 1px solid #dddddd;
+	height: 14px;
+    padding: 10px 0 20px 20px;
+}
+.panelTitle-noTopBorder{
+	border-top: 0px;
+	padding: 0px 0px 20px 0px;
+	margin-left: -35px;
+}
+.task,.cxnr,.ajxx{
+	width: 100%;
+}
+.task td,.cxnr td,.ajxx td{
+    padding: 2px 0 2px 0;
+    border:10px  #FFF;
+    border-top:0px;
+}
+td.tb-left{
+	background:#f2f2f2;
+	border-right:none!important;
+	text-align: left;
+	font-weight:bold;
+}
+td.tb-right{
+	border-left:none!important;
+	padding:0!important;
+    height: 32px;
+    line-height: 32px;
+    text-indent: 5px;
+    box-sizing: border-box;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    overflow: hidden;
+}
+.task td input,.cxnr td input,.ajxx td input{
+    width:100%;
+    height:32px;
+    line-height:32px;
+    text-indent:5px;
+    border:1px solid #e5e5e5;
+}
+.task td select,.cxnr td select,.ajxx td select{
+    width:100%;
+    height:34px;
+    text-indent:5px;
+    padding:5px 0;
+    border:1px solid #ddd;
+    border-radius: 0;
+}
+.task td textarea,.cxnr td textarea,.ajxx td textarea{
+    width:100%;
+    border:1px solid #e5e5e5;
+    resize:none;
+    overflow: hidden;
+    float:left;
+    box-sizing : border-box;
+    padding:5px;
+}
+.requ{
+	color:red;
+}
+.requ1{
+	color:white;
+}
+#addCxnrBtn{
+	/* position: absolute;
+	top: -20px;
+	left:50px; */
+}
+.panelContent{
+	padding-bottom: 0px;
+    background: #f2f2f2;
+    padding: 30px 70px 5px 70px;
+    margin-bottom: 55px;
+	
+}
+.panelContent table{
+	font-size : 14px;
+    color : #4d4d4d;
+}
+.fileadd{
+	position: relative;
+	display: inline-block;
+}
+.cxnrOptBtn{
+	float:right;
+}
+.option-cxnr{
+	width: 55px;
+    height: 21px;
+    display: inline-block;
+    text-align: right;
+    color : #4080ee !important;
+    text-decoration: underline;
+    margin-left: 15px;
+}
+.deleteCxnr{
+	background: url(../../image/hcsq/del.png) no-repeat left;
+}
+.saveCxnr{
+    background: url(../../image/hcsq/save.png) no-repeat left;
+}
+.combo-panel{
+	border:1px solid #ddd;
+}
+.wspanel{
+	padding:0 111px;
+}
+.wsfjspan{
+	padding: 0 25px 0 25px;
+	background: url(../../image/hcsq/file.png) no-repeat left;
+}
+.dlzbinput{
+	width: 100px !important;
+}
+.dlzbspan{
+	padding: 0 2px;
+	float:left;
+	line-height:32px;
+}
+.tooltips {
+    position: absolute;
+    display: block;
+    color: #f73723;
+    font-size: 12px;
+}
+.spdialog-table{
+	width: 99%;
+	font-size: 14px;
+	border-collapse: collapse;
+}
+.spdialog-table td{
+	padding-right:10px;
+	border:1px dotted #d9d9d9;
+}
+.spdialog-table td.left{
+	background:#f1f1f1;
+}
+.spdialog-table td.top{
+	border:0 none;
+	color:#4381e6;
+	height:50px;
+	line-height:50px; 
+	padding-left:10px;
+	font-weight:700;
+	font-size:14px;
+}
+.clear{
+	margin:0;
+	padding:0;
+	width:0;
+	height:0;
+	overflow:hidden;
+	clear:both;
+}
+#markpointbtn{
+	background: url(../../image/hcsq/bd.png) no-repeat center;
+	float: right;
+	cursor: pointer;
+	width:20px;
+	height:32px;
+}
+.bottomBtn a{
+	margin-right:10px;
+}
+
+.border-div{
+	width:100%;
+	/* border:1px solid #e5e5e5; */
+	height:32px;
+	line-height:32px;
+	text-indent:1px;
+	box-sizing:border-box;
+	overflow: hidden;
+	text-overflow:ellipsis;
+	white-space: nowrap;
+}
+
+.fjspancont{
+	margin-left:30px;
+	width:120px;
+	height:30px;
+	display:block;
+	float:left;
+	line-height:30px;
+	overflow:hidden;
+	text-overflow:ellipsis;
+	white-space: nowrap;
+	text-align:left;
+}
+
+/*li*/
+li{
+	float: left;
+	list-style: none;
+	margin-left: 20px;
+	margin-right: 6px;
+	margin-top:4px;
+	width:160px;
+}
+/*关联线索div*/
+.relevance{
+	background-color:#f2f2f2;
+	width: auto;
+	height: 35px;
+	margin-top: 20px;
+	padding: 5px;
+}
+/*tab页的<a>标签*/
+.relevanceA{
+	display:block;
+	color:#4080ee;
+	height:23px;
+	width:140px;
+	margin-top:5px;
+	overflow:hidden;
+	word-break:keep-all;
+	white-space:nowrap;
+	text-overflow:ellipsis;
+	text-align: center;
+	margin-left: 10px;
+}
+/*顶部logodiv*/
+.header-nav {
+    width: 100%;
+    height: 48px;
+    background-color: #36587B;
+}
+.nav-logo {
+	width: 40%;
+	float: left;
+}
+.nav-logo i {
+	margin:4px 4px;
+	height: 40px;
+	width: 40px;
+	float:left;
+}
+.nav-logo h1 {
+	height: 48px;
+	line-height: 48px;
+	display: inline-block;
+	font-size: 18px;
+	color:#fff;
+}
+/*任务等级*/
+.level{
+	font-size: 16px;
+	color: #4d4d4d;
+	font-weight:bold;
+	margin-left: 35px; 
+	margin-top:10px;
+}

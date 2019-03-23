@@ -1,0 +1,154 @@
+/*
+* @Author: K.
+* @Date:   2017-10-12 14:07:12
+* @Last Modified by:   Administrator
+* @Last Modified time: 2017-11-10 17:39:20
+*/
+
+.workTabs {
+    height: 40px;
+}
+
+.workTabs li,.workTabs ul{
+   float: left;
+}
+
+.workTabs li{
+    cursor: pointer;
+    margin:10px 0;
+    /* padding-left: 10px; */
+    border-right: 1px solid gray;
+    text-align: center;
+    padding:0 10px;
+}
+
+/* .workTabs li+li:before {
+    content: '|';
+} */
+
+.workListTabs{
+    width: 80%;
+}
+
+.tabActive {
+    color:#4381e6;
+}
+
+.workListTabs li:hover,.newWork li:hover{
+	color:#4381e6;
+}
+
+.workListTabs li span{
+	padding: 0 3px;
+    height:18px;
+    text-align:center;
+    line-height:18px;
+    border-radius:2px;
+    background:#e6001f;
+    color:#FFF;
+    font-size:12px;
+    margin-left:5px;
+    display:inline-block;
+}
+
+.newWork{
+    width: 18%;
+    float: right !important;
+    margin-right: 20px;
+}
+
+#create{
+    line-height: 32px;
+    height: 32px;
+    background: #4080EE;
+    margin: 4px;
+    padding: 0 30px;
+    color: #fff;
+    display: none;
+}
+
+#create:hover{
+    background: #3B73D6;
+}
+
+
+#receive:hover{
+    background: #1A954B;
+}
+
+
+#receive{
+    line-height: 32px;
+    height: 32px;
+    margin: 4px;
+    padding: 0 30px;
+    color: #fff;
+	background:#40C474;
+	display: none;
+}
+
+
+.tab-link1{
+	color:#F3A249;
+}
+
+.tab-link2{
+	color:#40C474;
+	margin-left:20px;
+}
+
+/*任务列表操作下拉*/
+.toDos{
+	border:1px solid #e6e6e6;
+	box-shadow:0 0 2px #e6e6e6;
+}
+.toDos h3{
+	text-align:center;
+	line-height:34px;
+	color:#3dc47d;
+	font-weight:400;
+	padding-right:15px;
+}
+.toDosMenu{
+	width:70px;
+	height:24px;
+	line-height:24px;
+	text-align:center;
+	color:#424242;
+	cursor:pointer;
+	font-size:12px;
+	background:#FFF;
+}
+.toDosMenu:hover{
+	background:#f2f2f2;
+	color:#3dc47d;
+}
+.no-border{
+	border:0 !important;
+}
+.disClick{
+	color: #777 !important;
+    cursor: url(../../image/icon/not-allowed.png),not-allowed !important;
+}
+
+
+table.cxtj td span.combo,table.cxtj td span.combo-arrow{
+    height: 32px !important;
+}
+
+.td-title{
+	width:8%;
+	text-align: center !important;
+}
+.td-content{
+	width:22%;
+	text-align: left !important;
+}
+.td-content input{
+	width: 100%;
+	font-family: 'Microsoft Yahei';
+	font-size: 14px;
+}
+.combo-p {
+    border: 1px solid #ddd;
+}

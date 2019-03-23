@@ -1,0 +1,261 @@
+﻿<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.shield.frame.base.persistence.UserMapper">
+	<select id="getUserInfo" parameterType="string" resultType="User">
+		select *
+		from AU_T_USER t
+		where t.LOGIN_ACCOUNT = #{0, jdbcType=NVARCHAR}
+		and t.DELETE_BY is null
+	</select>
+
+	<select id="getUserRoles" resultType="Role">
+		select ur.role_id roleId,rd.auth_type authType
+		from AU_T_USER u
+		join au_t_user_role ur on u.user_id = ur.user_id and ur.delete_by is null
+		left join au_t_role_dataauth rd on rd.role_id=ur.role_id
+		where u.LOGIN_ACCOUNT = #{0, jdbcType=NVARCHAR}
+		and u.DELETE_BY is null
+		and u.CUR_STATE = '0'
+	</select>
+
+	<select id="getRolesById" resultType="Role">
+		select ur.role_id roleId,rd.auth_type authType
+		from AU_T_USER u
+		join au_t_user_role ur on u.user_id = ur.user_id and ur.delete_by is null
+		left join au_t_role_dataauth rd on rd.role_id=ur.role_id
+		where u.USER_ID = #{0, jdbcType=VARCHAR}
+		and u.DELETE_BY is null
+		and u.CUR_STATE = '0'
+	</select>
+
+	<select id="getChildDepts" resultType="String">
+		select WMSYS.WM_CONCAT(dept_id)
+		from au_t_dept where delete_by is null
+		Start With dept_id =#{0, jdbcType=DECIMAL}
+		Connect By Prior dept_id=parent_id
+	</select>
+
+	<select id="getList" resultType="com.shield.frame.sysmng.dto.UserDTO"
+		parameterType="hashMap">
+		<!-- WMSYS.WM_CONCAT(to_char(字段名)) 返回查询结果字符串 -->
+		select u.user_id as userId,u.username as userName,u.login_account as
+		loginAccount,u.cur_state as curState,u.id_no as idNo,u.user_no as
+		userNo
+		,u.age as age,u.gender as gender,u.mobile_phone as mobilePhone,u.address as
+		address,u.emial as emial
+		,t.dept_name as deptname,(select WMSYS.WM_CONCAT(to_char(r.rolename)) from
+		au_t_role r inner join au_t_user_role ur on r.role_id=ur.role_id
+		where ur.user_id=u.user_id and r.delete_by is null) as rolenames
+		from AU_T_USER u
+		inner join au_t_dept t on u.dept_id=t.dept_id and t.delete_by is null
+		where 1=1
+		<if test="hbDataAuth_D!= null">
+			and u.dept_id in (${hbDataAuth_D})
+			<!-- <foreach item="item" collection="hbDataAuth_D" open="(" separator="," 
+				close=")"> #{item} </foreach> -->
+		</if>
+		<if test="hbDataAuth_U!= null">
+			and u.create_by = #{hbDataAuth_U}
+		</if>
+		<if test="(username != null and username != '')">
+			and u.username like '%'||#{username}||'%'
+		</if>
+		<if test="(account != null and account  != '')">
+			and u.login_account like '%'||#{account}||'%'
+		</if>
+		<if test="(state != null and state  != '')">
+			and u.cur_state like '%'||#{state}||'%'
+		</if>
+		<if test="(gender != null and gender  != '')">
+			and u.gender like '%'||#{gender}||'%'
+		</if>
+		<if test="(userno != null and userno  != '')">
+			and u.user_no like '%'||#{userno}||'%'
+		</if>
+		<if test="(dept != null and dept  != '')">
+			and u.dept_id = #{dept}
+		</if>
+	</select>
+	<select id="getByPK" resultType="com.shield.frame.sysmng.dto.UserDTO">
+		select u.user_id as userId,u.username as userName,u.login_account as
+		loginAccount,u.login_pwd as loginPwd,u.cur_state as curState,u.id_no
+		as idNo,u.user_no as userNo
+		,u.age as age,u.gender as gender,u.mobile_phone as mobilePhone,u.address as
+		address,u.emial as emial
+		,t.dept_id as deptId,t.dept_name as deptname,u.police_type as policeType
+		from AU_T_USER u
+		left join AU_T_dept t
+		on u.dept_id=t.dept_id and t.delete_by is null
+		where u.user_id=#{uuid}
+	</select>
+	<insert id="add" parameterType="User">
+		<selectKey resultType="java.lang.String" order="BEFORE"
+			keyProperty="userId">
+			SELECT SQ_au_user.NEXTVAL FROM DUAL
+		</selectKey>
+		insert into AU_T_USER (user_id,login_ACCOUNT,login_PWD,
+		userNAME, ID_no,
+		user_no,dept_id,create_by,create_dt,age,gender,mobile_phone,address,emial,cur_state,
+		update_dt,update_by,ACT_BY_TYPE)
+		values (#{userId},#{loginAccount}, #{loginPwd},
+		#{userName}, #{idNo}, #{userNo},
+		#{deptId},#{createBy},#{createDt,jdbcType=TIMESTAMP},
+		#{age},#{gender},#{mobilePhone},#{address},#{emial},#{curState},#{updateDt,jdbcType=TIMESTAMP},#{updateBy},#{actByType})
+	</insert>
+	<!-- 批量插入 -->
+	<insert id="addMore" parameterType="java.util.List">
+		<selectKey resultType="java.lang.String" order="BEFORE"
+			keyProperty="userId">
+			SELECT SQ_au_user.NEXTVAL FROM DUAL
+		</selectKey>
+		insert into AU_T_USER (user_id,login_ACCOUNT,login_PWD,
+		userNAME, ID_no,
+		user_no,dept_id,create_by,create_dt,age,gender,mobile_phone,address,emial,cur_state,
+		update_dt,update_by,ACT_BY_TYPE)
+		values
+		<foreach collection="list" item="item" index="index"
+			separator=",">
+			(#item.userId},#{item.loginAccount}, #{item.loginPwd},
+			#{item.userName}, #{item.idNo}, #{item.userNo}, #{item.deptId},
+			#{item.createBy},#{item.createDt,jdbcType=TIMESTAMP},
+			#{item.age},#{item.gender},#{item.mobilePhone},#{item.address},
+			#{item.emial},#{item.curState},#{item.updateDt,jdbcType=TIMESTAMP},#{item.updateBy},#{item.actByType})
+		</foreach>
+	</insert>
+	<update id="updateByPK" parameterType="User">
+		update au_t_user
+		set
+		login_ACCOUNT=#{loginAccount},
+		<if test="(loginPwd != null and loginPwd != '')">
+			login_PWD=#{loginPwd},
+		</if>
+		userNAME=#{userName},
+		ID_no=#{idNo},
+		user_no=#{userNo},
+		dept_id=#{deptId},
+		update_by=#{updateBy},
+		update_dt=#{updateDt,jdbcType=TIMESTAMP} ,
+		age=#{age},
+		gender=#{gender},
+		mobile_phone=#{mobilePhone},
+		address=#{address},
+		emial=#{emial}
+		where user_id=#{userId}
+	</update>
+	<update id="upuse" parameterType="Map">
+		update au_t_user
+		set
+		cur_state=#{useflag}
+		where
+		user_id=#{userId}
+	</update>
+	<update id="resetPw" parameterType="Map">
+		update au_t_user
+		set
+		login_pwd=#{loginPwd}
+		where
+		user_id=#{userId}
+	</update>
+	<delete id="delByPK" parameterType="String">
+		delete from au_t_user t
+		where t.user_id =#{userId}
+	</delete>
+
+	<select id="getCount" resultType="int" parameterType="hashMap">
+		<!-- WMSYS.WM_CONCAT(to_char(字段名)) 返回查询结果字符串 -->
+		select count(1)
+		from AU_T_USER u
+		inner join au_t_dept t on u.dept_id=t.dept_id and t.delete_by is null
+		where 1=1
+		<if test="hbDataAuth_D!= null">
+			and u.dept_id in (${hbDataAuth_D})
+			<!-- <foreach item="item" collection="hbDataAuth_D" open="(" separator="," 
+				close=")"> #{item} </foreach> -->
+		</if>
+		<if test="hbDataAuth_U!= null">
+			and u.create_by = #{hbDataAuth_U}
+		</if>
+		<if test="(username != null and username != '')">
+			and u.username like '%'||#{username}||'%'
+		</if>
+		<if test="(account != null and account  != '')">
+			and u.login_account like '%'||#{account}||'%'
+		</if>
+		<if test="(state != null and state  != '')">
+			and u.cur_state like '%'||#{state}||'%'
+		</if>
+		<if test="(gender != null and gender  != '')">
+			and u.gender like '%'||#{gender}||'%'
+		</if>
+		<if test="(userno != null and userno  != '')">
+			and u.user_no like '%'||#{userno}||'%'
+		</if>
+		<if test="(dept != null and dept  != '')">
+			and u.dept_id = #{dept}
+		</if>
+	</select>
+
+	<select id="getByAccount" resultType="com.shield.frame.sysmng.dto.UserDTO">
+		select u.user_id as userId,u.username as userName,u.login_account as
+		loginAccount,u.login_pwd as loginPwd,u.cur_state as curState,u.id_no
+		as idNo,u.user_no as userNo
+		,u.age as age,u.gender as gender,u.mobile_phone as mobilePhone,u.address as
+		address,u.emial as emial
+		,t.dept_id as deptId,t.dept_name as deptname
+		from AU_T_USER u
+		left join AU_T_dept t
+		on u.dept_id=t.dept_id and t.delete_by is null
+		where u.login_account=#{loginAccount}
+	</select>
+
+	<update id="updatePwd" parameterType="hashMap">
+		update au_t_user t
+		set t.login_pwd = #{newPwd},
+		t.update_dt = #{updateDt},
+		t.update_by = #{updateBy}
+		where t.login_pwd = #{oldPwd}
+		and t.user_id = #{usrId}
+		and t.cur_state = '0'
+		and t.delete_by is null
+	</update>
+	<select id="getByIdNo" resultType="com.shield.frame.sysmng.dto.UserDTO">
+		select u.user_id as userId,u.username as userName,u.login_account as
+    		loginAccount,u.login_pwd as loginPwd,u.cur_state as curState,u.id_no
+    		as idNo,u.user_no as userNo
+    		,u.age as age,u.gender as gender,u.mobile_phone as mobilePhone,u.address as
+    		address,u.emial as emial
+    		,t.dept_id as deptId,t.dept_name as deptname
+    		from AU_T_USER u
+    		left join AU_T_dept t on u.dept_id=t.dept_id and t.delete_by is null
+		left join AU_t_dept t2 on u.dept_id=t2.dept_id
+		where u.id_no=#{idNo} and u.delete_by is null
+	</select>
+
+	<update id="blindPT" parameterType="Map">
+		update au_t_user
+		set
+		POLICE_TYPE = #{ids}
+		where
+		user_id=#{userId}
+	</update>
+	
+	
+	<!-- 查询配侦反馈民警 -->
+	<select id="getBackUser" parameterType="hashMap" resultType="com.shield.frame.sysmng.dto.UserDTO">
+	   select distinct t.* from au_t_user t join pz_t_clue_info c on t.user_id=c.clue_auxiliary 
+	   where c.pz_id=#{pzid,jdbcType=VARCHAR}
+	</select>
+
+    <select id="getPoliceTypeById" parameterType="java.lang.String" resultType="java.lang.String">
+        select police_type from au_t_user where user_id = #{_parameter}
+    </select>
+    
+    <select id="getCountByRoleId" parameterType="java.lang.String" resultType="java.lang.Integer">
+        select 
+        count(*) total
+        from au_t_user u 
+        left join au_t_user_role ur on ur.user_id = u.user_id
+        where u.delete_by is null
+        and ur.role_id = #{_parameter,jdbcType=VARCHAR}
+    </select>
+</mapper>

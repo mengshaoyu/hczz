@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.shield.hczz.base.persistence.PzCommLangMapper">
+  <resultMap id="BaseResultMap" type="com.shield.hczz.base.domain.PzCommLang">
+    <id column="COMMON_LANGUAGE" jdbcType="VARCHAR" property="commonLanguage" />
+    <result column="LANG_TYPE" jdbcType="CHAR" property="langType" />
+    <result column="CREATE_BY" jdbcType="VARCHAR" property="createBy" />
+    <result column="CREATE_DT" jdbcType="TIMESTAMP" property="createDt" />
+    <result column="UPDATE_DT" jdbcType="TIMESTAMP" property="updateDt" />
+    <result column="UPDATE_BY" jdbcType="VARCHAR" property="updateBy" />
+    <result column="DELETE_BY" jdbcType="VARCHAR" property="deleteBy" />
+    <result column="ACT_BY_TYPE" jdbcType="VARCHAR" property="actByType" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    COMMON_LANGUAGE, LANG_TYPE, CREATE_BY, CREATE_DT, UPDATE_DT, UPDATE_BY, DELETE_BY, 
+    ACT_BY_TYPE
+  </sql>
+  <select id="countLang" parameterType="com.shield.hczz.base.domain.PzCommLang" resultType="Integer">
+    select count(1)
+    from PZ_T_COMMON_LANGUAGE 
+    where LANG_TYPE = #{langType,jdbcType=CHAR}
+      and CREATE_BY = #{createBy,jdbcType=VARCHAR}
+  </select>
+  <select id="selectLang" parameterType="com.shield.hczz.base.domain.PzCommLang" resultMap="BaseResultMap">
+  select nvl(COMMON_LANGUAGE, value_desc) COMMON_LANGUAGE,
+         code_value lang_type
+    from (select trim(COMMON_LANGUAGE) COMMON_LANGUAGE, LANG_TYPE
+          from PZ_T_COMMON_LANGUAGE
+         where CREATE_BY = #{createBy,jdbcType=VARCHAR}) l,
+         (select value_desc, code_value
+          from sy_t_codevalue
+         where type_id = '1010') c
+   where l.lang_type(+) = c.code_value
+   <if test="langType != null">
+     and code_value = #{langType,jdbcType=CHAR}
+   </if>
+  </select>
+  <delete id="deleteLang" parameterType="com.shield.hczz.base.domain.PzCommLang">
+    delete from PZ_T_COMMON_LANGUAGE
+    where CREATE_BY = #{createBy,jdbcType=VARCHAR}
+    <if test="langType != null">
+      and LANG_TYPE = #{langType,jdbcType=CHAR}
+    </if>
+  </delete>
+  <insert id="insertLang" parameterType="com.shield.hczz.base.domain.PzCommLang">
+    insert into PZ_T_COMMON_LANGUAGE (COMMON_LANGUAGE, LANG_TYPE, CREATE_BY, 
+      CREATE_DT, UPDATE_DT, UPDATE_BY, ACT_BY_TYPE)
+    values (#{commonLanguage,jdbcType=VARCHAR}, #{langType,jdbcType=CHAR}, #{createBy,jdbcType=VARCHAR}, 
+      sysdate, sysdate, #{updateBy,jdbcType=VARCHAR}, 'B')
+  </insert>
+
+  <update id="updateLang" parameterType="com.shield.hczz.base.domain.PzCommLang">
+    update PZ_T_COMMON_LANGUAGE
+    <set>
+      <if test="commonLanguage != null">
+        COMMON_LANGUAGE = #{commonLanguage,jdbcType=VARCHAR},
+      </if>
+      <if test="updateBy != null">
+        UPDATE_BY = #{updateBy,jdbcType=VARCHAR},
+      </if>
+        UPDATE_DT = SYSDATE
+    </set>
+    where LANG_TYPE = #{langType,jdbcType=CHAR}
+      and CREATE_BY = #{createBy,jdbcType=VARCHAR}
+  </update>
+</mapper>

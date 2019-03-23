@@ -1,0 +1,118 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.shield.frame.base.persistence.PermissionMapper">
+	<resultMap id="BaseResultMap" type="com.shield.frame.base.domain.Permission">
+		<id column="PERMISSION_ID" property="permissionId" jdbcType="DECIMAL" />
+		<result column="AUTHORITY_NAME" property="authorityName"
+			jdbcType="NVARCHAR" />
+		<result column="PARENT_ID" property="parentId" jdbcType="DECIMAL" />
+		<result column="SORT_ORDER" property="sortOrder" jdbcType="DECIMAL" />
+		<result column="DOMAIN_NAME" property="domainName" jdbcType="NVARCHAR" />
+		<result column="CREATE_BY" property="createBy" jdbcType="NVARCHAR" />
+		<result column="CREATE_DT" property="createDt" jdbcType="TIMESTAMP" />
+		<result column="UPDATE_DT" property="updateDt" jdbcType="TIMESTAMP" />
+		<result column="UPDATE_BY" property="updateBy" jdbcType="NVARCHAR" />
+		<result column="DELETE_BY" property="deleteBy" jdbcType="NVARCHAR" />
+		<result column="ACT_BY_TYPE" property="actByType" jdbcType="NVARCHAR" />
+	</resultMap>
+	<delete id="delByPK" parameterType="java.math.BigDecimal">
+		delete from AU_T_PERMISSION
+		where PERMISSION_ID = #{permissionId,jdbcType=DECIMAL}
+	</delete>
+	<insert id="add" parameterType="com.shield.frame.base.domain.Permission">
+		insert into AU_T_PERMISSION (PERMISSION_ID, AUTHORITY_NAME, PARENT_ID,
+		SORT_ORDER, DOMAIN_NAME, CREATE_BY,
+		CREATE_DT, UPDATE_DT, UPDATE_BY,
+		DELETE_BY, ACT_BY_TYPE)
+		values (#{permissionId,jdbcType=DECIMAL},
+		#{authorityName,jdbcType=NVARCHAR}, #{parentId,jdbcType=DECIMAL},
+		#{sortOrder,jdbcType=DECIMAL}, #{domainName,jdbcType=NVARCHAR},
+		#{createBy,jdbcType=NVARCHAR},
+		#{createDt,jdbcType=TIMESTAMP}, #{updateDt,jdbcType=TIMESTAMP}, #{updateBy,jdbcType=NVARCHAR},
+		#{deleteBy,jdbcType=NVARCHAR}, #{actByType,jdbcType=NVARCHAR})
+	</insert>
+	<update id="updateByPK" parameterType="com.shield.frame.base.domain.Permission">
+		update AU_T_PERMISSION
+		set AUTHORITY_NAME = #{authorityName,jdbcType=NVARCHAR},
+		PARENT_ID = #{parentId,jdbcType=DECIMAL},
+		SORT_ORDER = #{sortOrder,jdbcType=DECIMAL},
+		DOMAIN_NAME = #{domainName,jdbcType=NVARCHAR},
+		CREATE_BY = #{createBy,jdbcType=NVARCHAR},
+		CREATE_DT = #{createDt,jdbcType=TIMESTAMP},
+		UPDATE_DT = #{updateDt,jdbcType=TIMESTAMP},
+		UPDATE_BY = #{updateBy,jdbcType=NVARCHAR},
+		DELETE_BY = #{deleteBy,jdbcType=NVARCHAR},
+		ACT_BY_TYPE = #{actByType,jdbcType=NVARCHAR}
+		where PERMISSION_ID = #{permissionId,jdbcType=DECIMAL}
+	</update>
+	<select id="getByPK" resultMap="BaseResultMap" parameterType="java.math.BigDecimal">
+		select PERMISSION_ID, AUTHORITY_NAME, PARENT_ID, SORT_ORDER,
+		DOMAIN_NAME, CREATE_BY,
+		CREATE_DT, UPDATE_DT, UPDATE_BY, DELETE_BY, ACT_BY_TYPE
+		from AU_T_PERMISSION
+		where PERMISSION_ID = #{permissionId,jdbcType=DECIMAL}
+	</select>
+	<select id="getList" resultMap="BaseResultMap">
+		select PERMISSION_ID, AUTHORITY_NAME, PARENT_ID, SORT_ORDER, DOMAIN_NAME,
+		CREATE_BY,
+		CREATE_DT, UPDATE_DT, UPDATE_BY, DELETE_BY, ACT_BY_TYPE
+		from AU_T_PERMISSION
+	</select>
+	<select id="getPermissionTree" resultType="com.shield.frame.sysmng.dto.PermissionDTO">
+		select * from (select distinct p.permission_id as
+		permissionId,p.authority_name as authorityName,p.parent_id as
+		parentId,p.sort_order from au_t_permission p
+		inner join
+		au_t_role_permission rp
+		on p.permission_id = rp.permission_id
+		inner join
+		au_t_role r
+		on to_char(rp.role_id)=r.role_id
+		inner join
+		au_t_user_role ur
+		on r.role_id=ur.role_id
+		inner join
+		au_t_user u
+		on ur.user_id = u.user_id
+		where u.user_id=#{userId} and r.delete_by is null
+		) pp
+		order by pp.sort_order asc, pp.permissionid asc
+	</select>
+
+	<select id="getPermission" resultType="com.shield.frame.sysmng.dto.PermissionDTO">
+		select * from (select distinct p.permission_id as
+		permissionId,p.authority_name as authorityName,p.parent_id as
+		parentId,p.sort_order from au_t_permission p
+		inner join
+		au_t_role_permission rp
+		on p.permission_id = rp.permission_id
+		inner join
+		au_t_role r
+		on to_char(rp.role_id)=r.role_id and r.delete_by is null
+		where r.role_id=#{userId}
+		) pp
+		order by pp.sort_order asc, pp.permissionid asc
+	</select>
+
+	<select id="getPermList" resultType="com.shield.frame.sysmng.dto.PermissionDTO">
+		select * from(
+		select distinct a.permission_id as permissionId,a.authority_name as
+		authorityName,a.parent_id as parentId,a.sort_order,b.ckecked from
+		au_t_permission a
+		left join
+		( select permissionId, ckecked from
+		(select distinct p.permission_id as permissionId,'1' ckecked from
+		au_t_permission p
+		inner join au_t_role_permission rp
+		on p.permission_id = rp.permission_id
+		inner join au_t_role r
+		on to_char(rp.role_id)=r.role_id and r.delete_by is null
+		where r.role_id=#{userId}
+		)
+		) b
+		on a.permission_id=b.permissionId
+		)
+		order by sort_order asc, permissionId asc
+	</select>
+
+</mapper>

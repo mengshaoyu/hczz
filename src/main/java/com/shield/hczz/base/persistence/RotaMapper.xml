@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.shield.hczz.base.persistence.RotaMapper">
+	<resultMap id="BaseResultMap" type="com.shield.hczz.rotamng.qvo.RotaVO">
+		<id column="ROTA_ID" property="rotaId" jdbcType="DECIMAL" />
+		<result column="USER_ID" property="userId" jdbcType="DECIMAL" />
+		<result column="DURATION" property="duration" jdbcType="DECIMAL" />
+		<result column="START_TIME" property="startTime" jdbcType="TIMESTAMP" />
+		<result column="END_TIME" property="endTime" jdbcType="TIMESTAMP" />
+		<result column="ASSIGNER" property="assigner" jdbcType="DECIMAL" />
+		<result column="ROTA_AUTO_ID" property="rotaAutoId" jdbcType="DECIMAL" />
+		<result column="REMARK" property="remark" jdbcType="VARCHAR" />
+		<result column="CREATE_BY" property="createBy" jdbcType="VARCHAR" />
+		<result column="CREATE_DT" property="createDt" jdbcType="TIMESTAMP" />
+		<result column="UPDATE_DT" property="updateDt" jdbcType="TIMESTAMP" />
+		<result column="UPDATE_BY" property="updateBy" jdbcType="VARCHAR" />
+		<result column="DELETE_BY" property="deleteBy" jdbcType="VARCHAR" />
+		<result column="ACT_BY_TYPE" property="actByType" jdbcType="VARCHAR" />
+
+		<result column="USER_NAME" property="userName" jdbcType="VARCHAR" />
+		<result column="ASSIGNER_NAME" property="assignerName"
+			jdbcType="VARCHAR" />
+	</resultMap>
+
+	<select id="getList" resultMap="BaseResultMap" parameterType="map">
+		select t.rota_id,
+		t.user_id,
+		u1.username user_name,
+		t.duration,
+		t.start_time,
+		t.end_time,
+		t.assigner,
+		u2.username assigner_name,
+		t.rota_auto_id,
+		t.remark,
+		t.create_by,
+		t.create_dt,
+		t.update_dt,
+		t.update_by,
+		t.delete_by,
+		t.act_by_type
+		from pz_t_rota t,au_t_user
+		u1,au_t_user u2
+		where t.user_id=u1.user_id
+		and t.assigner=u2.user_id
+		<if test="userName != null and userName != ''">
+			and u1.username like '%'||#{userName}||'%'
+		</if>
+	</select>
+
+	<select id="getCount" resultType="int" parameterType="map">
+		select count(1)
+		from pz_t_rota t,au_t_user u1,au_t_user u2
+		where
+		t.user_id=u1.user_id
+		and t.assigner=u2.user_id
+		<if test="userName != null and userName != ''">
+			and u1.username like '%'||#{userName}||'%'
+		</if>
+	</select>
+</mapper>

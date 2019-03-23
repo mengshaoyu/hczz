@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+
+<mapper namespace="com.shield.frame.base.persistence.OpsMapper">
+
+	<!-- 获取全部意见 关联查询 -->
+	<select id="getOpsList" resultType="com.shield.hczz.ops.qvo.OpsVO"
+		parameterType="java.util.Map">
+		select
+		u.user_no,u.username,d.dept_name,t.sop_ops_id,t.sop_ops_content,t.sop_ops_state,t.sop_ops_response,t.create_by,t.create_dt,t.update_dt,t.update_by,t.delete_by,t.act_by_type
+		from SOP_OPS t
+		left join au_t_user u
+		on u.user_id = t.create_by
+		left join
+		au_t_dept d
+		on d.dept_id = u.dept_id
+		<if test="sorter != null and sorter != ''">
+			order by ${sorter}
+		</if>
+		<if test="order != null and order != ''">
+			${order}
+		</if>
+	</select>
+
+	<!-- 获取一条意见 -->
+	<select id="selectById" resultType="com.shield.hczz.base.domain.Ops"
+		parameterType="java.lang.String">
+		select * from SOP_OPS where SOP_OPS_ID = #{sopOpsId} and
+		DELETE_BY is null
+	</select>
+
+	<!-- 回复意见 -->
+	<update id="updateOps" parameterType="java.lang.String">
+		UPDATE
+		SOP_OPS
+		SET
+		SOP_OPS_STATE = #{sopOpsState},
+		SOP_OPS_RESPONSE =
+		#{sopOpsResponse},
+		UPDATE_DT = sysdate,
+		UPDATE_BY = #{updateBy}
+		WHERE
+		SOP_OPS_ID = #{sopOpsId}
+	</update>
+
+	<!-- 新增意见 -->
+	<insert id="insertOps" parameterType="com.shield.hczz.base.domain.Ops">
+		INSERT INTO SOP_OPS
+		(SOP_OPS_ID,
+		SOP_OPS_CONTENT,
+		SOP_OPS_STATE,
+		SOP_OPS_RESPONSE,
+		CREATE_BY,
+		CREATE_DT,
+		UPDATE_DT,
+		UPDATE_BY,
+		ACT_BY_TYPE
+		)
+		VALUES
+		(#{sopOpsId,jdbcType=VARCHAR},#{sopOpsContent,jdbcType=VARCHAR},#{sopOpsState,jdbcType=VARCHAR},#{sopOpsResponse,jdbcType=VARCHAR},
+		#{createBy,jdbcType=VARCHAR},sysdate,sysdate,#{createBy,jdbcType=VARCHAR},#{actByType,jdbcType=VARCHAR})
+	</insert>
+
+</mapper>

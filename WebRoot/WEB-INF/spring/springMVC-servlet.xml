@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:aop="http://www.springframework.org/schema/aop"
+	xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:mvc="http://www.springframework.org/schema/mvc"
+	xsi:schemaLocation="http://www.springframework.org/schema/mvc http://www.springframework.org/schema/mvc/spring-mvc-4.0.xsd
+	    http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-4.0.xsd
+		http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-4.0.xsd
+		http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-4.0.xsd">
+
+	<!-- 处理静态资源，且可以添加一些有用的附加值功能。资源位置可以放在任何地方，也可以使用classpath:等指定资源位置。 -->
+	<mvc:resources mapping="/resource/**" location="/resource/**" />
+	<mvc:resources mapping="favicon.ico" location="/favicon.ico" cache-period="31556926"/>
+	<!-- 图标将在浏览器的缓存中存放一年 -->
+	
+	<context:component-scan base-package="com.shield.*.**.controller"></context:component-scan>
+	
+	<mvc:interceptors>
+		<mvc:interceptor>
+			<mvc:mapping path="/*/*" />
+			<mvc:exclude-mapping path="/resource/**"/>
+			<bean class="com.shield.frame.common.SessionInterceptor"></bean>
+		</mvc:interceptor>
+	</mvc:interceptors>
+	
+	<mvc:annotation-driven />
+		
+	<bean class="org.springframework.web.servlet.view.InternalResourceViewResolver">
+		<property name="prefix" value="/WEB-INF/view/"/>
+		<property name="suffix" value=".jsp"/>
+	</bean>
+	
+    <bean id="multipartResolver"
+        class="org.springframework.web.multipart.commons.CommonsMultipartResolver">
+        <property name="defaultEncoding" value="UTF-8" />
+        <!-- 指定所上传文件的总大小不能超过1000MB。注意maxUploadSize属性的限制不是针对单个文件，而是所有文件的容量之和 -->
+        <property name="maxUploadSize" value="10485760000" />
+        <!-- 设置在文件上传时允许写到内存中的最大值，以字节为单位计算，默认是10240 -->
+        <!-- 但是经实验，上传文件大小若小于此参数，则不会生成临时文件，故改为2048 -->
+        <property name="maxInMemorySize" value="2048" />  
+    </bean>
+	<bean class="com.shield.frame.common.CommonHandlerExceptionResolver"></bean>
+
+	<mvc:view-controller path="/" view-name="login"/>
+
+	<!-- Controller内公有方法自动日志    开始 -->
+	<bean id="logAspect" class="com.shield.spring.LogAspect">
+		<property name="order"  value="100" />
+	</bean>
+	<aop:aspectj-autoproxy proxy-target-class="true">
+		<aop:include name="logAspect" />
+	</aop:aspectj-autoproxy> 
+
+	<aop:config>
+		<aop:aspect ref="logAspect">
+			<aop:pointcut id="logControlCut" expression="execution(* com.shield.frame.*.controller.*.*(..))"/>
+			<!-- 方法执行前 -->
+			<aop:before pointcut-ref="logControlCut" method="doBefore" />
+			<!-- 方法执行结束后 -->
+			<aop:after-returning pointcut-ref="logControlCut" method="doAfterReturn" returning="rtnVal"/>
+		</aop:aspect>
+	</aop:config>
+	<!-- Controller内公有方法自动日志    结束 -->
+    
+</beans>

@@ -1,0 +1,56 @@
+*{
+	margin: 0;
+	padding:0;
+}
+.fankui-container{
+	width: 80%;
+	margin:auto;
+}
+.fankuiSheet p,
+.fankuiSheet a{
+	text-align: left;
+	line-height: 45px;
+	font-family: "仿宋";
+	font-size: 21px;
+	text-indent: 42px;
+	word-break:break-all;
+}
+.fankui-container h3{
+	text-align: center;
+	font-family: "方正小标宋简体";
+	font-size: 29px;
+	line-height: 45px;
+}
+.fankui-container h3.first{
+	margin-top:30px;
+}
+.cut-line{
+	height:2px;
+	border-top:3px solid #000;
+	border-bottom: 1px solid #000;
+}
+.bottom-line{
+	height:2px;
+	border-top:1px solid #000;
+	border-bottom: 3px solid #000;
+}
+.fankuiSheet p.bianhao{
+	float: right;
+	text-align: right;
+	font-size:14px;
+}
+.fankuiSheet p.title{
+	font-family: "黑体";
+	font-size: 21px;
+}
+.fankuiSheet p.right{
+	text-align: right;
+}
+.fankuiSheet p.name{
+	margin-top: 50px;
+}
+.fankuiSheet p.shengming{
+	font-size: 18px;
+	margin-top:50px;
+}
+.noprint{display:none;}

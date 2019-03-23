@@ -1,0 +1,13 @@
+eclipse.preferences.version=1
+encoding//WebRoot/resource/common/common.js=UTF-8
+encoding//WebRoot/resource/style/sop/index.css=UTF-8
+encoding//src/main/config=UTF-8
+encoding//src/main/config/DB/04\u3001INSERT_SOPTABLES_sop\u7528\u6237\u6267\u884C.sql=GBK
+encoding//src/main/config/config.properties=UTF-8
+encoding//src/main/java=UTF-8
+encoding//src/main/java/com/shield/hczz/approve/controller/PzApproveController.java=UTF-8
+encoding//src/main/java/com/shield/hczz/approve/serviceimpl/PzApproveServiceImpl.java=UTF-8
+encoding//src/main/java/com/shield/hczz/base/persistence/impl/ClueApplyMapperImpl.java=UTF-8
+encoding//src/main/java/com/shield/hczz/index/mapper/IndexMapper.java=UTF-8
+encoding//src/main/java/com/shield/hczz/pzsp/controller/PzspController.java=UTF-8
+encoding/<project>=UTF-8

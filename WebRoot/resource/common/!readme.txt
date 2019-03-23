@@ -1,0 +1,1 @@
+common目录下存储各类开源js文件，比如：jquery-1.10.2.min.js

@@ -1,0 +1,580 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.shield.hczz.base.persistence.PzApplyMapper">
+    <!-- 获取配侦任务列表（包括代办） -->
+	<select id="getlist" parameterType="java.util.Map"
+		resultType="com.shield.hczz.apply.qvo.PzApplyVO">
+		select a.pz_apply_id,
+	    a.pz_apply_no,
+	    a.case_id,
+	    c.case_no,
+	    c.case_name,
+	    a.remark,
+	    a.create_by userId,
+	    u.username,
+	    nvl(art.task_def_key_,'end') pzApplyStatus,
+        v1.value_desc statusDesc,
+	    a.pz_apply_type,
+	    v2.value_desc typeDesc,
+	    a.pz_apply_grade,
+	    v3.value_desc gradeDesc,
+	    d.dept_id,
+	    d.dept_name,
+	    to_char(tl.end_time_, 'yyyy-mm-dd hh24:mi:ss') submitTime,
+	    a.pz_main_accept,
+	    nvl2(ae.apply_id,'1','0') is_open,
+	    a.flow_id
+	    from pz_t_apply a
+	    left join 
+	    (select distinct apply_id,user_id from pz_t_apply_exp where user_id = #{userId,jdbcType=VARCHAR}) ae
+	    on ae.apply_id = a.pz_apply_id
+	    left join (select *
+	    from (select aht.*,
+	    ROW_NUMBER() over(PARTITION BY aht.proc_inst_id_ ORDER BY aht.start_time_ desc) rn
+	    from act_hi_taskinst aht
+	    where aht.task_def_key_ = #{applyTaskKey,jdbcType=VARCHAR})
+	    where rn = 1
+	    ) tl
+	    on tl.proc_inst_id_ = a.flow_id
+	    left join case_info c
+	    on c.case_id = a.case_id
+	    left join au_t_user u
+	    on u.user_id = a.create_by
+	    left join au_t_dept d
+	    on d.dept_id = u.dept_id
+	    left join (select distinct proc_inst_id_,task_def_key_,name_ from ACT_RU_TASK) art 
+	    on art.proc_inst_id_ = a.flow_id
+	    left join (select code_value, value_desc
+        from sy_t_codevalue
+        where type_id = 1004) v1
+        on nvl(art.task_def_key_,'end') = v1.code_value
+	    left join (select code_value, value_desc
+	    from sy_t_codevalue
+	    where type_id = 1002) v2
+	    on v2.code_value = a.pz_apply_type
+	    left join (select code_value, value_desc
+	    from sy_t_codevalue
+	    where type_id = 1003) v3
+	    on v3.code_value = a.pz_apply_grade
+		where a.delete_by is null 
+		and ((art.task_def_key_ != #{applyTaskKey,jdbcType=VARCHAR} 
+		or (art.task_def_key_ = #{applyTaskKey,jdbcType=VARCHAR} and a.create_by = #{userId,jdbcType=VARCHAR}))
+		or (art.task_def_key_ is null
+		<if test="hbDataAuth_U!= null">
+            and a.create_by = #{hbDataAuth_U}
+        </if>
+        <if test="hbDataAuth_D!= null">
+            and u.dept_id in (${hbDataAuth_D})
+        </if>
+        ))
+		<if test="isdbsx != null and isdbsx != ''">
+		  and a.flow_id 
+		  in (
+		  select i.proc_id 
+	      from pz_v_flow_wait i 
+	      where i.user_id = #{userId,jdbcType=VARCHAR}
+	      )
+		</if>
+		<if test="hbDataAuth_U!= null">
+			and a.create_by = #{hbDataAuth_U}
+		</if>
+		<if test="hbDataAuth_D!= null">
+			and u.dept_id in (${hbDataAuth_D})
+		</if>
+		<if test="clueName != null and clueName != ''">
+			and c.case_id in (select case_id from pz_t_clue_info
+			where clue_desc like '%'||#{clueName}||'%')
+		</if>
+		<if test="pzApplyType != null and pzApplyType != ''">
+			and c.case_id in (select case_id from pz_t_clue_info
+			where pz_type = #{pzApplyType})
+		</if>
+		<if test="pzApplyId != null and pzApplyId != ''">
+			and a.pz_apply_id = #{pzApplyId}
+		</if>
+		<if test="pzApplyNo != null and pzApplyNo != ''">
+			and a.pz_apply_no like '%'||#{pzApplyNo}||'%'
+		</if>
+		<if test="pzApplyStatus != null and pzApplyStatus != ''">
+			and nvl(art.task_def_key_,'end') in (${pzApplyStatus})
+		</if>
+		<if test="caseId != null and caseId != ''">
+			and c.case_id = #{caseId}
+		</if>
+		<if test="caseNo != null and caseNo != ''">
+			and c.case_no like '%'||#{caseNo}||'%'
+		</if>
+		<if test="caseName != null and caseName != ''">
+			and c.case_name like '%'||#{caseName}||'%'
+		</if>
+		<if test="caseType != null and caseType != ''">
+		    and c.case_type like '%'||#{caseType}||'%'
+		</if>
+		<if test="caseTypeImp != null and caseTypeImp != ''">
+		    and c.case_type_imp = #{caseTypeImp}
+		</if>
+		<if test="deptId != null and deptId != ''">
+			and d.dept_name like '%'||#{deptId}||'%'
+		</if>
+		<if test="timeStart != null and timeStart != ''">
+			and cast(tl.end_time_ as date) >= to_date(#{timeStart},'yyyy-mm-dd
+			hh24:mi:ss')
+		</if>
+		<if test="timeEnd != null and timeEnd != ''">
+			and cast(tl.end_time_ as date) &lt;= to_date(#{timeEnd},'yyyy-mm-dd
+			hh24:mi:ss')
+		</if>
+		<if test="sorter != null and sorter != ''">
+			order by ${sorter}
+		</if>
+		<if test="order != null and order != ''">
+			${order}
+		</if>
+	</select>
+	<select id="getById" parameterType="java.lang.String"
+		resultType="com.shield.hczz.apply.qvo.PzApplyVO">
+        select a.pz_apply_id,
+        a.pz_apply_no,
+        a.case_id,
+        a.remark,
+        a.create_by userId,
+        nvl(art.task_def_key_,'end') pzApplyStatus,
+        v1.value_desc statusDesc,
+        a.pz_apply_type,
+        to_char(tl.end_time_, 'yyyy-mm-dd hh24:mi:ss') submitTime,
+        a.pz_apply_grade,
+        c.value_desc pz_apply_grade_name,
+        a.pz_main_accept,
+        ad.dept_name deptName,
+        a.flow_id
+        from pz_t_apply a
+        left join (select *
+        from (select aht.*,
+        ROW_NUMBER() over(PARTITION BY aht.proc_inst_id_ ORDER BY aht.start_time_ desc) rn
+        from act_hi_taskinst aht
+        where aht.task_def_key_ = 'HCZZ_1001')
+        where rn = 1
+        ) tl
+        on tl.proc_inst_id_ = a.flow_id
+        left join (select distinct proc_inst_id_,task_def_key_,name_ from ACT_RU_TASK) art 
+        on art.proc_inst_id_ = a.flow_id
+        left join (select code_value, value_desc
+        from sy_t_codevalue
+        where type_id = 1004) v1
+        on nvl(art.task_def_key_,'end') = v1.code_value
+        left join (select code_value,value_desc from SY_T_CODEVALUE
+        where type_id = '1003') c
+        on a.pz_apply_grade = c.code_value
+        left join (select u.user_id,d.dept_name from au_t_dept d,au_t_user u where d.dept_id=u.dept_id) ad
+        on a.create_by=ad.user_id
+        where a.delete_by is null
+        and a.pz_apply_id = #{_parameter,jdbcType=VARCHAR}
+	</select>
+	<insert id="add" parameterType="com.shield.hczz.base.domain.PzApply">
+		insert into pz_t_apply
+		(pz_apply_id,pz_apply_no,case_id,pz_apply_type,
+		pz_apply_grade,advance_end_time,remark,
+		pz_main_accept,edit_flag,create_by,create_dt,flow_id)
+		values (
+		SQ_APPLY.nextval,#{pzApplyNo,jdbcType=VARCHAR},#{caseId,jdbcType=VARCHAR},
+		#{pzApplyType,jdbcType=VARCHAR},#{pzApplyGrade,jdbcType=VARCHAR},
+		to_date(#{advanceEndTime},'yyyy-mm-dd hh24:mi:ss'),
+		#{remark,jdbcType=VARCHAR},#{pzMainAccept,jdbcType=VARCHAR},
+		#{editFlag,jdbcType=VARCHAR},#{createBy,jdbcType=VARCHAR},sysdate,#{flowId,jdbcType=INTEGER}
+		)
+	</insert>
+	<!-- 获取配侦任务数量（包括代办） -->
+	<select id="getCount" parameterType="java.util.Map" resultType="Integer">
+		select count(1) as TOTAL
+		from pz_t_apply a
+		left join (select *
+        from (select aht.*,
+        ROW_NUMBER() over(PARTITION BY aht.proc_inst_id_ ORDER BY aht.start_time_ desc) rn
+        from act_hi_taskinst aht
+        where aht.task_def_key_ = #{applyTaskKey,jdbcType=VARCHAR})
+        where rn = 1
+        ) tl
+        on tl.proc_inst_id_ = a.flow_id
+        left join case_info c
+        on c.case_id = a.case_id
+        left join au_t_user u
+        on u.user_id = a.create_by
+        left join au_t_dept d
+        on d.dept_id = u.dept_id
+        left join (select distinct proc_inst_id_,task_def_key_,name_ from ACT_RU_TASK) art 
+        on art.proc_inst_id_ = a.flow_id
+        left join (select code_value, value_desc
+        from sy_t_codevalue
+        where type_id = 1004) v1
+        on nvl(art.task_def_key_,'end') = v1.code_value
+        left join (select code_value, value_desc
+        from sy_t_codevalue
+        where type_id = 1002) v2
+        on v2.code_value = a.pz_apply_type
+        left join (select code_value, value_desc
+        from sy_t_codevalue
+        where type_id = 1003) v3
+        on v3.code_value = a.pz_apply_grade
+        where a.delete_by is null 
+        and ((art.task_def_key_ != #{applyTaskKey,jdbcType=VARCHAR} 
+        or (art.task_def_key_ = #{applyTaskKey,jdbcType=VARCHAR} and a.create_by = #{userId,jdbcType=VARCHAR}))
+        or (art.task_def_key_ is null
+        <if test="hbDataAuth_U!= null">
+            and a.create_by = #{hbDataAuth_U}
+        </if>
+        <if test="hbDataAuth_D!= null">
+            and u.dept_id in (${hbDataAuth_D})
+        </if>
+        ))
+        <if test="isdbsx != null and isdbsx != ''">
+          and a.flow_id 
+          in (
+          select i.proc_id 
+          from pz_v_flow_wait i 
+          where i.user_id = #{userId,jdbcType=VARCHAR}
+          )
+        </if>
+        <if test="hbDataAuth_U!= null">
+            and a.create_by = #{hbDataAuth_U}
+        </if>
+        <if test="hbDataAuth_D!= null">
+            and u.dept_id in (${hbDataAuth_D})
+        </if>
+        <if test="clueName != null and clueName != ''">
+            and c.case_id in (select case_id from pz_t_clue_info
+            where clue_desc like '%'||#{clueName}||'%')
+        </if>
+        <if test="pzApplyType != null and pzApplyType != ''">
+            and c.case_id in (select case_id from pz_t_clue_info
+            where pz_type = #{pzApplyType})
+        </if>
+        <if test="pzApplyId != null and pzApplyId != ''">
+            and a.pz_apply_id = #{pzApplyId}
+        </if>
+        <if test="pzApplyNo != null and pzApplyNo != ''">
+            and a.pz_apply_no like '%'||#{pzApplyNo}||'%'
+        </if>
+        <if test="pzApplyStatus != null and pzApplyStatus != ''">
+            and nvl(art.task_def_key_,'end') in (${pzApplyStatus})
+        </if>
+        <if test="caseId != null and caseId != ''">
+            and c.case_id = #{caseId}
+        </if>
+        <if test="caseNo != null and caseNo != ''">
+            and c.case_no like '%'||#{caseNo}||'%'
+        </if>
+        <if test="caseName != null and caseName != ''">
+            and c.case_name like '%'||#{caseName}||'%'
+        </if>
+        <if test="caseType != null and caseType != ''">
+            and c.case_type like '%'||#{caseType}||'%'
+        </if>
+        <if test="caseTypeImp != null and caseTypeImp != ''">
+            and c.case_type_imp = #{caseTypeImp}
+        </if>
+        <if test="deptId != null and deptId != ''">
+            and d.dept_name like '%'||#{deptId}||'%'
+        </if>
+        <if test="timeStart != null and timeStart != ''">
+            and cast(tl.end_time_ as date) >= to_date(#{timeStart},'yyyy-mm-dd
+            hh24:mi:ss')
+        </if>
+        <if test="timeEnd != null and timeEnd != ''">
+            and cast(tl.end_time_ as date) &lt;= to_date(#{timeEnd},'yyyy-mm-dd
+            hh24:mi:ss')
+        </if>
+	</select>
+	<update id="updateFlow" parameterType="com.shield.hczz.base.domain.PzApply">
+		update pz_t_apply
+		set
+		update_by = #{updateBy,jdbcType=VARCHAR}
+		,update_dt = sysdate
+		<if test="flowId != null and flowId != ''">
+			,flow_id = #{flowId}
+		</if>
+		<if test="pzMainAccept != null and pzMainAccept != ''">
+			,pz_main_accept = #{pzMainAccept}
+		</if>
+		<if test="remark != null and remark != ''">
+			,remark = #{remark}
+		</if>
+		where delete_by is null
+		and pz_apply_id = #{pzApplyId}
+	</update>
+	<insert id="insertSelective" parameterType="com.shield.hczz.base.domain.PzApply">
+		insert into PZ_T_APPLY
+		<trim prefix="(" suffix=")" suffixOverrides=",">
+			PZ_APPLY_ID,
+			<if test="pzApplyNo != null">
+				PZ_APPLY_NO,
+			</if>
+			<if test="caseId != null">
+				CASE_ID,
+			</if>
+			<if test="pzApplyType != null">
+				PZ_APPLY_TYPE,
+			</if>
+			<if test="pzApplyGrade != null">
+				PZ_APPLY_GRADE,
+			</if>
+			<if test="advanceEndTime != null">
+				ADVANCE_END_TIME,
+			</if>
+			<if test="isOpen != null">
+				IS_OPEN,
+			</if>
+			<if test="pzMainAccept != null">
+				PZ_MAIN_ACCEPT,
+			</if>
+			<if test="remark != null">
+				REMARK,
+			</if>
+			<if test="createBy != null">
+				CREATE_BY,
+			</if>
+			CREATE_DT,
+			UPDATE_DT,
+			<if test="updateBy != null">
+				UPDATE_BY,
+			</if>
+			<if test="deleteBy != null">
+				DELETE_BY,
+			</if>
+			<if test="actByType != null">
+				ACT_BY_TYPE,
+			</if>
+			<if test="flowId != null">
+				FLOW_ID,
+			</if>
+		</trim>
+		<trim prefix="values (" suffix=")" suffixOverrides=",">
+			#{pzApplyId},
+			<if test="pzApplyNo != null">
+				sop_get_pz_apply_no(#{pzApplyNo}),
+			</if>
+			<if test="caseId != null">
+				#{caseId,jdbcType=OTHER},
+			</if>
+			<if test="pzApplyType != null">
+				#{pzApplyType,jdbcType=VARCHAR},
+			</if>
+			<if test="pzApplyGrade != null">
+				#{pzApplyGrade,jdbcType=VARCHAR},
+			</if>
+			<if test="advanceEndTime != null">
+				#{advanceEndTime,jdbcType=TIMESTAMP},
+			</if>
+			<if test="isOpen != null">
+				#{isOpen,jdbcType=VARCHAR},
+			</if>
+			<if test="pzMainAccept != null">
+				#{pzMainAccept,jdbcType=VARCHAR},
+			</if>
+			<if test="remark != null">
+				#{remark,jdbcType=VARCHAR},
+			</if>
+			<if test="createBy != null">
+				#{createBy,jdbcType=OTHER},
+			</if>
+			sysdate,
+			sysdate,
+			<if test="updateBy != null">
+				#{updateBy,jdbcType=OTHER},
+			</if>
+			<if test="deleteBy != null">
+				#{deleteBy,jdbcType=OTHER},
+			</if>
+			<if test="actByType != null">
+				#{actByType,jdbcType=OTHER},
+			</if>
+			<if test="flowId != null">
+				#{flowId},
+			</if>
+		</trim>
+	</insert>
+
+	<!-- 逻辑删除任务信息 -->
+	<update id="updateDeleted" parameterType="hashMap">
+		update pz_t_apply
+		set
+		UPDATE_DT = sysdate,
+		UPDATE_BY =
+		#{userId,jdbcType=VARCHAR},
+		DELETE_BY = #{userId,jdbcType=VARCHAR}
+		where pz_apply_id in
+		<foreach collection="uuid" index="index" item="item" open="("
+			separator="," close=")">
+			#{item,jdbcType=VARCHAR}
+		</foreach>
+	</update>
+
+	<select id="getInfoById" parameterType="java.lang.String"
+		resultType="com.shield.hczz.apply.qvo.PzApplyVO">
+		select * from (select rownum rn,
+		a.pz_apply_id,a.pz_apply_no,a.case_id,c.case_no,c.case_name,
+		a.remark,a.create_by userId,u.username,f.flow_status pzApplyStatus,
+		v1.value_desc statusDesc,a.pz_apply_type,v2.value_desc typeDesc,
+		a.pz_apply_grade,v3.value_desc gradeDesc,d.dept_id,d.dept_name,
+		to_char(tl.end_time_, 'yyyy-mm-dd hh24:mi:ss') submitTime,
+		c.accept_date acceptTime, a.pz_main_accept,
+		a.flow_id,c.incident_date,c.case_type,
+		c.incident_place,c.case_desc
+		from pz_t_apply a
+		left join (select *
+        from (select aht.*,
+        ROW_NUMBER() over(PARTITION BY aht.proc_inst_id_ ORDER BY aht.start_time_ desc) rn
+        from act_hi_taskinst aht
+        where aht.task_def_key_ = 'HCZZ_1001')
+        where rn = 1
+        ) tl
+        on tl.proc_inst_id_ = a.flow_id
+		left join case_info c on c.case_id =
+		a.case_id
+		left join
+		au_t_user u on u.user_id = a.create_by
+		left join
+		au_t_dept d on
+		d.dept_id = u.dept_id
+		left join pz_t_flow f on f.flow_id
+		= a.flow_id
+		left join (select code_value,value_desc from sy_t_codevalue
+		where
+		type_id
+		= 1004) v1
+		on v1.code_value = f.flow_status
+		left join
+		(select
+		code_value,value_desc from sy_t_codevalue where type_id
+		= 1002)
+		v2
+		on v2.code_value = a.pz_apply_type
+		left join (select
+		code_value,value_desc
+		from sy_t_codevalue where type_id
+		= 1003) v3
+		on
+		v3.code_value =
+		a.pz_apply_grade
+		where a.delete_by is null
+		and
+		a.pz_apply_id =
+		#{_parameter,jdbcType=VARCHAR}
+		and rownum >= 0
+		order by a.create_dt desc) r where r.rn &lt;= 1
+	</select>
+
+	<select id="getToDoCount" parameterType="java.util.Map"
+		resultType="java.util.Map">
+		select distinct k.task_def_key_ status,
+	      count(*) over(partition by k.task_def_key_) count
+	    from act_ru_task k 
+	    where k.id_ in
+	      (select distinct 
+	        i.task_id 
+	      from pz_v_flow_wait i 
+	      where 1=1
+	      <if test="userId != null and userId != ''">
+	       and i.user_id = #{userId}
+	      </if>
+	      )
+		<if test="status != null and status != ''">
+			and k.task_def_key_ = #{status}
+		</if>
+	</select>
+
+
+	<select id="getFlowTime" parameterType="hashMap"
+		resultType="com.shield.hczz.apply.qvo.PzApplyVO">
+		SELECT
+		NVL(SOP_APPLY_FLOW_TIME(#{pzid,jdbcType=VARCHAR},#{startFlow,jdbcType=VARCHAR},#{endFlow,jdbcType=VARCHAR}),'')
+		flowTime,
+		u.username feedBackPolice,p.create_by userId,nvl(u.mobile_phone,'无') policePhone 
+		FROM act_hi_taskinst t join pz_t_apply p on t.proc_inst_id_=p.flow_id 
+		left join au_t_user u on p.create_by=u.user_id where p.pz_apply_id =#{pzid,jdbcType=VARCHAR} and 
+		t.task_def_key_=#{endFlow,jdbcType=VARCHAR}
+	</select>
+
+	<!-- 更新落地情况反馈及评价 -->
+	<update id="updateLanding" parameterType="hashMap">
+		update pz_t_apply
+		set
+		landing=#{landing,jdbcType=VARCHAR},
+		feedback_used=#{feedbackUsed,jdbcType=VARCHAR},
+		usability=#{usability,jdbcType=VARCHAR},
+		feedback_aging=#{feedbackAging,jdbcType=VARCHAR},
+		UPDATE_DT = sysdate,
+		UPDATE_BY =#{updateBy,jdbcType=VARCHAR}
+		where pz_apply_id=#{pzApplyId,jdbcType=VARCHAR}
+	</update>
+	<!-- 设置已读 -->
+	<update id="readApply" parameterType="java.util.Map">
+		update pz_t_apply
+		set is_open = '1',
+		update_by = #{updateBy,jdbcType=VARCHAR}
+		where delete_by is null
+		and pz_apply_id = #{pzApplyId,jdbcType=VARCHAR}
+	</update>
+	
+		<!-- 依据合成申请主键，获取申请当前所在的流程 -->
+	<select id="getFlowNameById" parameterType="hashMap"
+		resultType="com.shield.hczz.apply.qvo.PzApplyVO">
+		select p.*,f.flow_desc flowDesc from pz_t_apply p join pz_t_flow f on p.flow_id=f.flow_id
+ 		where p.pz_apply_id=#{pzid,jdbcType=VARCHAR}
+	</select>
+	
+	<select id="getApplyMsgById" parameterType="java.lang.String"
+		resultType="com.shield.hczz.apply.qvo.PzApplyVO">
+		select * from (
+			select rownum rn,
+    		a.pz_apply_id,a.pz_apply_no,a.case_id,c.case_no,c.case_name,
+		    a.remark,a.create_by userId,u.username,f.task_def_key_ pzApplyStatus,
+		    a.pz_apply_type,
+		    a.pz_apply_grade,v3.value_desc gradeDesc,d.dept_id,d.dept_name,
+		    to_char(f.start_time_,'yyyy-mm-dd hh24:mi:ss')
+		    submitTime,c.accept_date acceptTime,a.pz_main_accept,a.is_open,a.flow_id,
+		    c.incident_date,
+		     nvl(v4.value_desc,'无') case_type,
+		    nvl(c.incident_place,'无') incident_place,a.sum_up,
+		    nvl(c.case_desc,'无') case_desc from pz_t_apply a
+		    left join case_info c on c.case_id = a.case_id
+		    left join au_t_user u on u.user_id = a.create_by
+		    left join au_t_dept d on d.dept_id = u.dept_id
+		    left join act_hi_taskinst f on f.proc_inst_id_ = a.flow_id and task_def_key_='HCZZ_1002'
+		    left join (select code_value,value_desc from sy_t_codevalue where type_id = 1003) v3 on v3.code_value =a.pz_apply_grade 
+		    left join (select code_value,value_desc from sy_t_codevalue where type_id = 2005) v4 on v4.code_value =c.case_type
+		    where a.delete_by is null 
+		    and A.pz_apply_id =#{pzid,jdbcType=VARCHAR}
+		    and rownum >= 0
+		    order by a.create_dt desc
+		) r where r.rn &lt;= 1
+	</select>
+	<!-- 添加用户已读记录 -->
+	<insert id="addExp" parameterType="com.shield.frame.base.domain.ApplyExp">
+	   insert into pz_t_apply_exp (ae_id,apply_id,user_id,create_dt)
+	   values (SQ_APPLY_EXP.nextval,#{applyId,jdbcType=VARCHAR},#{userId,jdbcType=VARCHAR},sysdate)
+	</insert>
+	<!-- 重置配侦记录的已读未读状态 -->
+	<delete id="backUnread" parameterType="com.shield.frame.base.domain.ApplyExp">
+	   delete from pz_t_apply_exp 
+	   where apply_id = #{applyId,jdbcType=VARCHAR}
+	   <if test="userId != null and userId != ''">
+		   and user_id = #{userId,jdbcType=VARCHAR}
+	   </if>
+	</delete>
+	<!-- 获取当前任务的流转人 -->
+	<select id="getAssignees" parameterType="java.util.Map" resultType="java.util.HashMap">
+	   select fw.user_id,fw.proc_id,fw.task_id,fw.task_key,
+	   to_char(fw.create_dt,'yyyy-mm-dd hh24:mi:ss') create_dt
+	   from PZ_V_FLOW_WAIT fw 
+	   left join pz_t_apply a on a.flow_id = fw.proc_id
+	   where a.pz_apply_id = #{pzid,jdbcType=VARCHAR}
+	</select>
+	
+	<select id="getPjById" parameterType="java.lang.String" resultType="java.util.Map">
+	   select 
+	   pz_apply_id as PZID, USABILITY as GRADE,LANDING as REMARK,FEEDBACK_AGING as TIME
+	   from pz_t_apply 
+	   where delete_by is null
+	   and pz_apply_id = #{_parameter,jdbcType=VARCHAR}
+	</select>
+</mapper>

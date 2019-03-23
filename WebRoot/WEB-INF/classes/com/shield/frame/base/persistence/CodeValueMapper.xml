@@ -1,0 +1,124 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.shield.frame.base.persistence.CodeValueMapper">
+	<resultMap id="BaseResultMap" type="com.shield.frame.base.domain.CodeValue">
+		<id column="PK" property="pk" jdbcType="DECIMAL" />
+		<result column="VALUE_DESC" property="valueDesc" jdbcType="NVARCHAR" />
+		<result column="CODE_VALUE" property="codeValue" jdbcType="NVARCHAR" />
+		<result column="TYPE_ID" property="typeId" jdbcType="DECIMAL" />
+		<result column="CREATE_BY" property="createBy" jdbcType="NVARCHAR" />
+		<result column="CREATE_DT" property="createDt" jdbcType="TIMESTAMP" />
+		<result column="UPDATE_DT" property="updateDt" jdbcType="TIMESTAMP" />
+		<result column="UPDATE_BY" property="updateBy" jdbcType="NVARCHAR" />
+		<result column="DELETE_BY" property="deleteBy" jdbcType="NVARCHAR" />
+		<result column="ACT_BY_TYPE" property="actByType" jdbcType="NVARCHAR" />
+	</resultMap>
+	<delete id="delByPK" parameterType="java.math.BigDecimal">
+		delete from SY_T_CODEVALUE
+		where PK = #{pk,jdbcType=DECIMAL}
+	</delete>
+	<delete id="delByTypeId" parameterType="java.math.BigDecimal">
+		delete from
+		SY_T_CODEVALUE
+		where TYPE_ID = #{typeId,jdbcType=DECIMAL}
+	</delete>
+	<delete id="delByDto" parameterType="com.shield.frame.sysmng.dto.CodeValueDTO">
+		delete from SY_T_CODEVALUE
+		where TYPE_ID = #{typeId,jdbcType=DECIMAL} and
+		VALUE_DESC=#{valueDesc,jdbcType=NVARCHAR}
+		and
+		CODE_VALUE=#{codeValue,jdbcType=NVARCHAR}
+	</delete>
+	<insert id="add" parameterType="com.shield.frame.sysmng.dto.CodeValueDTO">
+		<selectKey resultType="java.math.BigDecimal" order="BEFORE"
+			keyProperty="pk">
+			SELECT SQ_CODE_VALUE.NEXTVAL FROM DUAL
+		</selectKey>
+		insert into SY_T_CODEVALUE (PK, VALUE_DESC, CODE_VALUE,
+		TYPE_ID,
+		CREATE_BY, CREATE_DT,
+		UPDATE_DT, UPDATE_BY, DELETE_BY,
+		ACT_BY_TYPE)
+		values (#{pk,jdbcType=DECIMAL}, #{valueDesc,jdbcType=NVARCHAR},
+		#{codeValue,jdbcType=NVARCHAR},
+		#{typeId,jdbcType=DECIMAL},
+		#{createBy,jdbcType=NVARCHAR}, #{createDt,jdbcType=TIMESTAMP},
+		#{updateDt,jdbcType=TIMESTAMP}, #{updateBy,jdbcType=NVARCHAR},
+		#{deleteBy,jdbcType=NVARCHAR},
+		#{actByType,jdbcType=NVARCHAR})
+	</insert>
+	<update id="updateByPK" parameterType="com.shield.frame.sysmng.dto.CodeValueDTO">
+		update SY_T_CODEVALUE
+		set
+		VALUE_DESC = #{valueDesc,jdbcType=NVARCHAR},
+		CODE_VALUE =
+		#{codeValue,jdbcType=NVARCHAR},
+		TYPE_ID = #{typeId,jdbcType=DECIMAL},
+		CREATE_BY = #{createBy,jdbcType=NVARCHAR},
+		CREATE_DT =
+		#{createDt,jdbcType=TIMESTAMP},
+		UPDATE_DT =
+		#{updateDt,jdbcType=TIMESTAMP},
+		UPDATE_BY =
+		#{updateBy,jdbcType=NVARCHAR},
+		DELETE_BY =
+		#{deleteBy,jdbcType=NVARCHAR},
+		ACT_BY_TYPE =
+		#{actByType,jdbcType=NVARCHAR}
+		where PK = #{pk,jdbcType=DECIMAL}
+	</update>
+	<select id="getByPK" resultMap="BaseResultMap" parameterType="java.math.BigDecimal">
+		select PK, VALUE_DESC, CODE_VALUE, TYPE_ID, CREATE_BY, CREATE_DT,
+		UPDATE_DT, UPDATE_BY,
+		DELETE_BY, ACT_BY_TYPE
+		from SY_T_CODEVALUE
+		where PK
+		= #{pk,jdbcType=DECIMAL}
+	</select>
+	<select id="getList" resultMap="BaseResultMap">
+		select PK, VALUE_DESC,
+		CODE_VALUE, TYPE_ID, CREATE_BY, CREATE_DT, UPDATE_DT,
+		UPDATE_BY,
+		DELETE_BY, ACT_BY_TYPE
+		from SY_T_CODEVALUE
+	</select>
+	<select id="getListByTypeId" resultType="com.shield.frame.sysmng.dto.CodeValueDTO"
+		parameterType="java.math.BigDecimal">
+		select PK, VALUE_DESC, CODE_VALUE, TYPE_ID, CREATE_BY,
+		CREATE_DT, UPDATE_DT,
+		UPDATE_BY,
+		DELETE_BY, ACT_BY_TYPE
+		from
+		SY_T_CODEVALUE
+		where TYPE_ID = #{typeid,jdbcType=DECIMAL}
+		AND DELETE_BY
+		IS NULL
+		ORDER BY CODE_VALUE
+	</select>
+	<select id="getCodeVlueListByTypeName" resultType="com.shield.frame.sysmng.dto.CodeValueDTO"
+		parameterType="java.lang.String">
+		select cv.VALUE_DESC, cv.CODE_VALUE
+		from SY_T_CODEVALUE
+		cv,
+		sy_t_code c
+		where cv.type_id=c.type_id
+		and c.type_name='资讯分类'
+	</select>
+
+	<select id="getCodeValueMap" parameterType="int" resultType="hashMap">
+		select VALUE_DESC,CODE_VALUE FROM SY_T_CODEVALUE WHERE TYPE_ID =
+		#{typeId} AND DELETE_BY IS NULL ORDER BY CODE_VALUE
+	</select>
+
+	<select id="getYwlxMap" resultType="map">
+		select t1.code_value pcode,
+		t1.value_desc pval,
+		t2.code_value ccode,
+		t2.value_desc cval
+		from SY_T_CODEVALUE t1, SY_T_CODEVALUE t2
+		where t1.code_value = substr(t2.code_value, 1, 1)
+		and t1.type_id = '1002'
+		and t2.type_id = '1007'
+		order by to_number(t1.code_value), to_number(t2.code_value)
+	</select>
+</mapper>

@@ -1,0 +1,327 @@
+/*
+* @Author: Administrator
+* @Date:   2017-11-28 11:11:45
+* @Last Modified by:   Administrator
+* @Last Modified time: 2017-11-30 17:27:48
+*/
+
+body
+{
+    font-size: 14px;
+
+    overflow: auto !important;
+
+    background-color: #e5e5e5;
+}
+
+h1,
+h2,
+h3,
+h4
+{
+    font-weight: bold;
+}
+
+h2
+{
+    font-size: 18px;
+
+    margin: 10px 0;
+}
+
+h4
+{
+    font-size: 14px;
+
+    margin-top: 30px;
+    margin-bottom: 10px;
+}
+
+
+.ops
+{
+    width: 94%;
+    min-width: 1366px;
+    max-width: 1920px;
+    margin: 0 auto;
+
+    background-color: #fff;
+}
+
+.content
+{
+    width: 96%;
+    margin: 0 auto;
+    padding: 15px 0;
+}
+
+.ops-content
+{
+    margin-bottom: 10px;
+}
+
+.ops-content-area
+{
+    width: 100%;
+    height: 100px;
+}
+
+.ops-content-info
+{
+    float: left;
+
+    width: 92%;
+}
+
+.ops-content-info > textarea
+{
+    width: 98%;
+    height: 90px;
+    padding: 5px 10px;
+
+    border: none;
+    border-radius: 8px;
+    background-color: #f2f2f2;
+}
+
+.ops-content-sub
+{
+    line-height: 100px;
+
+    float: right;
+
+    width: 100px;
+    height: 100px;
+
+    cursor: pointer;
+    text-align: center;
+
+    color: #fff;
+    border-radius: 8px;
+    background-color: #4381e6;
+}
+
+/*.ops-content-sub>p{
+  width: 100px;
+  height: 100px;
+  background-color: #4381E6;
+}
+*/
+.clear
+{
+    clear: both;
+}
+
+.ops-response-list
+{
+    padding: 10px 0;
+
+    border-top: 2px #e7e7e7 solid;
+}
+
+.ops-response
+{
+    /*height: 100px;*/
+    width: 100%;
+    /* height: 100%; */
+    margin-bottom: 10px;
+
+    border: 1px #e7e7e7 solid;
+    border-radius: 8px;
+}
+
+.ops-opinion
+{
+    overflow: hidden;
+
+    width: 96%;
+    height: 100%;
+    margin: 0 auto;
+    padding: 15px 0;
+    /*border-bottom: 1px #e7e7e7 solid;*/
+}
+
+.opinion-content
+{
+    float: left;
+
+    width: 85%;
+    margin-bottom: 15px;
+    /*height: 100px;*/
+}
+
+.opinion-user
+{
+    margin-bottom: 10px;
+}
+
+.opinion-user span
+{
+    margin-right: 30px;
+}
+.opinion-info
+{
+    line-height: 22px;
+}
+.opinion-state-1
+{
+    float: right;
+
+    margin-top: 30px;
+
+    color: #54c479;
+    /*height: 100px;*/
+    /*margin-right: 20px;*/
+}
+
+.opinion-state-content
+{
+    display: inline-block;
+    float: left;
+
+    margin-right: 10px;
+}
+
+.opinion-state-icon
+{
+    display: none;
+    float: right;
+
+    width: 40px;
+    height: 40px;
+
+    cursor: pointer;
+
+    background: url(../../image/toolBar/response-button.png) no-repeat center;
+}
+
+/*.opinion-state-icon > p
+{
+    width: 40px;
+    height: 40px;
+
+    cursor: pointer;
+
+    background: url(../../image/toolBar/response-button.png) no-repeat center;
+}
+*/
+
+.state-icon
+{
+    float: right;
+}
+
+.ops-response-border
+{
+    clear: both;
+
+    width: 96%;
+    margin: 0 auto;
+
+    border-top: 1px #e7e7e7 solid;
+    display:none;
+}
+
+
+.ops-response-content
+{
+    width: 94%;
+    height: 140px;
+    margin: 0 auto;
+}
+
+.ops-response-content textarea
+{
+    width: 100%;
+    height: 70px;
+    padding: 5px 10px;
+
+    border: none;
+    border-radius: 8px;
+    background-color: #f2f2f2;
+}
+
+.response-buttons
+{
+    margin-right: 0;
+}
+
+.response-info,
+.response-buttons
+{
+    margin: 15px 0;
+    margin-left: -20px;
+}
+
+.response-buttons
+{
+    margin-right: -20px;
+}
+
+
+.response-buttons button
+{
+    width: 80px;
+    height: 30px;
+    margin-left: 20px;
+
+    cursor: pointer;
+
+    color: #fff;
+    border: none;
+    border-radius: 3px;
+}
+
+.response-buttons > p
+{
+    float: right;
+}
+
+.response-send
+{
+    background-color: #4381e6;
+}
+
+.canel
+{
+    background-color: #ccc;
+}
+.ops-responsed-border
+{
+    clear: both;
+
+    width: 96%;
+    margin: 0 auto;
+
+    border-top: 1px #e7e7e7 solid;
+}
+
+.ops-responsed-content
+{
+    width: 94%;
+    /*height: 100%;*/
+    margin: 0 auto;
+}
+
+.responsed-info
+{
+    margin: 15px 0;
+}
+
+.responsed-info > p
+{
+    color: #5081ea;
+}
+
+.opinion-state-2
+{
+    float: right;
+
+    margin-top: 30px;
+    margin-right: 40px;
+}
+
+.none
+{
+    display: none;
+}

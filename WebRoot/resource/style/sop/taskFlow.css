@@ -1,0 +1,159 @@
+*{
+	margin: 0;
+	padding:0;
+}
+body,html{
+	font-size: 14px;
+}
+ul{
+	list-style-type: none;
+}
+.task-flow-box li{
+	padding-bottom: 40px;
+	background: url(../../image/taskFlow/li-bj.png) repeat-y 19px 20px;
+}
+.task-flow-box li.resent{
+	background: url(../../image/taskFlow/resent-bj.png) epeat-y 19px 50px;
+}
+.task-flow-box li.fist-info{
+	background: url(../../image/taskFlow/li-bj.png) repeat-y 19px 50px;
+}
+.task-flow-box li.last-info{
+	background: none;
+}
+.day-time{
+	width: 80px;
+	height: 20px;
+	font-size:14px;
+	background: #f2f2f2;
+	color: #5d5d5d;
+	margin: 0 0 10px 10px;
+}
+.info-line{
+	padding-left: 30px;
+	background: url(../../image/taskFlow/test.png) no-repeat 10px;
+}
+.info-line-first{
+	padding-left: 30px;
+	background: url(../../image/taskFlow/test1.png) no-repeat 10px;
+}
+.info-line-end{
+	padding-left: 30px;
+	background: url(../../image/taskFlow/test2.png) no-repeat 10px;
+}
+.flow-box{
+	margin-right: 19px;
+}
+.flow-box-unit{
+	width:670px;
+	display:inline-block;
+	height:30px;
+	line-height:30px;
+}
+.flow-box-username{
+	width:75px;
+	display:inline-block;
+}
+.flow-box-type{
+	width:144px;
+	display:inline-block;
+}
+.flow-box-deptname{
+	margin-right:30px;
+	display:inline-block;
+}
+.flow-box-phone{
+	margin-right:50px;
+	display:inline-block;
+}
+.flow-box-time-right{
+	display:inline-block;
+}
+.flow-box01{
+	width:98px;
+	padding-left: 20px;
+	color: #3dc47d;
+	display:inline-block;
+}
+.flow-box-resent{
+	padding-left: 20px;
+	color: #f5af77;
+	width:98px;
+	display:inline-block;
+}
+.flow-time{
+	padding-left: 50px;
+	font-size: 12px;
+	margin-right: 94px;
+	color: #b3b3b3;
+}
+.flow-box02{
+	margin-right: 30px;
+	font-size: 12px;
+	color: #b3b3b3;
+}
+.flow-desc{
+	padding-left: 166px;
+	font-size: 12px;
+	margin-right: 94px;
+	color: #b3b3b3;
+}
+
+.police-1024 {
+    border-radius: 3px;
+    margin-right:3px;
+    padding:2px 5px;
+    background-color:#F3A249;
+    color:#fff;
+    font-size: 14px;
+}
+
+
+.police-1025 {
+    border-radius: 3px;
+    margin-right:3px;
+    padding:2px 5px;
+    background-color:#40C474;
+    color:#fff;
+    font-size: 14px;
+}
+
+
+.police-1026 {
+    border-radius: 3px;
+    margin-right:3px;
+    padding:2px 5px;
+    background-color:#4080EE;
+    color:#fff;
+    font-size: 14px;
+}
+
+
+.police-1027 {
+    border-radius: 3px;
+    margin-right:3px;
+    padding:2px 5px;
+    background-color:#F26272;
+    color:#fff;
+    font-size: 14px;
+}
+
+.police-1028 {
+    border-radius: 3px;
+    margin-right:3px;
+    padding:2px 5px;
+    background-color:#8C47E2;
+    color:#fff;
+    font-size: 14px;
+}
+.bgzhong{
+	z-index:-1;
+	position:fixed;
+	bottom:20px;
+	right:20px;
+	width:410px;
+	height:410px;
+}
+
+
+

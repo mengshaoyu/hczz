@@ -1,0 +1,335 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.shield.hczz.base.persistence.PzResultMapper">
+	<resultMap id="BaseResultMap" type="com.shield.hczz.base.domain.PzResult">
+		<id column="RESULT_ID" jdbcType="VARCHAR" property="resultId" />
+		<result column="CLUE_ID" jdbcType="VARCHAR" property="clueId" />
+		<result column="CASE_ID" jdbcType="VARCHAR" property="caseId" />
+		<result column="CASE_NO" jdbcType="VARCHAR" property="caseNo" />
+		<result column="PZ_ID" jdbcType="VARCHAR" property="pzId" />
+		<result column="RESULT_DESC" jdbcType="VARCHAR" property="resultDesc" />
+		<result column="RESULT_DATE" jdbcType="VARCHAR" property="resultDate" />
+		<result column="RESULT_BY" jdbcType="VARCHAR" property="resultBy" />
+		<result column="IS_FILES" jdbcType="DECIMAL" property="isFiles" />
+		<result column="RECEIVER_BY" jdbcType="VARCHAR" property="receiverBy" />
+		<result column="CREATE_BY" jdbcType="VARCHAR" property="createBy" />
+		<result column="CREATE_DT" jdbcType="VARCHAR" property="createDt" />
+		<result column="UPDATE_DT" jdbcType="VARCHAR" property="updateDt" />
+		<result column="UPDATE_BY" jdbcType="VARCHAR" property="updateBy" />
+		<result column="DELETE_BY" jdbcType="VARCHAR" property="deleteBy" />
+		<result column="ACT_BY_TYPE" jdbcType="VARCHAR" property="actByType" />
+	</resultMap>
+	
+	<delete id="deleteAtt">
+		delete from fdi_t_attach where ATT_ID = #{attId} 
+	</delete>
+	
+	<select id="selectAtt" parameterType="java.lang.String" resultType="java.lang.String">
+		select 
+			j.ATT_ID
+		from 
+			fdi_t_attach j 
+		where 
+			j.bus_id = #{resultId} 
+	</select>
+	
+	<select id="selectatt" parameterType="java.lang.String" resultType="java.lang.String">
+		select 
+			j.ATT_ID
+		from 
+			fdi_t_attach j 
+		where 
+			j.bus_id = #{resultId} 
+		and
+			j.MODULE_TYPE = '1'
+	</select>
+	
+	<select id="selectAttById" parameterType="java.lang.String" resultType="java.util.Map">
+		select 
+			* 
+		from 
+			fdi_t_attach j 
+		where 
+			j.ATT_ID = #{attId} 
+	</select>
+	
+	<update id="updateByResultId">
+		update 
+			PZ_T_RESULT 
+		set
+			RESULT_DESC = #{model.resultDesc}, 
+			RESULT_DATE = to_date(#{model.resultDate},'yyyy/mm/dd'),
+			RESULT_BY  = #{model.resultBy}, 
+			IS_FILES = #{model.isFiles}, 
+			RESULT_REMARK = #{model.resultRemark} 
+		where 
+			RESULT_ID = #{model.resultId} 
+	</update>
+	
+	<select id="selectByResultId" parameterType="java.lang.String" resultType="java.util.Map">
+		select 
+			*
+		from
+			pz_t_result k 
+		where 
+			k.result_id = #{resultId} 
+	</select>
+	
+	<delete id="remove" parameterType="java.util.Map" >
+		delete from 
+			pz_t_result k 
+		where k.result_id = #{resultId} 
+          and k.create_by = #{userId} 
+	</delete>
+	
+	<sql id="Base_Column_List">
+		RESULT_ID, CLUE_ID, CASE_ID, CASE_NO, PZ_ID, RESULT_DESC,
+		RESULT_DATE,
+		RESULT_BY,
+		IS_FILES, RECEIVER_BY, CREATE_BY, CREATE_DT,
+		UPDATE_DT, UPDATE_BY, DELETE_BY,
+		ACT_BY_TYPE
+	</sql>
+	<select id="selectByPrimaryKey" parameterType="java.lang.String"
+		resultMap="BaseResultMap">
+		select
+		<include refid="Base_Column_List" />
+		from PZ_T_RESULT
+		where RESULT_ID = #{resultId,jdbcType=VARCHAR}
+	</select>
+	<select id="selectByPzid" parameterType="java.lang.String"
+		resultMap="BaseResultMap">
+		select
+		<include refid="Base_Column_List" />
+		from PZ_T_RESULT
+		where pz_id = #{pzid,jdbcType=VARCHAR}
+	</select>
+	<delete id="deleteByPrimaryKey" parameterType="java.lang.String">
+		delete from
+		PZ_T_RESULT
+		where RESULT_ID = #{resultId,jdbcType=VARCHAR}
+	</delete>
+	<insert id="insert" parameterType="com.shield.hczz.base.domain.PzResult">
+		insert into PZ_T_RESULT
+		(RESULT_ID, CLUE_ID, CASE_ID,
+		CASE_NO, PZ_ID, RESULT_DESC,
+		RESULT_DATE,
+		RESULT_BY, IS_FILES,
+		RECEIVER_BY, CREATE_BY, CREATE_DT,
+		UPDATE_DT,
+		UPDATE_BY, DELETE_BY,
+		ACT_BY_TYPE)
+		values (#{resultId,jdbcType=VARCHAR},
+		#{clueId,jdbcType=VARCHAR},
+		#{caseId,jdbcType=VARCHAR},
+		#{caseNo,jdbcType=VARCHAR}, #{pzId,jdbcType=VARCHAR},
+		#{resultDesc,jdbcType=VARCHAR},
+		#{resultDate,jdbcType=TIMESTAMP},
+		#{resultBy,jdbcType=VARCHAR},
+		#{isFiles,jdbcType=DECIMAL},
+		#{receiverBy,jdbcType=VARCHAR}, #{createBy,jdbcType=VARCHAR},
+		#{createDt,jdbcType=TIMESTAMP},
+		#{updateDt,jdbcType=TIMESTAMP},
+		#{updateBy,jdbcType=VARCHAR},
+		#{deleteBy,jdbcType=VARCHAR},
+		#{actByType,jdbcType=VARCHAR})
+	</insert>
+	<insert id="insertSelective" parameterType="com.shield.hczz.base.domain.PzResult">
+		insert into PZ_T_RESULT
+		<trim prefix="(" suffix=")" suffixOverrides=",">
+			<if test="resultRemark != null">
+				RESULT_REMARK,
+			</if>
+			<if test="resultId != null">
+				RESULT_ID,
+			</if>
+			<if test="clueId != null">
+				CLUE_ID,
+			</if>
+			<if test="caseId != null">
+				CASE_ID,
+			</if>
+			<if test="caseNo != null">
+				CASE_NO,
+			</if>
+			<if test="pzId != null">
+				PZ_ID,
+			</if>
+			<if test="resultDesc != null">
+				RESULT_DESC,
+			</if>
+			<if test="resultDate != null">
+				RESULT_DATE,
+			</if>
+			<if test="resultBy != null">
+				RESULT_BY,
+			</if>
+			<if test="isFiles != null">
+				IS_FILES,
+			</if>
+			<if test="receiverBy != null">
+				RECEIVER_BY,
+			</if>
+			<if test="createBy != null">
+				CREATE_BY,
+			</if>
+			CREATE_DT,
+			UPDATE_DT,
+			<if test="updateBy != null">
+				UPDATE_BY,
+			</if>
+			<if test="deleteBy != null">
+				DELETE_BY,
+			</if>
+			ACT_BY_TYPE
+		</trim>
+		<trim prefix="values (" suffix=")" suffixOverrides=",">
+			<if test="resultRemark != null">
+				#{resultRemark,jdbcType=VARCHAR},
+			</if>
+			<if test="resultId != null">
+				#{resultId,jdbcType=VARCHAR},
+			</if>
+			<if test="clueId != null">
+				#{clueId,jdbcType=VARCHAR},
+			</if>
+			<if test="caseId != null">
+				#{caseId,jdbcType=VARCHAR},
+			</if>
+			<if test="caseNo != null">
+				#{caseNo,jdbcType=VARCHAR},
+			</if>
+			<if test="pzId != null">
+				#{pzId,jdbcType=VARCHAR},
+			</if>
+			<if test="resultDesc != null">
+				#{resultDesc,jdbcType=VARCHAR},
+			</if>
+			<if test="resultDate != null">
+				to_date(#{resultDate},'yyyy-mm-dd'),
+			</if>
+			<if test="resultBy != null">
+				#{resultBy,jdbcType=VARCHAR},
+			</if>
+			<if test="isFiles != null">
+				#{isFiles,jdbcType=DECIMAL},
+			</if>
+			<if test="receiverBy != null">
+				#{receiverBy,jdbcType=VARCHAR},
+			</if>
+			<if test="createBy != null">
+				#{createBy,jdbcType=VARCHAR},
+			</if>
+			sysdate,
+			sysdate,
+			<if test="updateBy != null">
+				#{updateBy,jdbcType=VARCHAR},
+			</if>
+			<if test="deleteBy != null">
+				#{deleteBy,jdbcType=VARCHAR},
+			</if>
+			'B',
+		</trim>
+	</insert>
+	<update id="updateByPrimaryKeySelective" parameterType="com.shield.hczz.base.domain.PzResult">
+		update PZ_T_RESULT
+		<set>
+			<if test="clueId != null">
+				CLUE_ID = #{clueId,jdbcType=VARCHAR},
+			</if>
+			<if test="caseId != null">
+				CASE_ID = #{caseId,jdbcType=VARCHAR},
+			</if>
+			<if test="caseNo != null">
+				CASE_NO = #{caseNo,jdbcType=VARCHAR},
+			</if>
+			<if test="pzId != null">
+				PZ_ID = #{pzId,jdbcType=VARCHAR},
+			</if>
+			<if test="resultDesc != null">
+				RESULT_DESC = #{resultDesc,jdbcType=VARCHAR},
+			</if>
+			<if test="resultDate != null">
+				RESULT_DATE = #{resultDate,jdbcType=TIMESTAMP},
+			</if>
+			<if test="resultBy != null">
+				RESULT_BY = #{resultBy,jdbcType=VARCHAR},
+			</if>
+			<if test="isFiles != null">
+				IS_FILES = #{isFiles,jdbcType=DECIMAL},
+			</if>
+			<if test="receiverBy != null">
+				RECEIVER_BY = #{receiverBy,jdbcType=VARCHAR},
+			</if>
+			<if test="createBy != null">
+				CREATE_BY = #{createBy,jdbcType=VARCHAR},
+			</if>
+			<if test="createDt != null">
+				CREATE_DT = #{createDt,jdbcType=TIMESTAMP},
+			</if>
+			<if test="updateDt != null">
+				UPDATE_DT = #{updateDt,jdbcType=TIMESTAMP},
+			</if>
+			<if test="updateBy != null">
+				UPDATE_BY = #{updateBy,jdbcType=VARCHAR},
+			</if>
+			<if test="deleteBy != null">
+				DELETE_BY = #{deleteBy,jdbcType=VARCHAR},
+			</if>
+			<if test="actByType != null">
+				ACT_BY_TYPE = #{actByType,jdbcType=VARCHAR},
+			</if>
+		</set>
+		where RESULT_ID = #{resultId,jdbcType=VARCHAR}
+	</update>
+	<update id="updateByPrimaryKey" parameterType="com.shield.hczz.base.domain.PzResult">
+		update PZ_T_RESULT
+		set CLUE_ID = #{clueId,jdbcType=VARCHAR},
+		CASE_ID =
+		#{caseId,jdbcType=VARCHAR},
+		CASE_NO = #{caseNo,jdbcType=VARCHAR},
+		PZ_ID
+		= #{pzId,jdbcType=VARCHAR},
+		RESULT_DESC =
+		#{resultDesc,jdbcType=VARCHAR},
+		RESULT_DATE =
+		#{resultDate,jdbcType=TIMESTAMP},
+		RESULT_BY =
+		#{resultBy,jdbcType=VARCHAR},
+		IS_FILES = #{isFiles,jdbcType=DECIMAL},
+		RECEIVER_BY = #{receiverBy,jdbcType=VARCHAR},
+		CREATE_BY =
+		#{createBy,jdbcType=VARCHAR},
+		CREATE_DT =
+		#{createDt,jdbcType=TIMESTAMP},
+		UPDATE_DT =
+		#{updateDt,jdbcType=TIMESTAMP},
+		UPDATE_BY =
+		#{updateBy,jdbcType=VARCHAR},
+		DELETE_BY = #{deleteBy,jdbcType=VARCHAR},
+		ACT_BY_TYPE = #{actByType,jdbcType=VARCHAR}
+		where RESULT_ID =
+		#{resultId,jdbcType=VARCHAR}
+	</update>
+
+	<select id="selectResultByClueid" parameterType="map"
+		resultType="map">
+		select r.result_id,
+		r.result_desc,
+		to_char(r.result_date,
+		'yyyy-mm-dd') result_date,
+		r.result_by,
+		r.CREATE_BY,
+		rf.att_id,
+		rf.att_name,
+		rf.att_path,
+		r.result_remark,
+		rf.module_type
+		from pz_t_result r, fdi_t_attach rf
+		where
+		r.result_id = rf.bus_id(+)
+		and r.clue_id = #{clueid}
+		order by
+		rf.create_dt
+	</select>
+</mapper>

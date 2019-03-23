@@ -1,0 +1,116 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.shield.hczz.base.persistence.PzApproveMapper">
+	<insert id="add" parameterType="com.shield.hczz.base.domain.PzApprove">
+		insert into pz_t_approve
+		(pz_approve_id,user_id,role_id,apply_id,flow_id,result,reason,
+		create_by,create_dt,update_by,update_dt,act_by_type)
+		values
+		(SQ_APPROVE.nextval,#{userId,jdbcType=INTEGER},#{roleId,jdbcType=INTEGER},#{applyId,jdbcType=VARCHAR},
+		#{flowId,jdbcType=INTEGER},#{result,jdbcType=VARCHAR},#{reason,jdbcType=VARCHAR},
+		#{createBy,jdbcType=VARCHAR},sysdate,#{updateBy,jdbcType=VARCHAR},sysdate,#{actByType,jdbcType=VARCHAR})
+	</insert>
+	<select id="queryApprove" parameterType="com.shield.hczz.approve.qvo.PzApproveQO"
+		resultType="com.shield.hczz.approve.qvo.PzApproveVO">
+		select a.pz_approve_id,
+		a.user_id,
+		a.apply_id,
+		a.flow_id,
+		a.result,
+		a.reason,
+		a.create_by,
+		a.create_dt,
+		a.update_by,
+		a.update_dt,
+		u.username,
+		nvl(u.mobile_phone,'无') mobile_phone,
+		spu.username sprusername
+		from
+		pz_t_approve a,au_t_user u,au_t_user spu
+		where a.create_by=u.user_id(+)
+		and a.user_id=spu.user_id(+)
+		and a.delete_by is null
+		<if test="result != null and result != ''">
+			and a.result in (${result})
+		</if>
+		<if test="pzApproveId != null and pzApproveId != ''">
+			and a.pz_approve_id = #{pzApproveId,jdbcType=VARCHAR}
+		</if>
+		<if test="userId != null and userId != ''">
+			and a.user_id = #{userId,jdbcType=INTEGER}
+		</if>
+		<if test="roleId != null and roleId != ''">
+			and a.role_id = #{roleId,jdbcType=INTEGER}
+		</if>
+		<if test="flowId != null and flowId != ''">
+			and a.flow_id = #{flowId,jdbcType=VARCHAR}
+		</if>
+		<if test="applyId != null and applyId != ''">
+			and a.apply_id = #{applyId,jdbcType=VARCHAR}
+		</if>
+		order by a.create_dt desc
+	</select>
+	<update id="updateApprove" parameterType="com.shield.hczz.base.domain.PzApprove">
+		update pz_t_approve
+		set
+		result = #{result,jdbcType=VARCHAR},
+		reason =
+		#{reason,jdbcType=VARCHAR},
+		update_by = #{updateBy,jdbcType=VARCHAR},
+		update_dt = sysdate
+		where pz_approve_id =
+		#{pzApproveId,jdbcType=INTEGER}
+	</update>
+	<select id="getApproveUser" parameterType="string" resultType="map">
+		select case when t.user_id is not null then '1'
+		else '2'
+		end userorrole,
+		t.user_id,
+		t.role_id
+		from pz_t_approve t, pz_t_apply a
+		where t.apply_id =
+		a.pz_apply_id
+		and t.flow_id = a.flow_id
+		and t.result = '0'
+		and a.flow_id
+		in ('1002','1004','1005')
+		and t.apply_id = #{_parameter}
+	</select>
+
+	<select id="getSumlist" parameterType="com.shield.hczz.approve.qvo.PzApproveQO"
+		resultType="com.shield.hczz.approve.qvo.PzApproveVO">
+		select to_char(u.user_id) userId,
+		       u.username userName,
+		       u.police_type policeType,
+		       u.userno,
+		       nvl(r.numc, 0) sumIng,
+		       nvl(c.sunall, 0) sumAll
+		  from (select h.assignee_ userid, count(h.assignee_) sunall
+		          from act_hi_taskinst h
+		         where h.task_def_key_ = 'HCZZ_1006'
+		         group by h.assignee_) c
+		  left join (select t.assignee_ userid, count(t.assignee_) numc
+		               from act_ru_task t
+		              where t.task_def_key_ = 'HCZZ_1006'
+		              group by t.assignee_) r
+		    on c.userid = r.userid
+		 right join (select uu.username      username,
+		                    uu.user_id       user_id,
+		                    uu.police_type   police_type,
+		                    uu.login_account userNo
+		               from au_t_user uu, au_t_user_role ur
+		              where uu.user_id = ur.user_id
+		                and ur.role_id = '1003'
+	                <if test="userName != null and userName != ''">
+			            and (uu.username like '%'|| #{userName}||'%'
+			            or uu.user_no like '%'|| #{userName} ||'%')
+			        </if>
+			        <if test="deptId != null and deptId != ''">
+			            and uu.dept_id = #{deptId}
+			        </if>
+		             ) u
+		    on c.userid = u.user_id
+		 order by nvl(r.numc, 0) ,nvl(c.sunall, 0) 
+	</select>
+</mapper>
+

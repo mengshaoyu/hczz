@@ -1,0 +1,138 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xmlns:aop="http://www.springframework.org/schema/aop" xmlns:context="http://www.springframework.org/schema/context" 
+    xmlns:tx="http://www.springframework.org/schema/tx" xmlns:jdbc="http://www.springframework.org/schema/jdbc"
+    xmlns:util="http://www.springframework.org/schema/util"
+    xsi:schemaLocation="
+        http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-4.0.xsd
+        http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-4.0.xsd
+        http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-4.0.xsd
+        http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-4.0.xsd
+        http://www.springframework.org/schema/jdbc http://www.springframework.org/schema/jdbc/spring-jdbc-4.0.xsd
+        http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util-4.0.xsd"
+        default-lazy-init="true">
+
+    <description>Spring公共配置</description>
+     <util:properties id="propertyConfig" location="classpath:config.properties" />
+    
+    <bean id="propertyConfigurer" class="com.shield.frame.utils.ConvertPwdPropertyConfigurer"> 
+  	 	<property name="locations"> 
+    		<list> 
+     			<value>classpath:config.properties</value>    
+    		</list> 
+   		</property> 
+	</bean> 
+    
+    <!-- 数据源配置,使用DBCP数据库连接池 -->
+    <bean id="dataSource" class="org.apache.commons.dbcp.BasicDataSource" destroy-method="close">
+        <property name="driverClassName" value="${jdbc.driver}" />
+        <property name="url" value="${jdbc.url}" />
+        <property name="username" value="${jdbc.username}" />
+        <property name="password" value="${jdbc.password}" />
+        <property name="defaultAutoCommit" value="false" />
+        
+        <property name="maxActive" value="1000" /><!-- 最大连接数据库连接数，设置为0时，表示没有限制(开发用) -->
+    </bean>
+    
+	<bean id="txManager" class="org.springframework.jdbc.datasource.DataSourceTransactionManager">
+		<property name="dataSource" ref="dataSource"/>
+	</bean>
+   
+    <tx:advice id="txAdvice" transaction-manager="txManager">
+        <tx:attributes>
+            <tx:method name="get*" read-only="true"/>
+            <tx:method name="select*" read-only="true"/>
+            <tx:method name="queryFor*" read-only="true"/>
+            <tx:method name="*"/>
+         </tx:attributes>
+      </tx:advice>
+  
+    <aop:config>
+        <aop:pointcut id="servicePointcut" expression="execution(* com.shield.*.*.service.*.*(..))"/>
+        <aop:advisor advice-ref="txAdvice" pointcut-ref="servicePointcut"/>
+    </aop:config>
+    
+	<!-- serviceImpl内公有方法自动日志    开始 -->
+	<bean id="logAspect" class="com.shield.spring.LogAspect">
+		<property name="order"  value="200" />
+	</bean>
+	<aop:aspectj-autoproxy proxy-target-class="true">
+		<aop:include name="logAspect" />
+	</aop:aspectj-autoproxy>
+	<aop:config>
+		<aop:aspect ref="logAspect">
+			<aop:pointcut id="logServiceCut" expression="execution(* com.shield.*.*.serviceimpl.*.*(..))"/>
+
+			<!-- 方法执行前 -->
+			<aop:before pointcut-ref="logServiceCut" method="doBefore" />
+			<!-- 方法执行结束后 -->
+			<aop:after-returning pointcut-ref="logServiceCut" method="doAfterReturn" returning="rtnVal"/>
+		</aop:aspect>
+	</aop:config>
+	<!-- serviceImpl内公有方法自动日志    结束 -->
+	
+	<!-- 分页Interceptor配置 -->
+	<bean id="paginationInterceptor" class="com.shield.frame.common.PaginationInterceptor"/>
+
+    <bean id="sqlSessionFactory" class="org.mybatis.spring.SqlSessionFactoryBean">
+        <property name="dataSource" ref="dataSource" />
+        <property name="configLocation" value="classpath:/mybatisConfig.xml" />
+		<property name="plugins">
+		        <array>
+		            <ref bean="paginationInterceptor"/>
+		        </array>
+    	</property>
+	    <property name="configurationProperties">
+	        <props>
+	            <prop key="dialect">oracle</prop>
+	        </props>
+	    </property>
+    </bean>
+    
+    <!-- 配置sqlSessionTemplate --> 
+    <bean id="sqlSessionTemplate" class="org.mybatis.spring.SqlSessionTemplate"> 
+        <constructor-arg index="0" ref="sqlSessionFactory" /> 
+    </bean>
+
+
+	<!-- 配置mybatis的sqlMap及接口的映射 -->
+    <bean class="org.mybatis.spring.mapper.MapperScannerConfigurer">
+        <property name="basePackage" value="com.shield.frame.base.persistence,com.shield.hczz.base.persistence"/>
+    </bean>
+    
+
+	<!-- 扫描控件，不包括controller -->
+    <context:component-scan base-package="com.shield.*">
+        <context:exclude-filter type="annotation" expression="org.springframework.stereotype.Controller"/>
+    </context:component-scan>
+    
+    <!-- Dozer支持简单类型 复杂类型的双向递归映射。性能优于BeanUtil -->
+    <bean id="mapper" class="org.dozer.DozerBeanMapper">
+    </bean>
+    
+        <!-- activiti sping 配置 -->
+    <bean id="processEngineConfiguration" class="org.activiti.spring.SpringProcessEngineConfiguration">
+        <property name="dataSource" ref="dataSource" />
+        <property name="transactionManager" ref="txManager" />
+        <property name="databaseSchemaUpdate" value="true" />
+        <property name="jobExecutorActivate" value="false" />
+    </bean>
+    <bean id="processEngine" class="org.activiti.spring.ProcessEngineFactoryBean">
+        <property name="processEngineConfiguration" ref="processEngineConfiguration" />
+    </bean>
+    <!-- activiti的各种服务接口 --> 
+    <bean id="repositoryService" factory-bean="processEngine" factory-method="getRepositoryService" />
+    <bean id="runtimeService" factory-bean="processEngine" factory-method="getRuntimeService" />
+    <bean id="taskService" factory-bean="processEngine" factory-method="getTaskService" />
+    <bean id="historyService" factory-bean="processEngine" factory-method="getHistoryService" />
+    <bean id="managementService" factory-bean="processEngine" factory-method="getManagementService" />
+    <bean id="IdentityService" factory-bean="processEngine" factory-method="getIdentityService" />
+    
+    
+    <!-- 自动扫描com.shield.*.mapper下的所有MyBatis DAO，自动注册bean，并注入sqlSessionFactory-->
+	<bean class="org.mybatis.spring.mapper.MapperScannerConfigurer">
+		<property name="basePackage" value="com.shield"></property>
+		<property name="sqlSessionFactoryBeanName" value="sqlSessionFactory" />
+		<property name="annotationClass" value="org.springframework.stereotype.Repository" />
+	</bean>
+</beans>

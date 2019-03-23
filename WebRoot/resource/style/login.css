@@ -1,0 +1,219 @@
+.body, html {
+	margin: 0;
+	padding: 0;
+	font-family: "Microsoft Yahei";
+	font-size: 14px;
+	height:100%;
+	color:#FFF;
+	background:#131825 url(../image/login/login-bg1.png) no-repeat center;
+}
+
+* {
+	margin: 0;
+	padding: 0;
+	text-decoration: none;
+}
+
+.header {
+	width: 100%;
+	height: 90px;
+}
+
+.header-box {
+	width: 1200px;
+	height: 90px;
+}
+
+.logo {
+	float: left;
+}
+
+.info {
+	float: right;
+}
+
+.container {
+	width: 100%;
+	height: 530px;
+	position: absolute;
+	top: 0;
+	right: 0;
+	bottom: 0;
+	left: 0;
+	margin: auto;
+
+}
+
+.login-bg{
+	z-index: -99;
+	width:100%;
+	height: 530px;
+	position: absolute;
+	top: 0;
+	right: 0;
+	bottom: 0;
+	left: 0;
+	margin: auto;
+}
+
+.login-bg > img{
+	width:100%;
+	height: 100%;
+}
+
+.login-body-logo{
+	float: left;
+	width:60%;
+	/* height: 100%; */
+	/* padding-left: 15%; */
+	padding-top: 150px;
+	/* vertical-align: middle; */
+}
+
+.login-body-logo h1 {
+	width: 600px;
+	margin: 0 auto;
+	font-size: 57px;
+}
+
+.login-body-logo h4 {
+	width: 600px;
+	margin: 0 auto;
+	font-size: 28px;
+	padding-left: 6px;
+}
+
+.login-box {
+	display: inline-block;
+	width: 40%;
+	height: 100%;
+	/* border-radius: 2px; */
+	/* background: #F0F2F7; */
+/* 	margin: 60px 0 0 700px;
+	padding: 5px 0 0 5px; */
+}
+
+.login-box-title {
+	margin: 70px 0 40px 0;
+	color:#d6d7d9;
+	width: 335px;
+	height: 20px;
+	padding-bottom:20px;
+	/* background: #f1f1f1; */
+	border-bottom: 1px solid #d6d7d9;
+}
+
+.login-box input {
+	display:block;
+	font-family: "Microsoft Yahei";
+	color:#d6d7d9;
+	font-size: 18px;
+	width: 335px;
+	height: 55px;
+	line-height: 55px;
+	box-sizing: border-box;;
+	border: 1px solid #d6d7d9;
+	border-radius: 2px;
+	margin: 10px 0;
+	padding-left: 40px;
+	background: url(../image/login/input-bj_03.png) no-repeat 15px center;
+}
+
+.login-box input.inp1 {
+	margin-bottom: 0;
+	background: url(../image/login/input-bj_06.png) no-repeat 15px center;
+}
+
+.login-box p {
+	font-family:"Microsoft Yahei";
+	line-height: 24px;
+	font-size: 24px;
+	/* color: #F00; */
+	/* display: none; */
+}
+
+
+#accountLogin p{
+	font-size: 14px;
+	color: #f06868;
+	line-height:30px;
+	height:30px;
+}
+
+
+
+.login-box button {
+	display: block;
+	font-size: 18px;
+	width: 335px;
+	height: 55px;
+	line-height: 55px;
+	text-align: center;
+	border-radius: 2px;
+	background: #2286F1;
+	color: #ffffff;
+	cursor: pointer;
+	border: none;
+	/* margin: 0 auto; */
+	outline: none;
+}
+
+.login-box button span{
+	font-family: "Microsoft Yahei";
+}
+
+#CARBtn{
+	background-color:#FFA200;
+	margin-bottom: 10px;
+}
+
+
+.login-box-title a {
+	display: block;
+	line-height: 40px;
+	height: 40px;
+	text-align: center;
+	color: #fff;
+	border-radius: 2px;
+	background: url(../image/login/normal-question.png) no-repeat right;
+	padding-right: 25px;
+}
+
+.login-box-title p{
+	color:#FFF;
+}
+.login-box-title a.selected {
+	background: #0e4981;
+	color: #ffffff;
+}
+
+#pwdBtn:hover {
+	background: #094c8b;
+}
+
+#CARBtn:hover {
+	background: #F26F2F;
+}
+
+.dataLogin {
+	text-align: center;
+	height: 184px;
+	background: #FFF;
+	width: 400px;
+	overflow: hidden;
+}
+
+.login-footer{
+	width: 100%;
+	height: 50px;
+	position: absolute;
+	bottom: 60px;
+	text-align: center;
+}
+
+.login-footer > p{
+	display: block;
+	height: 50px;
+	line-height: 80px;
+	color:#3f4c6e;
+}

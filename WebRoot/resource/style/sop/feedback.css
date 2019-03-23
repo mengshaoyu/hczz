@@ -1,0 +1,170 @@
+@charset "utf-8";
+html,body{
+	overflow-x:hidden;
+	overflow-y:auto; 
+}
+
+.fankui-container{
+	width: 80%;
+	margin:auto;
+	color:#2f2f2f;
+}
+.fankuiSheet p,
+.fankuiSheet a{
+	text-align: left;
+	line-height: 45px;
+	font-family: "仿宋";
+	font-size: 21px;
+	text-indent: 42px;
+	word-break:break-all;
+}
+.fankui-container h3{
+	text-align: center;
+	font-family: "方正小标宋简体";
+	font-size: 29px;
+	line-height: 45px;
+}
+.fankui-container h3.first{
+	margin-top:30px;
+}
+.cut-line{
+	height:2px;
+	border-top:3px solid #000;
+	border-bottom: 1px solid #000;
+}
+.bottom-line{
+	height:2px;
+	border-top:1px solid #000;
+	border-bottom: 3px solid #000;
+}
+.fankuiSheet p.bianhao{
+	float: right;
+	text-align: right;
+	font-size:14px;
+}
+.fankuiSheet p.title{
+	font-family: "黑体";
+	font-size: 21px;
+}
+.fankuiSheet p.right{
+	text-align: right;
+}
+.fankuiSheet p.name{
+	margin-top: 50px;
+}
+.fankuiSheet p.shengming{
+	font-size: 18px;
+	margin-top:50px;
+}
+
+/* 
+
+.feedback {
+	width: 100%;
+	border-collapse: collapse;
+	color: #444444;
+	font-size: 14px;
+	border:1px solid #e0e0e0!important;
+}
+
+.feedback td {
+	padding: 0 5px;
+	width:40px;
+	height: 25px;
+	border:1px solid #e0e0e0;
+	line-height: 25px;
+}
+
+.feedback td input {
+	border: 1px solid #d7d5d5;
+}
+.luodiqingkuang input,.pingjia_box span{
+	border: 1px solid #d7d5d5;
+	width:300px;
+}*/
+.box {
+	margin: 0 auto;
+	position: relative;
+}
+
+.box_left {
+	width: 350px;
+	margin: 25px auto;
+	/* position: absolute;
+	top: 30px;
+	left: 50px; */
+}
+
+.bord {
+	border: none;
+}
+
+.star {
+	position: relative;
+	height: 90px;
+	margin-left: 30px;
+}
+
+.pic {
+	position: absolute;
+	top: 0;
+	left: 30px;
+}
+
+.pic img {
+	margin-left: 8px;
+}
+
+.pic2 {
+	position: absolute;
+	top: 25px;
+	left: 30px;
+}
+
+.pic2 img {
+	margin-left: 8px;
+}
+
+.pic3 {
+	position: absolute;
+	top: 50px;
+	left: 30px;
+}
+
+.pic3 img {
+	margin-left: 8px;
+}
+
+.char1 {
+	position: relative;
+}
+
+.tex1 {
+	position: absolute;
+	top: -10px;
+	left: 50px;
+	width: 250px;
+}
+
+.con {
+	border: solid 1px black;
+	width: 250px;
+	height: 90px;
+	position: absolute;
+	left: 20px;
+	top: -10px;
+}
+
+.tex1 {
+	border: solid 1px black;
+}
+
+.ld {
+	position: absolute;
+	left: -20px;
+}
+
+.pj {
+	position: absolute;
+	left: -20px;
+}

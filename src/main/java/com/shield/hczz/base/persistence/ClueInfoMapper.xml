@@ -1,0 +1,305 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.shield.hczz.base.persistence.ClueInfoMapper">
+	<resultMap id="BaseResultMap" type="com.shield.hczz.base.domain.ClueInfo">
+		<id column="CLUE_ID" jdbcType="VARCHAR" property="clueId" />
+		<result column="CASE_ID" jdbcType="VARCHAR" property="caseId" />
+		<result column="CASE_NO" jdbcType="VARCHAR" property="caseNo" />
+		<result column="CLUE_NAME" jdbcType="VARCHAR" property="clueName" />
+		<result column="CLUE_TYPE" jdbcType="DECIMAL" property="clueType" />
+		<result column="CLUE_SOURCE" jdbcType="VARCHAR" property="clueSource" />
+		<result column="CLUE_DESC" jdbcType="VARCHAR" property="clueDesc" />
+		<result column="CLUE_TABLE_NAME" jdbcType="VARCHAR" property="clueTableName" />
+		<result column="PZ_TYPE" jdbcType="VARCHAR" property="pzType" />
+		<result column="PZ_TYPE_DETAIL" jdbcType="VARCHAR" property="pzTypeDetail" />
+		<result column="TASK_GLASS_ID" jdbcType="VARCHAR" property="taskGlassId" />
+		<result column="CREATE_BY" jdbcType="VARCHAR" property="createBy" />
+		<result column="CREATE_DT" jdbcType="TIMESTAMP" property="createDt" />
+		<result column="UPDATE_DT" jdbcType="TIMESTAMP" property="updateDt" />
+		<result column="UPDATE_BY" jdbcType="VARCHAR" property="updateBy" />
+		<result column="DELETE_BY" jdbcType="VARCHAR" property="deleteBy" />
+		<result column="ACT_BY_TYPE" jdbcType="VARCHAR" property="actByType" />
+		<result column="PZ_ID" jdbcType="VARCHAR" property="pzId" />
+	</resultMap>
+	<sql id="Base_Column_List">
+		CLUE_ID, CASE_ID, CASE_NO, CLUE_NAME, CLUE_TYPE, CLUE_SOURCE, CLUE_DESC,
+		CLUE_TABLE_NAME,
+		PZ_TYPE, PZ_TYPE_DETAIL, TASK_GLASS_ID, CREATE_BY, CREATE_DT, UPDATE_DT,
+		UPDATE_BY,
+		DELETE_BY, ACT_BY_TYPE,PZ_ID
+	</sql>
+	<select id="selectByPrimaryKey" parameterType="java.lang.String"
+		resultMap="BaseResultMap">
+		select
+		<include refid="Base_Column_List" />
+		from PZ_T_CLUE_INFO
+		where CLUE_ID = #{clueId,jdbcType=VARCHAR}
+	</select>
+	<delete id="deleteByPrimaryKey" parameterType="java.lang.String">
+		delete from PZ_T_CLUE_INFO
+		where CLUE_ID = #{clueId,jdbcType=VARCHAR}
+	</delete>
+	<insert id="insert" parameterType="com.shield.hczz.base.domain.ClueInfo">
+		insert into PZ_T_CLUE_INFO (CLUE_ID, CASE_ID, CASE_NO,
+		CLUE_NAME, CLUE_TYPE, CLUE_SOURCE,
+		CLUE_DESC, CLUE_TABLE_NAME, PZ_TYPE,
+		PZ_TYPE_DETAIL, TASK_GLASS_ID, CREATE_BY,
+		CREATE_DT, UPDATE_DT, UPDATE_BY,
+		DELETE_BY, ACT_BY_TYPE)
+		values (#{clueId,jdbcType=VARCHAR}, #{caseId,jdbcType=VARCHAR},
+		#{caseNo,jdbcType=VARCHAR},
+		#{clueName,jdbcType=VARCHAR}, #{clueType,jdbcType=DECIMAL}, #{clueSource,jdbcType=VARCHAR},
+		#{clueDesc,jdbcType=VARCHAR}, #{clueTableName,jdbcType=VARCHAR},
+		#{pzType,jdbcType=VARCHAR},
+		#{pzTypeDetail,jdbcType=VARCHAR}, #{taskGlassId,jdbcType=VARCHAR}, #{createBy,jdbcType=VARCHAR},
+		SYSDATE, SYSDATE, #{updateBy,jdbcType=VARCHAR},
+		#{deleteBy,jdbcType=VARCHAR}, #{actByType,jdbcType=VARCHAR})
+	</insert>
+	<insert id="insertSelective" parameterType="com.shield.hczz.base.domain.ClueInfo">
+		insert into PZ_T_CLUE_INFO
+		<trim prefix="(" suffix=")" suffixOverrides=",">
+			<if test="clueId != null">
+				CLUE_ID,
+			</if>
+			<if test="caseId != null">
+				CASE_ID,
+			</if>
+			<if test="caseNo != null">
+				CASE_NO,
+			</if>
+			<if test="clueName != null">
+				CLUE_NAME,
+			</if>
+			<if test="clueType != null">
+				CLUE_TYPE,
+			</if>
+			<if test="clueSource != null">
+				CLUE_SOURCE,
+			</if>
+			<if test="clueDesc != null">
+				CLUE_DESC,
+			</if>
+			<if test="clueTableName != null">
+				CLUE_TABLE_NAME,
+			</if>
+			<if test="pzType != null">
+				PZ_TYPE,
+			</if>
+			<if test="pzTypeDetail != null">
+				PZ_TYPE_DETAIL,
+			</if>
+			<if test="taskGlassId != null">
+				TASK_GLASS_ID,
+			</if>
+			<if test="createBy != null">
+				CREATE_BY,
+			</if>
+			CREATE_DT,
+			UPDATE_DT,
+			<if test="updateBy != null">
+				UPDATE_BY,
+			</if>
+			<if test="deleteBy != null">
+				DELETE_BY,
+			</if>
+			<if test="actByType != null">
+				ACT_BY_TYPE,
+			</if>
+			<if test="pzId != null">
+				pz_id,
+			</if>
+		</trim>
+		<trim prefix="values (" suffix=")" suffixOverrides=",">
+			<if test="clueId != null">
+				#{clueId,jdbcType=VARCHAR},
+			</if>
+			<if test="caseId != null">
+				#{caseId,jdbcType=VARCHAR},
+			</if>
+			<if test="caseNo != null">
+				#{caseNo,jdbcType=VARCHAR},
+			</if>
+			<if test="clueName != null">
+				#{clueName,jdbcType=VARCHAR},
+			</if>
+			<if test="clueType != null">
+				#{clueType,jdbcType=DECIMAL},
+			</if>
+			<if test="clueSource != null">
+				#{clueSource,jdbcType=VARCHAR},
+			</if>
+			<if test="clueDesc != null">
+				#{clueDesc,jdbcType=VARCHAR},
+			</if>
+			<if test="clueTableName != null">
+				#{clueTableName,jdbcType=VARCHAR},
+			</if>
+			<if test="pzType != null">
+				#{pzType,jdbcType=VARCHAR},
+			</if>
+			<if test="pzTypeDetail != null">
+				#{pzTypeDetail,jdbcType=VARCHAR},
+			</if>
+			<if test="taskGlassId != null">
+				#{taskGlassId,jdbcType=VARCHAR},
+			</if>
+			<if test="createBy != null">
+				#{createBy,jdbcType=VARCHAR},
+			</if>
+			SYSDATE,
+			SYSDATE,
+			<if test="updateBy != null">
+				#{updateBy,jdbcType=VARCHAR},
+			</if>
+			<if test="deleteBy != null">
+				#{deleteBy,jdbcType=VARCHAR},
+			</if>
+			<if test="actByType != null">
+				#{actByType,jdbcType=VARCHAR},
+			</if>
+			<if test="pzId != null">
+				#{pzId,jdbcType=VARCHAR},
+			</if>
+		</trim>
+	</insert>
+	<update id="updateByPrimaryKeySelective" parameterType="com.shield.hczz.base.domain.ClueInfo">
+		update PZ_T_CLUE_INFO
+		<set>
+			<if test="caseId != null">
+				CASE_ID = #{caseId,jdbcType=VARCHAR},
+			</if>
+			<if test="caseNo != null">
+				CASE_NO = #{caseNo,jdbcType=VARCHAR},
+			</if>
+			<if test="clueName != null">
+				CLUE_NAME = #{clueName,jdbcType=VARCHAR},
+			</if>
+			<if test="clueType != null">
+				CLUE_TYPE = #{clueType,jdbcType=DECIMAL},
+			</if>
+			<if test="clueSource != null">
+				CLUE_SOURCE = #{clueSource,jdbcType=VARCHAR},
+			</if>
+			<if test="clueDesc != null">
+				CLUE_DESC = #{clueDesc,jdbcType=VARCHAR},
+			</if>
+			<if test="clueTableName != null">
+				CLUE_TABLE_NAME = #{clueTableName,jdbcType=VARCHAR},
+			</if>
+			<if test="pzType != null">
+				PZ_TYPE = #{pzType,jdbcType=VARCHAR},
+			</if>
+			<if test="pzTypeDetail != null">
+				PZ_TYPE_DETAIL = #{pzTypeDetail,jdbcType=VARCHAR},
+			</if>
+			<if test="taskGlassId != null">
+				TASK_GLASS_ID = #{taskGlassId,jdbcType=VARCHAR},
+			</if>
+			<if test="createBy != null">
+				CREATE_BY = #{createBy,jdbcType=VARCHAR},
+			</if>
+			<if test="createDt != null">
+				CREATE_DT = SYSDATE,
+			</if>
+			<if test="updateDt != null">
+				UPDATE_DT = SYSDATE,,
+			</if>
+			<if test="updateBy != null">
+				UPDATE_BY = #{updateBy,jdbcType=VARCHAR},
+			</if>
+			<if test="deleteBy != null">
+				DELETE_BY = #{deleteBy,jdbcType=VARCHAR},
+			</if>
+			<if test="actByType != null">
+				ACT_BY_TYPE = #{actByType,jdbcType=VARCHAR},
+			</if>
+		</set>
+		where CLUE_ID = #{clueId,jdbcType=VARCHAR}
+	</update>
+	<update id="updateByPrimaryKey" parameterType="com.shield.hczz.base.domain.ClueInfo">
+		update PZ_T_CLUE_INFO
+		set CASE_ID = #{caseId,jdbcType=VARCHAR},
+		CASE_NO = #{caseNo,jdbcType=VARCHAR},
+		CLUE_NAME = #{clueName,jdbcType=VARCHAR},
+		CLUE_TYPE = #{clueType,jdbcType=DECIMAL},
+		CLUE_SOURCE = #{clueSource,jdbcType=VARCHAR},
+		CLUE_DESC = #{clueDesc,jdbcType=VARCHAR},
+		CLUE_TABLE_NAME = #{clueTableName,jdbcType=VARCHAR},
+		PZ_TYPE = #{pzType,jdbcType=VARCHAR},
+		PZ_TYPE_DETAIL = #{pzTypeDetail,jdbcType=VARCHAR},
+		TASK_GLASS_ID = #{taskGlassId,jdbcType=VARCHAR},
+		CREATE_BY = #{createBy,jdbcType=VARCHAR},
+		CREATE_DT = SYSDATE,
+		UPDATE_DT = SYSDATE,,
+		UPDATE_BY = #{updateBy,jdbcType=VARCHAR},
+		DELETE_BY = #{deleteBy,jdbcType=VARCHAR},
+		ACT_BY_TYPE = #{actByType,jdbcType=VARCHAR}
+		where CLUE_ID = #{clueId,jdbcType=VARCHAR}
+	</update>
+	<delete id="delByPK" parameterType="java.lang.String">
+		delete from PZ_T_CLUE_INFO
+		where CLUE_ID = #{clueId,jdbcType=VARCHAR}
+	</delete>
+	<insert id="add" parameterType="com.shield.hczz.base.domain.ClueInfo">
+		insert into PZ_T_CLUE_INFO (CLUE_ID, CASE_ID, CASE_NO,
+		CLUE_NAME, CLUE_TYPE, CLUE_SOURCE,
+		CLUE_DESC, CLUE_TABLE_NAME, PZ_TYPE,
+		PZ_TYPE_DETAIL, TASK_GLASS_ID, CREATE_BY,
+		CREATE_DT, UPDATE_DT, UPDATE_BY,
+		DELETE_BY, ACT_BY_TYPE, PZ_ID
+		)
+		values (#{clueId,jdbcType=VARCHAR}, #{caseId,jdbcType=VARCHAR},
+		#{caseNo,jdbcType=VARCHAR},
+		#{clueName,jdbcType=VARCHAR}, #{clueType,jdbcType=DECIMAL}, #{clueSource,jdbcType=VARCHAR},
+		#{clueDesc,jdbcType=VARCHAR}, #{clueTableName,jdbcType=VARCHAR},
+		#{pzType,jdbcType=VARCHAR},
+		#{pzTypeDetail,jdbcType=VARCHAR}, #{taskGlassId,jdbcType=VARCHAR}, #{createBy,jdbcType=VARCHAR},
+		#{createDt,jdbcType=TIMESTAMP}, #{updateDt,jdbcType=TIMESTAMP},
+		#{updateBy,jdbcType=VARCHAR},
+		#{deleteBy,jdbcType=VARCHAR}, #{actByType,jdbcType=VARCHAR}, #{pzId,jdbcType=VARCHAR}
+		)
+	</insert>
+	<update id="updateByPK" parameterType="com.shield.hczz.base.domain.ClueInfo">
+		update PZ_T_CLUE_INFO
+		set CASE_ID = #{caseId,jdbcType=VARCHAR},
+		CASE_NO = #{caseNo,jdbcType=VARCHAR},
+		CLUE_NAME = #{clueName,jdbcType=VARCHAR},
+		CLUE_TYPE = #{clueType,jdbcType=DECIMAL},
+		CLUE_SOURCE = #{clueSource,jdbcType=VARCHAR},
+		CLUE_DESC = #{clueDesc,jdbcType=VARCHAR},
+		CLUE_TABLE_NAME = #{clueTableName,jdbcType=VARCHAR},
+		PZ_TYPE = #{pzType,jdbcType=VARCHAR},
+		PZ_TYPE_DETAIL = #{pzTypeDetail,jdbcType=VARCHAR},
+		TASK_GLASS_ID = #{taskGlassId,jdbcType=VARCHAR},
+		CREATE_BY = #{createBy,jdbcType=VARCHAR},
+		CREATE_DT = #{createDt,jdbcType=TIMESTAMP},
+		UPDATE_DT = #{updateDt,jdbcType=TIMESTAMP},
+		UPDATE_BY = #{updateBy,jdbcType=VARCHAR},
+		DELETE_BY = #{deleteBy,jdbcType=VARCHAR},
+		ACT_BY_TYPE = #{actByType,jdbcType=VARCHAR},
+		PZ_ID = #{pzId,jdbcType=VARCHAR}
+		where CLUE_ID = #{clueId,jdbcType=VARCHAR}
+	</update>
+	<select id="getByPK" resultMap="BaseResultMap" parameterType="java.lang.String">
+		select CLUE_ID, CASE_ID, CASE_NO, CLUE_NAME, CLUE_TYPE, CLUE_SOURCE,
+		CLUE_DESC, CLUE_TABLE_NAME,
+		PZ_TYPE, PZ_TYPE_DETAIL, TASK_GLASS_ID, CREATE_BY, CREATE_DT, UPDATE_DT,
+		UPDATE_BY,
+		DELETE_BY, ACT_BY_TYPE, PZ_ID
+		from PZ_T_CLUE_INFO
+		where CLUE_ID = #{clueId,jdbcType=VARCHAR}
+	</select>
+	<select id="getList" resultMap="BaseResultMap">
+		select CLUE_ID, CASE_ID, CASE_NO, CLUE_NAME, CLUE_TYPE, CLUE_SOURCE,
+		CLUE_DESC, CLUE_TABLE_NAME,
+		PZ_TYPE, PZ_TYPE_DETAIL, TASK_GLASS_ID, CREATE_BY, CREATE_DT, UPDATE_DT,
+		UPDATE_BY,
+		DELETE_BY, ACT_BY_TYPE, PZ_ID
+		from PZ_T_CLUE_INFO
+	</select>
+	
+  <!-- 更新线索综述 -->
+  <update id="updateClueSumup" parameterType="hashMap">
+  	update PZ_T_CLUE_INFO t set t.clue_sumup=#{clueSumup,jdbcType=VARCHAR} where t.clue_id=#{clueId,jdbcType=VARCHAR}
+  </update>
+</mapper>

@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project-module
+  type="WEB"
+  name="hczz"
+  id="myeclipse.1437616493703"
+  context-root="/hczz"
+  j2ee-spec="5.0"
+  archive="hczz.war">
+  <attributes>
+    <attribute name="webrootdir" value="/src/main/webapp/" />
+  </attributes>
+</project-module>
+

@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.shield.frame.base.persistence.UserRoleMapper">
+	<resultMap id="BaseResultMap" type="com.shield.frame.base.domain.UserRole">
+		<id column="REL_ID" property="relId" jdbcType="DECIMAL" />
+		<result column="USER_ID" property="userId" jdbcType="DECIMAL" />
+		<result column="ROLE_ID" property="roleId" jdbcType="DECIMAL" />
+		<result column="CREATE_BY" property="createBy" jdbcType="NVARCHAR" />
+		<result column="CREATE_DT" property="createDt" jdbcType="TIMESTAMP" />
+		<result column="UPDATE_DT" property="updateDt" jdbcType="TIMESTAMP" />
+		<result column="UPDATE_BY" property="updateBy" jdbcType="NVARCHAR" />
+		<result column="DELETE_BY" property="deleteBy" jdbcType="NVARCHAR" />
+		<result column="ACT_BY_TYPE" property="actByType" jdbcType="NVARCHAR" />
+	</resultMap>
+	<delete id="delByPK" parameterType="java.math.BigDecimal">
+		delete from AU_T_USER_ROLE
+		where REL_ID = #{relId,jdbcType=DECIMAL}
+	</delete>
+	<insert id="add" parameterType="com.shield.frame.base.domain.UserRole">
+		<selectKey resultType="java.lang.String" order="BEFORE"
+			keyProperty="relId">
+			SELECT SQ_USER_ROLE.NEXTVAL FROM DUAL
+		</selectKey>
+		insert into AU_T_USER_ROLE (REL_ID, USER_ID, ROLE_ID,
+		CREATE_BY, CREATE_DT, UPDATE_DT,
+		UPDATE_BY, ACT_BY_TYPE
+		)
+		values (#{relId,jdbcType=DECIMAL}, #{userId,jdbcType=DECIMAL},
+		#{roleId,jdbcType=DECIMAL},
+		#{createBy,jdbcType=NVARCHAR}, #{createDt,jdbcType=TIMESTAMP}, #{updateDt,jdbcType=TIMESTAMP},
+		#{updateBy,jdbcType=NVARCHAR}, 'b'
+		)
+	</insert>
+	<update id="updateByPK" parameterType="com.shield.frame.base.domain.UserRole">
+		update AU_T_USER_ROLE
+		set USER_ID = #{userId,jdbcType=DECIMAL},
+		ROLE_ID = #{roleId,jdbcType=DECIMAL},
+		CREATE_BY = #{createBy,jdbcType=NVARCHAR},
+		CREATE_DT = #{createDt,jdbcType=TIMESTAMP},
+		UPDATE_DT = #{updateDt,jdbcType=TIMESTAMP},
+		UPDATE_BY = #{updateBy,jdbcType=NVARCHAR},
+		DELETE_BY = #{deleteBy,jdbcType=NVARCHAR},
+		ACT_BY_TYPE = #{actByType,jdbcType=NVARCHAR}
+		where REL_ID = #{relId,jdbcType=DECIMAL}
+	</update>
+	<select id="getByPK" resultMap="BaseResultMap" parameterType="java.math.BigDecimal">
+		select REL_ID, USER_ID, ROLE_ID, CREATE_BY, CREATE_DT, UPDATE_DT,
+		UPDATE_BY, DELETE_BY,
+		ACT_BY_TYPE
+		from AU_T_USER_ROLE
+		where REL_ID = #{relId,jdbcType=DECIMAL}
+	</select>
+	<select id="getList" resultMap="BaseResultMap">
+		select REL_ID, USER_ID, ROLE_ID, CREATE_BY, CREATE_DT, UPDATE_DT, UPDATE_BY,
+		DELETE_BY,
+		ACT_BY_TYPE
+		from AU_T_USER_ROLE
+	</select>
+	<delete id="delByUPK" parameterType="Map">
+		delete from AU_T_USER_ROLE
+		where user_id in( #{userId})
+	</delete>
+</mapper>

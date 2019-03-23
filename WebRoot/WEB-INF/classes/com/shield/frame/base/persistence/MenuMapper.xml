@@ -1,0 +1,219 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.shield.frame.base.persistence.MenuMapper">
+	<resultMap id="BaseResultMap" type="com.shield.frame.base.domain.Menu">
+		<id column="MENU_ID" property="menuId" jdbcType="DECIMAL" />
+		<result column="MENU_NAME" property="menuName" jdbcType="NVARCHAR" />
+		<result column="MENU_ACTION" property="menuAction" jdbcType="NVARCHAR" />
+		<result column="MENU_PARENTID" property="menuParentid"
+			jdbcType="DECIMAL" />
+		<result column="MENU_DISABLED" property="menuDisabled"
+			jdbcType="CHAR" />
+		<result column="MENU_SORT_ORDER" property="menuSortOrder"
+			jdbcType="DECIMAL" />
+		<result column="DOMAIN_NAME" property="domainName" jdbcType="NVARCHAR" />
+		<result column="CREATE_BY" property="createBy" jdbcType="NVARCHAR" />
+		<result column="CREATE_DT" property="createDt" jdbcType="TIMESTAMP" />
+		<result column="UPDATE_DT" property="updateDt" jdbcType="TIMESTAMP" />
+		<result column="UPDATE_BY" property="updateBy" jdbcType="NVARCHAR" />
+		<result column="DELETE_BY" property="deleteBy" jdbcType="NVARCHAR" />
+		<result column="ACT_BY_TYPE" property="actByType" jdbcType="NVARCHAR" />
+	</resultMap>
+	<delete id="delByPK" parameterType="java.math.BigDecimal">
+		delete from AU_T_MENU
+		where MENU_ID = #{menuId,jdbcType=DECIMAL}
+	</delete>
+	<insert id="add" parameterType="com.shield.frame.base.domain.Menu">
+		insert into AU_T_MENU (MENU_ID, MENU_NAME, MENU_ACTION,
+		MENU_PARENTID, MENU_DISABLED, MENU_SORT_ORDER,
+		DOMAIN_NAME, CREATE_BY, CREATE_DT,
+		UPDATE_DT, UPDATE_BY, DELETE_BY,
+		ACT_BY_TYPE)
+		values (#{menuId,jdbcType=DECIMAL}, #{menuName,jdbcType=NVARCHAR},
+		#{menuAction,jdbcType=NVARCHAR},
+		#{menuParentid,jdbcType=DECIMAL}, #{menuDisabled,jdbcType=CHAR}, #{menuSortOrder,jdbcType=DECIMAL},
+		#{domainName,jdbcType=NVARCHAR}, #{createBy,jdbcType=NVARCHAR},
+		#{createDt,jdbcType=TIMESTAMP},
+		#{updateDt,jdbcType=TIMESTAMP}, #{updateBy,jdbcType=NVARCHAR}, #{deleteBy,jdbcType=NVARCHAR},
+		#{actByType,jdbcType=NVARCHAR})
+	</insert>
+	<update id="updateByPK" parameterType="com.shield.frame.base.domain.Menu">
+		update AU_T_MENU
+		set MENU_NAME = #{menuName,jdbcType=NVARCHAR},
+		MENU_ACTION = #{menuAction,jdbcType=NVARCHAR},
+		MENU_PARENTID = #{menuParentid,jdbcType=DECIMAL},
+		MENU_DISABLED = #{menuDisabled,jdbcType=CHAR},
+		MENU_SORT_ORDER = #{menuSortOrder,jdbcType=DECIMAL},
+		DOMAIN_NAME = #{domainName,jdbcType=NVARCHAR},
+		CREATE_BY = #{createBy,jdbcType=NVARCHAR},
+		CREATE_DT = #{createDt,jdbcType=TIMESTAMP},
+		UPDATE_DT = #{updateDt,jdbcType=TIMESTAMP},
+		UPDATE_BY = #{updateBy,jdbcType=NVARCHAR},
+		DELETE_BY = #{deleteBy,jdbcType=NVARCHAR},
+		ACT_BY_TYPE = #{actByType,jdbcType=NVARCHAR}
+		where MENU_ID = #{menuId,jdbcType=DECIMAL}
+	</update>
+	<select id="getByPK" resultMap="BaseResultMap" parameterType="java.math.BigDecimal">
+		select MENU_ID, MENU_NAME, MENU_ACTION, MENU_PARENTID, MENU_DISABLED,
+		MENU_SORT_ORDER,
+		DOMAIN_NAME, CREATE_BY, CREATE_DT, UPDATE_DT, UPDATE_BY, DELETE_BY, ACT_BY_TYPE
+		from AU_T_MENU
+		where MENU_ID = #{menuId,jdbcType=DECIMAL}
+	</select>
+	<select id="getInfo" resultType="com.shield.frame.sysmng.qvo.MenuVO"
+		parameterType="java.math.BigDecimal">
+		SELECT MENU_ID uuid,
+		MENU_NAME name,
+		MENU_ACTION url,
+		ICONCLS iconclsName,
+		MENU_SORT_ORDER ordernum,
+		MENU_PARENTID parent
+		from AU_T_MENU
+		where MENU_ID = #{id,jdbcType=DECIMAL}
+	</select>
+	<select id="getList" resultType="MenuRow" parameterType="hashMap">
+		SELECT MENU_ID, MENU_NAME, MENU_ACTION, MENU_PARENTID, MENU_DISABLED,
+		MENU_SORT_ORDER,
+		DOMAIN_NAME, CREATE_BY, CREATE_DT, UPDATE_DT, UPDATE_BY, DELETE_BY, ACT_BY_TYPE
+		from AU_T_MENU
+	</select>
+
+	<select id="getRootMenuList" parameterType="hashMap" resultType="RootMenuVO">
+		select distinct *
+		from (select m.menu_id uuid,
+		m.menu_name name,
+		m.menu_action url,
+		m.menu_sort_order ordernum,
+		m.iconcls iconCls
+		from au_t_menu m
+		<if test="usrId != null">
+			inner join au_t_role_permission rp on rp.permission_id = m.menu_id
+			inner join au_t_user_role ur on ur.role_id=rp.role_id
+			inner join au_t_user u on ur.user_id=u.user_id
+		</if>
+		where m.menu_disabled = 0
+		and m.domain_name = '0'
+		and m.menu_parentid = '0'
+		<if test="usrId != null">
+			and u.user_id = #{usrId, jdbcType=DECIMAL}
+		</if>
+		) t
+		order by t.ordernum
+	</select>
+	<select id="getMenuTreeNodeList" parameterType="hashMap"
+		resultType="MenuTreeNode">
+		select distinct *
+		from (select m.MENU_ID uuid,
+		m.MENU_NAME text,
+		case
+		when (select count(1)
+		from au_t_menu cm
+		where cm.MENU_PARENTID = m.MENU_ID
+		and cm.DELETE_BY is null
+		and cm.MENU_DISABLED = 0) > 0 then
+		'closed'
+		else
+		'open'
+		end as state,
+		m.MENU_ACTION url,
+		m.MENU_SORT_ORDER ordernum,
+		NVL(m.ICONCLS,'iconCls-default') as iconCls
+		from au_t_menu m
+		<if test="usrId != null">
+			inner join au_t_role_permission rp on rp.permission_id = m.menu_id
+			inner join au_t_user_role ur on ur.role_id=rp.role_id
+			inner join au_t_user u on ur.user_id=u.user_id
+		</if>
+		where m.MENU_PARENTID = #{itemId, jdbcType=DECIMAL}
+		and m.DOMAIN_NAME = '0'
+		and m.MENU_DISABLED = 0
+		<if test="usrId != null">
+			and ur.USER_ID = #{usrId, jdbcType=DECIMAL}
+		</if>
+		) t
+		order by t.ordernum
+	</select>
+	<select id="getToolBar" parameterType="hashMap" resultType="ToolBarVO">
+		select distinct *
+		from (select f.function_id uuid,
+		f.functionname name,
+		f.url url,
+		f.toolbar_order ordernum,
+		f.TOOBAR_TITLE title,
+		f.JS_METHOD jsMethod,
+		f.ICON_CSS iconCls,
+		f.open_method openMethod
+		from au_t_permission p
+		join au_t_permission_function pf on pf.permission_id = p.permission_id
+		join au_t_function f on pf.function_id = f.function_id and
+		f.is_toolbar = '1'
+		<if test="usrId != null">
+			join au_t_role_permission rp on rp.permission_id=p.permission_id
+			join au_t_user_role ur on ur.role_id=rp.role_id
+		</if>
+		where p.parent_id = #{menuId, jdbcType=DECIMAL}
+		<if test="usrId != null">
+			and ur.user_id = #{usrId, jdbcType=DECIMAL}
+		</if>
+		) t
+		order by t.ordernum
+	</select>
+	
+	<select id="getToolBarByType" parameterType="hashMap" resultType="ToolBarVO">
+		select distinct *
+		from (select f.function_id uuid,
+		f.functionname name,
+		f.url url,
+		f.toolbar_order ordernum,
+		f.TOOBAR_TITLE title,
+		f.JS_METHOD jsMethod,
+		f.ICON_CSS iconCls,
+		f.open_method openMethod
+		from au_t_permission p
+		join au_t_permission_function pf on pf.permission_id = p.permission_id
+		join au_t_function f on pf.function_id = f.function_id
+		<if test="toolbarType != null and toolbarType != ''">
+			and f.is_toolbar = #{toolbarType,jdbcType=VARCHAR}
+		</if>
+		<if test="userId != null and userId != ''">
+			join au_t_role_permission rp on rp.permission_id=p.permission_id
+			join au_t_user_role ur on ur.role_id=rp.role_id
+		</if>
+		where 1 = 1
+		<if test="menuId != null and menuId != ''">
+			and p.parent_id = #{menuId, jdbcType=DECIMAL}
+		</if>
+		<if test="userId != null and userId != ''">
+			and ur.user_id = #{userId, jdbcType=DECIMAL}
+		</if>
+		) t
+		order by t.ordernum
+	</select>
+	
+	<select id="getButtonShow" parameterType="hashMap" resultType="ToolBarVO">
+		select distinct *
+		from (select f.function_id uuid,
+		f.functionname name,
+		f.url url,
+		f.toolbar_order ordernum,
+		f.TOOBAR_TITLE title,
+		f.JS_METHOD jsMethod,
+		f.ICON_CSS iconCls,
+		f.open_method openMethod
+		from au_t_permission p
+		join au_t_permission_function pf on pf.permission_id = p.permission_id
+		join au_t_function f on pf.function_id = f.function_id and
+		f.is_toolbar = #{toolbar, jdbcType=DECIMAL}
+		<if test="usrId != null">
+			join au_t_role_permission rp on rp.permission_id=p.permission_id
+			join au_t_user_role ur on ur.role_id=rp.role_id
+		</if>
+		where p.parent_id = #{menuId, jdbcType=DECIMAL}
+		<if test="usrId != null">
+			and ur.user_id = #{usrId, jdbcType=DECIMAL}
+		</if>
+		) t
+		order by t.ordernum
+	</select>
+
+</mapper>

@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.shield.hczz.base.persistence.EffectMapper">
+
+<insert id="add" parameterType="com.shield.hczz.base.domain.Effect">
+    insert into pz_t_effect (pz_effect_id,pz_apply_id,total,effect_type,type1,type2,type3,
+    type4,type5,remark,create_by,create_dt,update_by,update_dt,delete_by,act_by_type) values 
+    (#{pzEffectId,jdbcType=VARCHAR},#{pzApplyId,jdbcType=VARCHAR},#{total,jdbcType=INTEGER},
+    #{effectType,jdbcType=VARCHAR},#{type1,jdbcType=INTEGER},#{type2,jdbcType=INTEGER},
+    #{type3,jdbcType=INTEGER},#{type4,jdbcType=INTEGER},#{type5,jdbcType=INTEGER},#{remark,jdbcType=VARCHAR},
+    #{createBy,jdbcType=VARCHAR},sysdate,#{updateBy,jdbcType=VARCHAR},sysdate,null,'B')
+</insert>
+
+<select id="getlist" parameterType="com.shield.hczz.efficiency.qvo.EffectQO" resultType="java.util.Map">
+    select 
+        e.effect_type,e.pz_apply_id,e.create_by,u.username,
+        e.total,e.type1,e.type2,e.type3,e.type4,e.type5,e.remark
+     from pz_t_effect e 
+    left join au_t_user u on u.user_id = e.create_by
+    where e.delete_by is null
+    <if test="createBy != null and createBy != ''">
+        and e.create_by = #{createBy,jdbcType=VARCHAR}
+    </if>
+    <if test="effectType != null and effectType != ''">
+        and e.effect_type = #{effectType,jdbcType=VARCHAR}
+    </if>
+    <if test="pzApplyId != null and pzApplyId != ''">
+        and e.pz_apply_id = #{pzApplyId,jdbcType=VARCHAR}
+    </if>
+</select>
+
+<select id="getCount" parameterType="com.shield.hczz.efficiency.qvo.EffectQO" resultType="java.lang.Integer">
+    select count(*) total
+    from pz_t_effect e
+    where e.delete_by is null
+    <if test="createBy != null and createBy != ''">
+        and e.create_by = #{createBy,jdbcType=VARCHAR}
+    </if>
+    <if test="effectType != null and effectType != ''">
+        and e.effect_type = #{effectType,jdbcType=VARCHAR}
+    </if>
+    <if test="pzApplyId != null and pzApplyId != ''">
+        and e.pz_apply_id = #{pzApplyId,jdbcType=VARCHAR}
+    </if>
+</select>
+</mapper>

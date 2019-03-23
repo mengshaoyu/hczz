@@ -1,0 +1,109 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.shield.hczz.base.persistence.SyAuditLogMapper">
+	<resultMap id="BaseResultMap" type="com.shield.hczz.recordsmng.qvo.AuditLogVO">
+		<id column="UUID" property="uuid" jdbcType="NVARCHAR" />
+		<result column="USER_ID" property="userId" jdbcType="DECIMAL" />
+		<result column="USER_IP" property="userIp" jdbcType="NVARCHAR" />
+		<result column="FUNCTION" property="function" jdbcType="NVARCHAR" />
+		<result column="OPER_TYPE" property="operType" jdbcType="NVARCHAR" />
+		<result column="OPER_CONTENT" property="operContent" jdbcType="NVARCHAR" />
+		<result column="RESOURCE_ID" property="resourceId" jdbcType="NVARCHAR" />
+		<result column="RESULT" property="result" jdbcType="CHAR" />
+		<result column="CREATE_BY" property="createBy" jdbcType="NVARCHAR" />
+		<result column="CREATE_DT" property="createDt" jdbcType="TIMESTAMP" />
+		<result column="UPDATE_DT" property="updateDt" jdbcType="TIMESTAMP" />
+		<result column="UPDATE_BY" property="updateBy" jdbcType="NVARCHAR" />
+		<result column="DELETE_BY" property="deleteBy" jdbcType="NVARCHAR" />
+		<result column="ACT_BY_TYPE" property="actByType" jdbcType="NVARCHAR" />
+
+		<result column="USERNAME" property="userName" jdbcType="NVARCHAR" />
+		<result column="RESULTSTR" property="resultStr" jdbcType="NVARCHAR" />
+		<result column="OPERTYPESTR" property="operTypeStr" jdbcType="NVARCHAR" />
+	</resultMap>
+
+	<select id="getList" resultMap="BaseResultMap" parameterType="hashMap">
+		<if test="(maxExp != null and maxExp != '')">
+			select UUID,
+			username,
+			FUNCTION,
+			OPERTYPESTR,
+			OPER_CONTENT,
+			OPER_CONTENT,
+			RESULTSTR
+			from (
+		</if>
+		SELECT T.UUID,
+		U.USERNAME,
+		T.FUNCTION,
+		CASE TO_CHAR(T.OPER_TYPE)
+		WHEN '1'
+		THEN
+		'查询'
+		WHEN '2' THEN
+		'查看'
+		WHEN '3' THEN
+		'新增'
+		WHEN '4' THEN
+		'编辑'
+		WHEN '5'
+		THEN
+		'删除'
+		WHEN '6' THEN
+		'导出'
+		ELSE
+		'其他'
+		END OPERTYPESTR,
+		T.OPER_CONTENT,
+		CASE
+		T.RESULT
+		WHEN '0' THEN
+		'成功'
+		ELSE
+		'失败'
+		END RESULTSTR,
+		T.CREATE_DT
+		FROM
+		SY_T_AUDITLOG T, AU_T_USER U
+		WHERE T.USER_ID = U.USER_ID(+)
+		<if test="(function != null and function != '')">
+			and T.FUNCTION like '%'||#{function}||'%'
+		</if>
+		<if test="(operContent != null and operContent != '')">
+			and T.OPER_CONTENT like '%'||#{operContent}||'%'
+		</if>
+		<if test="(logPKs != null and logPKs != '')">
+			and T.UUID in (
+			<foreach collection="logPKs" item="item" index="index"
+				separator=",">
+				#{item,jdbcType=VARCHAR}
+			</foreach>
+			)
+		</if>
+		ORDER BY T.CREATE_DT DESC
+		<if test="(maxExp != null and maxExp != '')">
+			) WHERE ROWNUM &lt;= #{maxExp}
+		</if>
+	</select>
+
+	<select id="getCount" resultType="int" parameterType="hashMap">
+		select count(1)
+		from SY_T_AUDITLOG T, AU_T_USER u
+		where T.USER_ID =
+		u.user_id(+)
+		<if test="(function != null and function != '')">
+			and T.FUNCTION like '%'||#{function}||'%'
+		</if>
+		<if test="(operContent != null and operContent != '')">
+			and T.OPER_CONTENT like '%'||#{operContent}||'%'
+		</if>
+		<if test="(logPKs != null and logPKs != '')">
+			and T.UUID in (
+			<foreach collection="logPKs" item="item" index="index"
+				separator=",">
+				#{item,jdbcType=VARCHAR}
+			</foreach>
+			)
+		</if>
+	</select>
+</mapper>

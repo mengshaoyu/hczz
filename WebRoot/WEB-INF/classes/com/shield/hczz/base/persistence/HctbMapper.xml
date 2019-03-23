@@ -1,0 +1,185 @@
+﻿<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.shield.hczz.base.persistence.HctbMapper">
+	<select id="selectCaseInfo" resultType="com.shield.hczz.pztb.dto.CaseInfoDTO"
+		parameterType="map">
+		select
+		a.pz_apply_id,a.pz_apply_grade,c.case_id,c.case_No,c.case_name,c.incident_place,
+		to_char(c.accept_date,'yyyy-mm-dd hh24:mi:ss') accept_date,
+		to_char(c.incident_date,'yyyy-mm-dd hh24:mi:ss') incident_Date,
+		c.JQ_NO,c.CASE_AJLY,c.lat_X,c.lon_Y,c.case_type_imp,
+		c.accept_Unit,c.case_Type,st.value_desc case_Type_value,c.case_Desc,c.case_status
+		from pz_t_apply a, case_info c ,(select * from sy_t_codevalue s where s.type_id='2005') st
+		where a.case_id(+) = c.case_id
+		  and c.case_type = st.code_value(+)
+		<if test="pzid != null">
+		and a.pz_apply_id = #{pzid}
+		</if>
+		<if test="caseNo != null">
+		and c.case_no = #{caseNo}
+		</if>
+	</select>
+
+	<select id="selectClueInfo" resultType="map" parameterType="map">
+		select t.clue_id,
+		t.clue_name,
+		t.pz_type,
+		c1.value_desc pz_type_name,
+		t.pz_type_detail,
+		c2.value_desc pz_type_detail_name,
+		t.clue_source,
+		t.clue_desc,
+		f.att_id,
+		f.bus_id,
+		f.att_name,
+		f.att_path,
+		t.CREATE_BY,
+		t.CREATE_DT,
+		t.CLUE_AUXILIARY
+		from pz_t_clue_info
+		t, fdi_t_attach f, SY_T_CODEVALUE c1,SY_T_CODEVALUE c2
+		where t.clue_id = f.bus_id(+)
+		and t.pz_type = c1.code_value
+		and t.pz_type_detail = c2.code_value
+		and c1.type_id = '1002'
+		and c2.type_id = '1007'
+		and t.pz_id = #{pzid}
+		order by decode(t.act_by_type,'B','1',to_number(t.act_by_type)), f.create_dt
+	</select>
+
+	<update id="updatePzApplyByKey" parameterType="map">
+		update pz_t_apply
+		t
+		set t.pz_apply_grade = #{pzApplyGrade}
+		where t.pz_apply_id = #{pzid}
+	</update>
+    <update id="updateCaseInfo" parameterType="com.shield.hczz.base.domain.CaseInfo">
+        update case_info t
+		set 
+		    <if test="jqNo != null">
+		    t.jq_no=#{jqNo},
+		    </if>
+		    <if test="caseAjly != null">
+		    t.case_Ajly=#{caseAjly},
+		    </if>
+            <if test="caseTypeImp != null">
+		    t.case_Type_Imp=#{caseTypeImp},
+		    </if>
+            <if test="caseStatus != null">
+		    t.case_Status=#{caseStatus},
+		    </if>
+            <if test="incidentPlace != null">
+		    t.incident_Place=#{incidentPlace},
+		    </if>
+            <if test="acceptUnit != null">
+		    t.accept_Unit=#{acceptUnit},
+		    </if>
+            <if test="latX != null">
+		    t.lat_X=#{latX},
+		    </if>
+            <if test="lonY != null">
+		    t.lon_Y=#{lonY},
+		    </if>
+            <if test="incidentDate != null">
+		    t.incident_Date=to_date(#{incidentDate},'yyyy-mm-dd hh24:mi:ss'),
+		    </if>
+		    t.case_type=#{caseType}
+		where t.case_id=#{caseId}
+    </update>
+	<delete id="deleteClueInfoByPzId" parameterType="map">
+		delete from
+		pz_t_clue_info t
+		where t.pz_id=#{pzid}
+	</delete>
+
+	<delete id="deleteClueAttByPzId" parameterType="map">
+		delete from
+		fdi_t_attach a
+		where a.bus_id in (select clue_id from pz_t_clue_info
+		where pz_id=#{pzid})
+	</delete>
+
+	<select id="getUsersByIds" parameterType="Map" resultType="Map">
+		select username,mobile_phone mobilePhone from au_t_user where user_id
+		in (${ids})
+	</select>
+	
+	<select id="getApprovers" parameterType="java.util.Map"
+        resultType="com.shield.frame.base.domain.User">
+        select u.user_id, u.username
+		  from AU_T_USER u
+		  left join au_t_user_role ur
+		    on ur.user_id = u.user_id
+		 where u.delete_by is null
+		   and ur.role_id = #{roleId,jdbcType=VARCHAR}
+		   <if test="deptId != null">
+           and u.dept_id = #{deptId,jdbcType=VARCHAR}
+           </if>
+    </select>
+    
+    <select id="selectClueByPzId" resultType="map" parameterType="map">
+		select t.clue_id,
+	    t.clue_name,
+	    t.pz_type,
+	    t.pz_type_detail,
+	    t.clue_source,
+	    t.clue_desc,
+	    t.CREATE_BY,
+	    t.CREATE_DT,
+	    t.CLUE_AUXILIARY,
+	    t.CLUE_SUMUP,
+        m.service_request 
+        from pz_t_clue_info t join PZ_T_SERVICE_MANAGE m on t.pz_type_detail=m.uuid
+	    where 
+	     t.pz_id = #{pzid}
+	    order by t.clue_id 
+	</select>
+	
+	<select id="selectClueByPz" parameterType="java.util.Map" resultType="java.util.Map">
+		select t.clue_id,
+      t.clue_name,
+      t.pz_type,
+      t.pz_type_detail,
+      t.clue_source,
+      t.clue_desc,
+      t.CREATE_BY,
+      t.CREATE_DT,
+      t.CLUE_AUXILIARY,
+      t.CLUE_SUMUP,
+      k.PZ_MAIN_ACCEPT,
+      k.CREATE_BY,
+        m.service_request 
+        from pz_t_clue_info t join PZ_T_SERVICE_MANAGE m on t.pz_type_detail=m.uuid join PZ_T_APPLY k on k.pz_apply_id = t.pz_id
+      where 
+       t.pz_id = #{pzid}
+      order by t.clue_id 
+	</select>
+	
+	
+    <select id="selectClueByPzIdAndUser" resultType="map" parameterType="map">
+		select t.clue_id
+		from pz_t_clue_info
+		t
+		where 
+		 t.pz_id = #{pzid}
+		 and t.CLUE_AUXILIARY = #{userId}
+	</select>
+	
+	<!-- 更新综述 -->
+  	<update id="updateSumup" parameterType="hashMap">
+  		update pz_t_apply t set t.sum_up=#{sumup,jdbcType=VARCHAR} where t.pz_apply_id=#{pzid,jdbcType=VARCHAR}
+  	</update>
+  	
+  	<select id="countLajds" parameterType="map" resultType="Integer">
+  	select count(1) from sop_lajds l
+	 where l.ajbh=#{ajbh}
+	   and l.isdel='0'
+  	</select>
+  	
+  	<select id="countSadjb" parameterType="map" resultType="Integer">
+  	select count(1) from sop_sadjb s
+	 where s.ajbh=#{ajbh}
+	   and s.isdel='0'
+  	</select>
+  	
+</mapper>

@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.shield.frame.base.persistence.SysParamMapper">
+	<select id="getSysparamList" resultType="com.shield.frame.sysmng.dto.SysparamDTO">
+		select param_key id, sys_key sysKey, sys_value sysValue,
+		edit_flag editFlag, domain_name domainName, description
+		from SY_T_PARAM
+		order by sysKey
+	</select>
+
+	<select id="getCount" resultType="int">
+		select count(*)
+		from SY_T_PARAM
+	</select>
+
+	<insert id="addSysparam" parameterType="SysparamDTO">
+		insert into sy_t_param(
+		param_key, sys_key, sys_value, edit_flag,
+		domain_name, create_by, create_dt, update_by,
+		update_dt, act_by_type, description)
+		values (SQ_SY_PARAM.NEXTVAL, #{sysKey}, #{sysValue}, #{editFlag},
+		#{domainName}, #{createBy}, #{createDt}, #{updateBy},
+		#{updateDt}, #{actByType}, #{description}
+		)
+	</insert>
+
+	<update id="updSysparam" parameterType="SysparamDTO">
+		update sy_t_param
+		set
+		sys_key = #{sysKey},
+		sys_value = #{sysValue}, edit_flag = #{editFlag},
+		domain_name = #{domainName}, update_by = #{createBy},
+		update_dt = #{updateDt}, act_by_type = #{actByType},
+		description = #{description}
+		where param_key = #{id}
+	</update>
+
+	<delete id="delSysparam" parameterType="string">
+		delete sy_t_param where param_key=#{id}
+	</delete>
+
+	<select id="getSysParam" parameterType="hashMap"
+		resultType="com.shield.frame.sysmng.dto.SysparamDTO">
+		select * from sy_t_param
+		where sys_key=#{sysKey} and domain_name=#{domainName}
+		<if test="id!= null">
+			and param_key!=#{id}
+		</if>
+	</select>
+
+	<select id="getDomainName" resultType="com.shield.frame.sysmng.dto.CodeValueDTO">
+		select distinct value_desc valueDesc, code_value codeValue from
+		sy_t_codevalue where type_id='1001'
+		order by codeValue
+	</select>
+
+	<select id="getSysparamDTOById" resultType="com.shield.frame.sysmng.dto.SysparamDTO"
+		parameterType="string">
+		select param_key id, sys_key sysKey, sys_value sysValue,
+		edit_flag editFlag, domain_name domainName, description
+		from sy_t_param
+		where param_key=#{id,jdbcType=DECIMAL}
+	</select>
+
+</mapper>

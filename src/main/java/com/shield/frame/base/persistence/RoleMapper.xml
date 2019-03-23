@@ -1,0 +1,178 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.shield.frame.base.persistence.RoleMapper">
+	<resultMap id="BaseResultMap" type="com.shield.frame.base.domain.Role">
+		<id column="ROLE_ID" property="roleId" jdbcType="DECIMAL" />
+		<result column="ROLENAME" property="rolename" jdbcType="NVARCHAR" />
+		<result column="DESCRIPTION" property="description" jdbcType="NVARCHAR" />
+		<result column="DOMAIN_NAME" property="domainName" jdbcType="NVARCHAR" />
+		<result column="CREATE_BY" property="createBy" jdbcType="NVARCHAR" />
+		<result column="CREATE_DT" property="createDt" jdbcType="TIMESTAMP" />
+		<result column="UPDATE_DT" property="updateDt" jdbcType="TIMESTAMP" />
+		<result column="UPDATE_BY" property="updateBy" jdbcType="NVARCHAR" />
+		<result column="DELETE_BY" property="deleteBy" jdbcType="NVARCHAR" />
+		<result column="ACT_BY_TYPE" property="actByType" jdbcType="NVARCHAR" />
+	</resultMap>
+	<delete id="delByPK" parameterType="java.math.BigDecimal">
+		delete from AU_T_ROLE
+		where ROLE_ID = #{roleId,jdbcType=DECIMAL}
+	</delete>
+	<insert id="add" parameterType="com.shield.frame.base.domain.Role">
+		insert into AU_T_ROLE (ROLE_ID, ROLENAME, DESCRIPTION,
+		DOMAIN_NAME, CREATE_BY, CREATE_DT,
+		UPDATE_DT, UPDATE_BY,
+		ACT_BY_TYPE)
+		values (SQ_au_role.NEXTVAL, #{rolename,jdbcType=NVARCHAR},
+		#{description,jdbcType=NVARCHAR},
+		'0', #{createBy,jdbcType=NVARCHAR}, #{createDt,jdbcType=TIMESTAMP},
+		#{updateDt,jdbcType=TIMESTAMP}, #{updateBy,jdbcType=NVARCHAR}, '0')
+	</insert>
+	<update id="updateByPK" parameterType="com.shield.frame.base.domain.Role">
+		update AU_T_ROLE
+		set ROLENAME = #{rolename,jdbcType=NVARCHAR},
+		DESCRIPTION = #{description,jdbcType=NVARCHAR},
+		DOMAIN_NAME = #{domainName,jdbcType=NVARCHAR},
+		CREATE_BY = #{createBy,jdbcType=NVARCHAR},
+		CREATE_DT = #{createDt,jdbcType=TIMESTAMP},
+		UPDATE_DT = #{updateDt,jdbcType=TIMESTAMP},
+		UPDATE_BY = #{updateBy,jdbcType=NVARCHAR},
+		DELETE_BY = #{deleteBy,jdbcType=NVARCHAR},
+		ACT_BY_TYPE = #{actByType,jdbcType=NVARCHAR}
+		where ROLE_ID = #{roleId,jdbcType=DECIMAL} and delete_by is null
+	</update>
+	<select id="getByPK" resultMap="BaseResultMap" parameterType="java.math.BigDecimal">
+		select ROLE_ID, ROLENAME, DESCRIPTION, DOMAIN_NAME, CREATE_BY,
+		CREATE_DT, UPDATE_DT,
+		UPDATE_BY, DELETE_BY, ACT_BY_TYPE
+		from AU_T_ROLE
+		where ROLE_ID = #{roleId,jdbcType=DECIMAL} and delete_by is null
+	</select>
+	<select id="getList" resultType="com.shield.frame.sysmng.dto.RoleDTO">
+		select a.ROLE_ID, a.ROLENAME, a.DESCRIPTION, a.DOMAIN_NAME,
+		a.CREATE_BY, a.CREATE_DT, a.UPDATE_DT,
+		a.UPDATE_BY, a.DELETE_BY, a.ACT_BY_TYPE,
+		decode(b.auth_type,'1','所有(不控制)','2','部门权限','3','人员权限','1,2','所有(不控制),部门权限',
+		'1,3','所有(不控制),人员权限','2,3','部门权限,人员权限','1,2,3',
+		'所有(不控制),部门权限,人员权限','无') authType
+		from AU_T_ROLE a left join au_t_role_dataauth b on a.role_id = b.role_id
+		where a.delete_by is null
+		order by a.role_id ,a.rolename
+	</select>
+
+	<resultMap id="RoleFuncRltMap" type="Function">
+		<result column="function_id" property="functionId" />
+		<result column="functionname" property="functionname" />
+		<result column="url" property="url" />
+		<result column="hasaudata" property="hasaudata" />
+	</resultMap>
+
+	<select id="getRoleFunction" parameterType="string" resultMap="RoleFuncRltMap">
+		select distinct replace(f.url,'/','.') url, f.function_id,
+		f.functionname, f.hasaudata
+		from AU_T_USER u
+		join au_t_user_role ur
+		on u.user_id = ur.user_id
+		and ur.delete_by is null
+		join au_t_role_permission rp
+		on rp.role_id = ur.role_id
+		and rp.delete_by is null
+		join au_t_permission_function pf
+		on pf.permission_id = rp.permission_id
+		and pf.delete_by is null
+		join au_t_function f
+		on f.function_id = pf.function_id
+		and f.delete_by is null
+		where u.delete_by is null
+		and u.cur_state = '0'
+		and ur.role_id = #{0, jdbcType=DECIMAL}
+		and trim(f.url) is not null
+	</select>
+
+	<select id="getCount" resultType="int">
+		select count(*)
+		from au_t_role
+		where delete_by is null
+	</select>
+
+	<update id="edit" parameterType="RoleDTO">
+		update AU_T_ROLE
+		set
+		ROLENAME = #{rolename,jdbcType=NVARCHAR},
+		DESCRIPTION = #{description,jdbcType=NVARCHAR},
+		UPDATE_DT = #{updateDt,jdbcType=TIMESTAMP},
+		UPDATE_BY = #{updateBy,jdbcType=NVARCHAR}
+		where ROLE_ID = #{roleId,jdbcType=DECIMAL} and delete_by is null
+	</update>
+
+	<update id="del" parameterType="hashMap">
+		update AU_T_ROLE set delete_by='1'
+		where ROLE_ID = #{id}
+	</update>
+
+	<delete id="delByUPK" parameterType="string">
+		delete from au_t_role_permission where role_id = #{uid}
+	</delete>
+
+	<insert id="save" parameterType="RolePermissionDTO">
+		insert into au_t_role_permission
+		(pk,role_id, permission_id, create_by,
+		create_dt, update_dt, update_by, act_by_type
+		)
+		values
+		(SQ_role_permission.Nextval, #{roleId,jdbcType=DECIMAL}, #{permissionId,jdbcType=DECIMAL},
+		#{createBy,jdbcType=NVARCHAR}, #{createDt,jdbcType=TIMESTAMP} ,
+		#{updateDt,jdbcType=TIMESTAMP},
+		#{updateBy,jdbcType=NVARCHAR},'b'
+		)
+	</insert>
+
+	<delete id="delDataPow" parameterType="string">
+		delete from au_t_role_dataauth where role_id = #{id}
+	</delete>
+
+	<delete id="delData" parameterType="string">
+		delete from au_t_role_dataauth where role_id = #{id}
+	</delete>
+
+	<insert id="addDataPow" parameterType="DataPowDTO">
+		insert into au_t_role_dataauth
+		(role_id, auth_type, create_by, create_dt,
+		update_dt, update_by, act_by_type)
+		values
+		(#{roleId,jdbcType=DECIMAL}, #{authType,jdbcType=NVARCHAR},
+		#{createBy,jdbcType=NVARCHAR}, #{createDt,jdbcType=TIMESTAMP} ,
+		#{updateDt,jdbcType=TIMESTAMP},#{updateBy,jdbcType=NVARCHAR},'b'
+		)
+	</insert>
+
+	<select id="getRoleDataAuth" parameterType="string" resultType="RoleDataAuth">
+		select
+		role_id,auth_type,sql_statment,create_by,create_dt,update_dt,update_by,delete_by,act_by_type
+		from au_t_role_dataauth
+		where role_id = #{0, jdbcType=DECIMAL}
+	</select>
+
+	<select id="getUserById" resultType="com.shield.frame.sysmng.dto.RoleDTO"
+		parameterType="string">
+		select distinct a.roleName
+		from au_t_role a inner join au_t_user_role b on a.role_id=b.role_id
+		where b.role_id=#{id}
+
+	</select>
+
+	<select id="getUser" parameterType="com.shield.frame.sysmng.dto.RoleDTO"
+		resultType="com.shield.frame.sysmng.dto.RoleDTO">
+		select roleName, role_id from au_t_role
+		where roleName=#{rolename} and delete_by is null
+		<if test="(roleId!=null and roleId!='')">
+			and role_id!=#{roleId}
+		</if>
+	</select>
+
+	<select id="getRole" parameterType="string"
+		resultType="com.shield.frame.sysmng.dto.RoleDTO">
+		select roleName ,delete_by deleteBy from au_t_role
+		where role_id=#{roleId,jdbcType=DECIMAL}
+	</select>
+
+</mapper>

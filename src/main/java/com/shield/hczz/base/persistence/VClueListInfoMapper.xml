@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.shield.hczz.base.persistence.VClueListInfoMapper">
+	<resultMap id="BaseResultMap" type="com.shield.hczz.base.domain.VClueListInfo">
+		<result column="CLUE_ID" property="clueId" jdbcType="VARCHAR" />
+		<result column="CASE_NO" property="caseNo" jdbcType="VARCHAR" />
+		<result column="CLUE_TYPE_NAME" property="clueTypeName"
+			jdbcType="VARCHAR" />
+		<result column="CLUE_TYPE" property="clueType" jdbcType="DECIMAL" />
+		<result column="CLUE_DESC" property="clueDesc" jdbcType="VARCHAR" />
+		<result column="FILENAME" property="filename" jdbcType="VARCHAR" />
+		<result column="CREATE_BY" property="createBy" jdbcType="VARCHAR" />
+		<result column="USERNAME" property="username" jdbcType="NVARCHAR" />
+		<result column="CREATE_DT" property="createDt" jdbcType="TIMESTAMP" />
+	</resultMap>
+	<insert id="add" parameterType="com.shield.hczz.base.domain.VClueListInfo">
+		insert into PZ_V_CLUE (CLUE_ID,
+		CASE_NO, CLUE_TYPE_NAME,
+		CLUE_TYPE, CLUE_DESC, FILENAME,
+		CREATE_BY,
+		USERNAME, CREATE_DT
+		)
+		values (#{clueId,jdbcType=VARCHAR},
+		#{caseNo,jdbcType=VARCHAR},
+		#{clueTypeName,jdbcType=VARCHAR},
+		#{clueType,jdbcType=DECIMAL}, #{clueDesc,jdbcType=VARCHAR},
+		#{filename,jdbcType=VARCHAR},
+		#{createBy,jdbcType=VARCHAR},
+		#{username,jdbcType=NVARCHAR},
+		#{createDt,jdbcType=TIMESTAMP}
+		)
+	</insert>
+	<select id="getList" parameterType="java.util.Map"
+		resultType="com.shield.hczz.base.domain.VClueListInfo">
+
+		select CLUE_ID, CASE_NO, CLUE_TYPE_NAME, CLUE_TYPE, CLUE_DESC,
+		FILENAME, CREATE_BY,
+		USERNAME, CREATE_DT,DEPT_ID
+		from PZ_V_CLUE
+		where 1=1
+		<if test="hbDataAuth_U!= null">
+            and create_by = #{hbDataAuth_U}
+        </if>
+        <if test="hbDataAuth_D!= null">
+            and dept_id in (${hbDataAuth_D})
+        </if>
+		<if test="clueType != null and clueType != ''">
+			and CLUE_TYPE=#{clueType}
+		</if>
+		<if test="clueDesc != null and clueDesc != ''">
+			and CLUE_DESC like '%'||#{clueDesc}||'%'
+		</if>
+	</select>
+	<select id="getCount" parameterType="java.util.Map" resultType="Integer">
+
+		select count(1) from PZ_V_CLUE
+		where 1=1
+		<if test="hbDataAuth_U!= null">
+            and create_by = #{hbDataAuth_U}
+        </if>
+        <if test="hbDataAuth_D!= null">
+            and dept_id in (${hbDataAuth_D})
+        </if>
+		<if test="clueType != null and clueType != ''">
+			and CLUE_TYPE=#{clueType}
+		</if>
+		<if test="clueDesc != null and clueDesc != ''">
+			and CLUE_DESC like '%'||#{clueDesc}||'%'
+		</if>
+	</select>
+</mapper>

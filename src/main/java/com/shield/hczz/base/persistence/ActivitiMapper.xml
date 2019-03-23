@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.shield.hczz.base.persistence.ActivitiMapper">
+	<select id="assigneeCompleteInfo" parameterType="map" resultType="com.shield.hczz.pztb.dto.AssigneeCompleteInfo">
+	   select to_char(t.start_time_,'yyyy-mm-dd hh24:mi:ss') start_Time,
+		       to_char(t.end_time_,'yyyy-mm-dd hh24:mi:ss') end_Time,
+		       u.username ,u.user_no ,nvl(u.mobile_phone,'无') mobile_phone
+		 from act_hi_taskinst t,au_t_user u
+		where t.assignee_=u.user_id
+		  and t.task_def_key_= #{actId}
+		  and t.proc_inst_id_= #{procInstId}
+	</select>
+	<select id="getComment" parameterType="map" resultType="map">
+	   select u.username,u.user_no,c.message_ comm,to_char(c.time_,'yyyy-mm-dd hh24:mi:ss') commtime
+		  from ACT_HI_COMMENT c,au_t_user u ,
+		       (select *
+		          from (select ta.*
+		                  from act_hi_taskinst ta
+		                 where ta.task_def_key_=#{actId}
+		                   and ta.proc_inst_id_= #{procInstId}
+		                 order by ta.start_time_ desc)
+		         where rownum = 1) t
+		 where c.task_id_ = t.ID_
+		   and t.assignee_ = u.user_id
+		   and t.proc_inst_id_= #{procInstId}
+	</select>
+	<select id="flowWait" parameterType="map" resultType="com.shield.hczz.base.domain.FlowWait">
+	   select * from PZ_V_FLOW_WAIT t
+	    where 1=1
+	    <if test="userId != null">
+	       and USER_ID=#{userId}
+	    </if>
+	    <if test="procId != null">
+           and PROC_ID=#{procId}
+        </if>
+        <if test="taskId != null">
+           and TASK_ID=#{taskId}
+        </if>
+        <if test="taskKey != null">
+           and TASK_KEY=#{taskKey}
+        </if>
+	</select>
+	
+	<select id="getFlowInfo"  parameterType="map" resultType="com.shield.hczz.base.domain.FlowWait">
+	   select distinct t.proc_inst_id_ proc_Id,t.task_def_key_ task_Key from ACT_RU_TASK t
+        where t.proc_inst_id_=(select a.flow_id from pz_t_apply a where a.pz_apply_id=#{pzid})
+	</select>
+</mapper>

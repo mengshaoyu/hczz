@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.shield.frame.base.persistence.FunctionMapper">
+	<resultMap id="BaseResultMap" type="com.shield.frame.base.domain.Function">
+		<id column="FUNCTION_ID" property="functionId" jdbcType="DECIMAL" />
+		<result column="FUNCTIONNAME" property="functionname" jdbcType="NVARCHAR" />
+		<result column="URL" property="url" jdbcType="NVARCHAR" />
+		<result column="DESCPT" property="descpt" jdbcType="NVARCHAR" />
+		<result column="IS_TOOLBAR" property="isToolbar" jdbcType="CHAR" />
+		<result column="TOOBAR_TITLE" property="toobarTitle" jdbcType="NVARCHAR" />
+		<result column="JS_METHOD" property="jsMethod" jdbcType="NVARCHAR" />
+		<result column="IMAGE_URL" property="imageUrl" jdbcType="NVARCHAR" />
+		<result column="TOOLBAR_ORDER" property="toolbarOrder"
+			jdbcType="DECIMAL" />
+		<result column="OPEN_METHOD" property="openMethod" jdbcType="CHAR" />
+		<result column="HASAUDATA" property="hasaudata" jdbcType="CHAR" />
+		<result column="CREATE_BY" property="createBy" jdbcType="NVARCHAR" />
+		<result column="CREATE_DT" property="createDt" jdbcType="TIMESTAMP" />
+		<result column="UPDATE_DT" property="updateDt" jdbcType="TIMESTAMP" />
+		<result column="UPDATE_BY" property="updateBy" jdbcType="NVARCHAR" />
+		<result column="DELETE_BY" property="deleteBy" jdbcType="NVARCHAR" />
+		<result column="ACT_BY_TYPE" property="actByType" jdbcType="NVARCHAR" />
+	</resultMap>
+	<delete id="delByPK" parameterType="java.math.BigDecimal">
+		delete from AU_T_FUNCTION
+		where FUNCTION_ID = #{functionId,jdbcType=DECIMAL}
+	</delete>
+	<insert id="add" parameterType="com.shield.frame.base.domain.Function">
+		insert into AU_T_FUNCTION (FUNCTION_ID, FUNCTIONNAME, URL,
+		DESCPT, IS_TOOLBAR, TOOBAR_TITLE,
+		JS_METHOD, IMAGE_URL, TOOLBAR_ORDER,
+		OPEN_METHOD, HASAUDATA, CREATE_BY,
+		CREATE_DT, UPDATE_DT, UPDATE_BY,
+		DELETE_BY, ACT_BY_TYPE)
+		values (#{functionId,jdbcType=DECIMAL}, #{functionname,jdbcType=NVARCHAR},
+		#{url,jdbcType=NVARCHAR},
+		#{descpt,jdbcType=NVARCHAR}, #{isToolbar,jdbcType=CHAR}, #{toobarTitle,jdbcType=NVARCHAR},
+		#{jsMethod,jdbcType=NVARCHAR}, #{imageUrl,jdbcType=NVARCHAR},
+		#{toolbarOrder,jdbcType=DECIMAL},
+		#{openMethod,jdbcType=CHAR}, #{hasaudata,jdbcType=CHAR}, #{createBy,jdbcType=NVARCHAR},
+		#{createDt,jdbcType=TIMESTAMP}, #{updateDt,jdbcType=TIMESTAMP},
+		#{updateBy,jdbcType=NVARCHAR},
+		#{deleteBy,jdbcType=NVARCHAR}, #{actByType,jdbcType=NVARCHAR})
+	</insert>
+	<update id="updateByPK" parameterType="com.shield.frame.base.domain.Function">
+		update AU_T_FUNCTION
+		set FUNCTIONNAME = #{functionname,jdbcType=NVARCHAR},
+		URL = #{url,jdbcType=NVARCHAR},
+		DESCPT = #{descpt,jdbcType=NVARCHAR},
+		IS_TOOLBAR = #{isToolbar,jdbcType=CHAR},
+		TOOBAR_TITLE = #{toobarTitle,jdbcType=NVARCHAR},
+		JS_METHOD = #{jsMethod,jdbcType=NVARCHAR},
+		IMAGE_URL = #{imageUrl,jdbcType=NVARCHAR},
+		TOOLBAR_ORDER = #{toolbarOrder,jdbcType=DECIMAL},
+		OPEN_METHOD = #{openMethod,jdbcType=CHAR},
+		HASAUDATA = #{hasaudata,jdbcType=CHAR},
+		CREATE_BY = #{createBy,jdbcType=NVARCHAR},
+		CREATE_DT = #{createDt,jdbcType=TIMESTAMP},
+		UPDATE_DT = #{updateDt,jdbcType=TIMESTAMP},
+		UPDATE_BY = #{updateBy,jdbcType=NVARCHAR},
+		DELETE_BY = #{deleteBy,jdbcType=NVARCHAR},
+		ACT_BY_TYPE = #{actByType,jdbcType=NVARCHAR}
+		where FUNCTION_ID = #{functionId,jdbcType=DECIMAL}
+	</update>
+	<select id="getByPK" resultMap="BaseResultMap" parameterType="java.math.BigDecimal">
+		select FUNCTION_ID, FUNCTIONNAME, URL, DESCPT, IS_TOOLBAR,
+		TOOBAR_TITLE, JS_METHOD,
+		IMAGE_URL, TOOLBAR_ORDER, OPEN_METHOD, HASAUDATA, CREATE_BY, CREATE_DT,
+		UPDATE_DT,
+		UPDATE_BY, DELETE_BY, ACT_BY_TYPE
+		from AU_T_FUNCTION
+		where FUNCTION_ID = #{functionId,jdbcType=DECIMAL}
+	</select>
+	<select id="getList" resultMap="BaseResultMap">
+		select FUNCTION_ID, FUNCTIONNAME, URL, DESCPT, IS_TOOLBAR, TOOBAR_TITLE,
+		JS_METHOD,
+		IMAGE_URL, TOOLBAR_ORDER, OPEN_METHOD, HASAUDATA, CREATE_BY, CREATE_DT,
+		UPDATE_DT,
+		UPDATE_BY, DELETE_BY, ACT_BY_TYPE
+		from AU_T_FUNCTION
+	</select>
+</mapper>

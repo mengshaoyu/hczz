@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.shield.frame.base.persistence.CodeMapper">
+	<resultMap id="BaseResultMap" type="Code">
+		<id column="TYPE_ID" property="typeId" jdbcType="DECIMAL" />
+		<result column="TYPE_NAME" property="typeName" jdbcType="NVARCHAR" />
+		<result column="TYPE_DESC" property="typeDesc" jdbcType="NVARCHAR" />
+
+		<result column="EDIT_FLAG" property="editFlag" jdbcType="CHAR" />
+		<result column="DOMAIN_NAME" property="domainName" jdbcType="NVARCHAR" />
+		<result column="CREATE_BY" property="createBy" jdbcType="NVARCHAR" />
+		<result column="CREATE_DT" property="createDt" jdbcType="TIMESTAMP" />
+		<result column="UPDATE_DT" property="updateDt" jdbcType="TIMESTAMP" />
+		<result column="UPDATE_BY" property="updateBy" jdbcType="NVARCHAR" />
+		<result column="DELETE_BY" property="deleteBy" jdbcType="NVARCHAR" />
+		<result column="ACT_BY_TYPE" property="actByType" jdbcType="NVARCHAR" />
+	</resultMap>
+	<delete id="delByPK" parameterType="java.math.BigDecimal">
+		delete from SY_T_CODE
+		where TYPE_ID = #{typeId,jdbcType=DECIMAL}
+	</delete>
+	<insert id="add" parameterType="Code">
+		insert into SY_T_CODE (TYPE_ID,TYPE_NAME, TYPE_DESC, EDIT_FLAG,
+		DOMAIN_NAME, CREATE_BY, CREATE_DT,
+		UPDATE_DT, UPDATE_BY, DELETE_BY,
+		ACT_BY_TYPE)
+		values (#{typeId,jdbcType=DECIMAL},
+		#{typeName,jdbcType=NVARCHAR},#{typeDesc,jdbcType=NVARCHAR},
+		#{editFlag,jdbcType=CHAR},
+		#{domainName,jdbcType=NVARCHAR}, #{createBy,jdbcType=NVARCHAR}, #{createDt,jdbcType=TIMESTAMP},
+		#{updateDt,jdbcType=TIMESTAMP}, #{updateBy,jdbcType=NVARCHAR},
+		#{deleteBy,jdbcType=NVARCHAR},
+		#{actByType,jdbcType=NVARCHAR})
+	</insert>
+	<update id="updateByPK" parameterType="com.shield.frame.sysmng.dto.CodeDTO">
+		update SY_T_CODE
+		set TYPE_NAME = #{typeName,jdbcType=NVARCHAR},
+		TYPE_DESC = #{typeDesc,jdbcType=NVARCHAR},
+		EDIT_FLAG = #{editFlag,jdbcType=CHAR},
+		DOMAIN_NAME = #{domainName,jdbcType=NVARCHAR},
+		CREATE_BY = #{createBy,jdbcType=NVARCHAR},
+		CREATE_DT = #{createDt,jdbcType=TIMESTAMP},
+		UPDATE_DT = #{updateDt,jdbcType=TIMESTAMP},
+		UPDATE_BY = #{updateBy,jdbcType=NVARCHAR},
+		DELETE_BY = #{deleteBy,jdbcType=NVARCHAR},
+		ACT_BY_TYPE = #{actByType,jdbcType=NVARCHAR}
+		where TYPE_ID = #{typeId,jdbcType=DECIMAL}
+	</update>
+	<select id="getByPK" resultMap="BaseResultMap" parameterType="java.math.BigDecimal">
+		select TYPE_ID,TYPE_NAME, TYPE_DESC, EDIT_FLAG, DOMAIN_NAME,
+		CREATE_BY, CREATE_DT, UPDATE_DT,
+		UPDATE_BY, DELETE_BY, ACT_BY_TYPE
+		from SY_T_CODE
+		where TYPE_ID = #{typeId,jdbcType=DECIMAL}
+	</select>
+	<select id="getList" resultMap="BaseResultMap">
+		select TYPE_ID,TYPE_NAME, TYPE_DESC, EDIT_FLAG, DOMAIN_NAME, CREATE_BY,
+		CREATE_DT, UPDATE_DT,
+		UPDATE_BY, DELETE_BY, ACT_BY_TYPE
+		from SY_T_CODE
+	</select>
+	<select id="getCodeList" parameterType="com.shield.frame.sysmng.dto.CodeDTO"
+		resultMap="BaseResultMap">
+		select TYPE_ID,TYPE_NAME, TYPE_DESC, EDIT_FLAG, DOMAIN_NAME, CREATE_BY,
+		CREATE_DT, UPDATE_DT,
+		UPDATE_BY, DELETE_BY, ACT_BY_TYPE
+		from SY_T_CODE
+	</select>
+	<select id="getCount" resultType="int">
+		select count(*)
+		from SY_T_CODE
+	</select>
+</mapper>

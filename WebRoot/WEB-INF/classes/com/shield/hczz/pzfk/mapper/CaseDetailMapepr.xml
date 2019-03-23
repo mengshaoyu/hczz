@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.shield.hczz.pzfk.mapper.CaseDetailMapepr">
+	<select id="selectDept" parameterType="java.lang.String" resultType="java.lang.String">
+		select dept_name from au_t_dept where dept_no = #{deptNo}
+	</select>
+	
+	<select id="selectPzFlow" resultType="java.util.Map" parameterType="java.lang.String">
+		select 
+			i.flow_id
+  		from 
+  			pz_t_apply i
+	    where i.case_id = #{caseId}
+	</select>
+	
+	<select id="selectEnd" resultType="java.util.Map" parameterType="java.lang.String">
+		select 
+			j.*
+  		from 
+  			pz_t_apply j, (select 
+  								i.proc_inst_id_
+          				   from 
+          				   	    ACT_HI_ACTINST i
+         				   where 
+         				   	    i.act_id_ = 'end'
+                           and 
+                           		i.proc_inst_id_ = #{flwoId}) k
+   		where 
+   			j.flow_id = k.proc_inst_id_
+	</select>
+	
+	<select id="selectCaseInfo" resultType="java.util.Map" parameterType="java.lang.String">
+		select * from case_info i where i.case_id = #{caseId}
+	</select>
+	
+	<select id="selectUser" resultType="java.lang.String" parameterType="java.lang.String">
+		select u.user_id from au_t_user u where u.dept_id = #{deptId}
+	</select>
+	
+	<select id="selectGarde" resultType="java.lang.String" parameterType="java.lang.String">
+		select i.pz_apply_grade from pz_t_apply i where i.pz_apply_id = #{pzId}
+	</select>
+	
+</mapper>

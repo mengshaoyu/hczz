@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.shield.hczz.base.persistence.PzLogMapper">
+	<resultMap id="BaseResultMap" type="com.shield.hczz.base.domain.PzLog">
+		<id column="FEATURE_PERSON_ID" property="featurePersonId" jdbcType="DECIMAL" />
+		<result column="CLUE_NO_REF" property="clueNoRef" jdbcType="VARCHAR" />
+		<result column="CASE_NO_REF" property="caseNoRef" jdbcType="VARCHAR" />
+		<result column="PZ_APPLY_ID" property="pzApplyId" jdbcType="VARCHAR" />
+		<result column="FLOW_ID" property="flowId" jdbcType="VARCHAR" />
+		<result column="TASK_STATUS" property="taskStatus" jdbcType="VARCHAR" />
+		<result column="NEXT_BY" property="nextBy" jdbcType="VARCHAR" />
+		<result column="TASK_DESC" property="taskDesc" jdbcType="VARCHAR" />
+		<result column="CREATE_BY" property="createBy" jdbcType="VARCHAR" />
+		<result column="CREATE_DT" property="createDt" jdbcType="TIMESTAMP" />
+		<result column="UPDATE_DT" property="updateDt" jdbcType="TIMESTAMP" />
+		<result column="UPDATE_BY" property="updateBy" jdbcType="VARCHAR" />
+		<result column="DELETE_BY" property="deleteBy" jdbcType="NVARCHAR" />
+		<result column="ACT_BY_TYPE" property="actByType" jdbcType="VARCHAR" />
+	</resultMap>
+	<delete id="delByPK" parameterType="java.math.BigDecimal">
+		delete from PZ_TASK_LOG
+		where
+		FEATURE_PERSON_ID = #{featurePersonId,jdbcType=DECIMAL}
+	</delete>
+	<insert id="add" parameterType="com.shield.hczz.base.domain.PzLog">
+		insert into PZ_TASK_LOG
+		(FEATURE_PERSON_ID, CLUE_NO_REF, CASE_NO_REF,
+		PZ_APPLY_ID, FLOW_ID,
+		TASK_STATUS,
+		NEXT_BY, TASK_DESC, CREATE_BY,
+		CREATE_DT, UPDATE_DT,
+		UPDATE_BY,
+		DELETE_BY, ACT_BY_TYPE)
+		values
+		(#{featurePersonId,jdbcType=DECIMAL}, #{clueNoRef,jdbcType=VARCHAR},
+		#{caseNoRef,jdbcType=VARCHAR},
+		#{pzApplyId,jdbcType=VARCHAR},
+		#{flowId,jdbcType=VARCHAR}, #{taskStatus,jdbcType=VARCHAR},
+		#{nextBy,jdbcType=VARCHAR}, #{taskDesc,jdbcType=VARCHAR},
+		#{createBy,jdbcType=VARCHAR},
+		#{createDt,jdbcType=TIMESTAMP},
+		#{updateDt,jdbcType=TIMESTAMP}, #{updateBy,jdbcType=VARCHAR},
+		#{deleteBy,jdbcType=NVARCHAR}, #{actByType,jdbcType=VARCHAR})
+	</insert>
+	<update id="updateByPK" parameterType="com.shield.hczz.base.domain.PzLog">
+		update PZ_TASK_LOG
+		set
+		CLUE_NO_REF = #{clueNoRef,jdbcType=VARCHAR},
+		CASE_NO_REF =
+		#{caseNoRef,jdbcType=VARCHAR},
+		PZ_APPLY_ID =
+		#{pzApplyId,jdbcType=VARCHAR},
+		FLOW_ID = #{flowId,jdbcType=VARCHAR},
+		TASK_STATUS = #{taskStatus,jdbcType=VARCHAR},
+		NEXT_BY =
+		#{nextBy,jdbcType=VARCHAR},
+		TASK_DESC = #{taskDesc,jdbcType=VARCHAR},
+		CREATE_BY = #{createBy,jdbcType=VARCHAR},
+		CREATE_DT =
+		#{createDt,jdbcType=TIMESTAMP},
+		UPDATE_DT =
+		#{updateDt,jdbcType=TIMESTAMP},
+		UPDATE_BY =
+		#{updateBy,jdbcType=VARCHAR},
+		DELETE_BY =
+		#{deleteBy,jdbcType=NVARCHAR},
+		ACT_BY_TYPE =
+		#{actByType,jdbcType=VARCHAR}
+		where FEATURE_PERSON_ID =
+		#{featurePersonId,jdbcType=DECIMAL}
+	</update>
+	<select id="getByPK" resultMap="BaseResultMap" parameterType="java.math.BigDecimal">
+		select FEATURE_PERSON_ID, CLUE_NO_REF, CASE_NO_REF, PZ_APPLY_ID,
+		FLOW_ID, TASK_STATUS,
+		NEXT_BY, TASK_DESC, CREATE_BY, CREATE_DT,
+		UPDATE_DT, UPDATE_BY, DELETE_BY,
+		ACT_BY_TYPE
+		from PZ_TASK_LOG
+		where
+		FEATURE_PERSON_ID = #{featurePersonId,jdbcType=DECIMAL}
+	</select>
+	<select id="getList" resultMap="BaseResultMap">
+		select FEATURE_PERSON_ID,
+		CLUE_NO_REF, CASE_NO_REF, PZ_APPLY_ID, FLOW_ID,
+		TASK_STATUS,
+		NEXT_BY,
+		TASK_DESC, CREATE_BY, CREATE_DT, UPDATE_DT, UPDATE_BY, DELETE_BY,
+		ACT_BY_TYPE
+		from PZ_TASK_LOG
+	</select>
+</mapper>

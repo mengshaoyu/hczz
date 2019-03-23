@@ -1,0 +1,161 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.shield.hczz.base.persistence.ServiceManageMapper">
+  <resultMap id="BaseResultMap" type="com.shield.hczz.base.domain.ServiceManage">
+    <id column="UUID" jdbcType="VARCHAR" property="uuid" />
+    <result column="SERVICE_REQUEST" jdbcType="VARCHAR" property="serviceRequest" />
+    <result column="FEEDBACK_TIME" jdbcType="VARCHAR" property="feedbackTime" />
+    <result column="SERVICE_TYPE" jdbcType="VARCHAR" property="serviceType" />
+    <result column="CREATE_BY" jdbcType="VARCHAR" property="createBy" />
+    <result column="CREATE_DT" jdbcType="TIMESTAMP" property="createDt" />
+    <result column="UPDATE_DT" jdbcType="TIMESTAMP" property="updateDt" />
+    <result column="UPDATE_BY" jdbcType="VARCHAR" property="updateBy" />
+    <result column="DELETE_BY" jdbcType="VARCHAR" property="deleteBy" />
+    <result column="ACT_BY_TYPE" jdbcType="VARCHAR" property="actByType" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    UUID, SERVICE_REQUEST, FEEDBACK_TIME, SERVICE_TYPE, CREATE_BY, CREATE_DT, UPDATE_DT, 
+    UPDATE_BY, DELETE_BY, ACT_BY_TYPE
+  </sql>
+  <select id="selectByPrimaryKey" parameterType="java.lang.String" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from PZ_T_SERVICE_MANAGE
+    where UUID = #{uuid,jdbcType=VARCHAR}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.String">
+    delete from PZ_T_SERVICE_MANAGE
+    where UUID = #{uuid,jdbcType=VARCHAR}
+  </delete>
+  <insert id="insert" parameterType="com.shield.hczz.base.domain.ServiceManage">
+    insert into PZ_T_SERVICE_MANAGE (UUID, SERVICE_REQUEST, FEEDBACK_TIME, 
+      SERVICE_TYPE, CREATE_BY, CREATE_DT, 
+      UPDATE_DT, UPDATE_BY, DELETE_BY, 
+      ACT_BY_TYPE)
+    values (#{uuid,jdbcType=VARCHAR}, #{serviceRequest,jdbcType=VARCHAR}, #{feedbackTime,jdbcType=VARCHAR}, 
+      #{serviceType,jdbcType=VARCHAR}, #{createBy,jdbcType=VARCHAR}, #{createDt,jdbcType=TIMESTAMP}, 
+      #{updateDt,jdbcType=TIMESTAMP}, #{updateBy,jdbcType=VARCHAR}, #{deleteBy,jdbcType=VARCHAR}, 
+      #{actByType,jdbcType=VARCHAR})
+  </insert>
+  <insert id="insertSelective" parameterType="com.shield.hczz.base.domain.ServiceManage">
+    insert into PZ_T_SERVICE_MANAGE
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="uuid != null">
+        UUID,
+      </if>
+      <if test="serviceRequest != null">
+        SERVICE_REQUEST,
+      </if>
+      <if test="feedbackTime != null">
+        FEEDBACK_TIME,
+      </if>
+      <if test="serviceType != null">
+        SERVICE_TYPE,
+      </if>
+      <if test="createBy != null">
+        CREATE_BY,
+      </if>
+      <if test="createDt != null">
+        CREATE_DT,
+      </if>
+      <if test="updateDt != null">
+        UPDATE_DT,
+      </if>
+      <if test="updateBy != null">
+        UPDATE_BY,
+      </if>
+      <if test="deleteBy != null">
+        DELETE_BY,
+      </if>
+      <if test="actByType != null">
+        ACT_BY_TYPE,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="uuid != null">
+        #{uuid,jdbcType=VARCHAR},
+      </if>
+      <if test="serviceRequest != null">
+        #{serviceRequest,jdbcType=VARCHAR},
+      </if>
+      <if test="feedbackTime != null">
+        #{feedbackTime,jdbcType=VARCHAR},
+      </if>
+      <if test="serviceType != null">
+        #{serviceType,jdbcType=VARCHAR},
+      </if>
+      <if test="createBy != null">
+        #{createBy,jdbcType=VARCHAR},
+      </if>
+      <if test="createDt != null">
+        #{createDt,jdbcType=TIMESTAMP},
+      </if>
+      <if test="updateDt != null">
+        #{updateDt,jdbcType=TIMESTAMP},
+      </if>
+      <if test="updateBy != null">
+        #{updateBy,jdbcType=VARCHAR},
+      </if>
+      <if test="deleteBy != null">
+        #{deleteBy,jdbcType=VARCHAR},
+      </if>
+      <if test="actByType != null">
+        #{actByType,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.shield.hczz.base.domain.ServiceManage">
+    update PZ_T_SERVICE_MANAGE
+    <set>
+      <if test="serviceRequest != null">
+        SERVICE_REQUEST = #{serviceRequest,jdbcType=VARCHAR},
+      </if>
+      <if test="feedbackTime != null">
+        FEEDBACK_TIME = #{feedbackTime,jdbcType=VARCHAR},
+      </if>
+      <if test="serviceType != null">
+        SERVICE_TYPE = #{serviceType,jdbcType=VARCHAR},
+      </if>
+      <if test="createBy != null">
+        CREATE_BY = #{createBy,jdbcType=VARCHAR},
+      </if>
+      <if test="createDt != null">
+        CREATE_DT = #{createDt,jdbcType=TIMESTAMP},
+      </if>
+      <if test="updateDt != null">
+        UPDATE_DT = #{updateDt,jdbcType=TIMESTAMP},
+      </if>
+      <if test="updateBy != null">
+        UPDATE_BY = #{updateBy,jdbcType=VARCHAR},
+      </if>
+      <if test="deleteBy != null">
+        DELETE_BY = #{deleteBy,jdbcType=VARCHAR},
+      </if>
+      <if test="actByType != null">
+        ACT_BY_TYPE = #{actByType,jdbcType=VARCHAR},
+      </if>
+    </set>
+    where UUID = #{uuid,jdbcType=VARCHAR}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.shield.hczz.base.domain.ServiceManage">
+    update PZ_T_SERVICE_MANAGE
+    set SERVICE_REQUEST = #{serviceRequest,jdbcType=VARCHAR},
+      FEEDBACK_TIME = #{feedbackTime,jdbcType=VARCHAR},
+      SERVICE_TYPE = #{serviceType,jdbcType=VARCHAR},
+      CREATE_BY = #{createBy,jdbcType=VARCHAR},
+      CREATE_DT = #{createDt,jdbcType=TIMESTAMP},
+      UPDATE_DT = #{updateDt,jdbcType=TIMESTAMP},
+      UPDATE_BY = #{updateBy,jdbcType=VARCHAR},
+      DELETE_BY = #{deleteBy,jdbcType=VARCHAR},
+      ACT_BY_TYPE = #{actByType,jdbcType=VARCHAR}
+    where UUID = #{uuid,jdbcType=VARCHAR}
+  </update>
+  
+  	<!-- 依据合成申请主键，获取申请当前所在的流程 -->
+	<select id="getMaxBackTime" parameterType="hashMap"
+		resultType="com.shield.hczz.base.domain.ServiceManage">
+		select max(p.feedback_time) feedback_time,p.uuid from pz_t_service_manage p where p.uuid in(
+		select t.pz_type_detail from PZ_T_CLUE_INFO t where t.pz_id=#{pzid,jdbcType=VARCHAR}
+		) group by uuid
+	</select>
+</mapper>

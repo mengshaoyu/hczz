@@ -1,0 +1,443 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.shield.hczz.base.persistence.CaseInfoMapper">
+    <!-- 获取案件列表 -->
+	<select id="getlist" parameterType="java.util.Map"
+		resultType="com.shield.hczz.base.domain.CaseInfo">
+		select c.case_id,c.case_no,c.case_name,c.accept_Unit,y.value_desc case_status,
+	    c.INCIDENT_PLACE,lx.value_desc caseType,to_char(c.case_date,'yyyy-mm-dd hh24:mi:ss') caseDate,
+	    c.case_desc,to_char(c.incident_date_begin,'yyyy-mm-dd hh24:mi:ss')
+	    incidentDateBegin,
+	    to_char(c.incident_date_end,'yyyy-mm-dd hh24:mi:ss') incidentDateEnd,
+	    to_char(c.incident_date,'yyyy-mm-dd hh24:mi:ss') incidentDate,
+	    to_char(c.punish_date,'yyyy-mm-dd hh24:mi:ss') punishDate,
+	    d1.dept_name handleUnit,c.handle_people,c.handle_people_id,
+	    c.handle_tel,to_char(c.accept_date,'yyyy-mm-dd hh24:mi:ss')
+	    acceptDate,
+	    d2.dept_name acceptUnit,c.undertake_unit,c.undertake_area,c.edit_flag,
+	    c.undertake_area_id,c.call_no,c.criminal_name,c.belong_area,
+	    c.JQ_NO,c.CASE_AJLY,c.lat_X,c.lon_Y,c.case_type_imp
+	    from CASE_INFO c left join au_t_dept d on c.undertake_unit = d.dept_no
+	    left join (select * from sy_t_codevalue e where e.type_id=1005) y on y.code_value=c.case_status
+	    left join (select * from sy_t_codevalue e where e.type_id=2001) lx on lx.code_value=c.case_type_imp
+	    left join au_t_dept d1 on d1.dept_id = c.handle_unit
+	    left join au_t_dept d2 on d2.dept_id = c.accept_unit
+	    where  c.delete_by is null
+		<if test="hbDataAuth_U!= null">
+            and c.undertake_unit = (select de.dept_no
+                             from au_t_dept de, au_t_user us
+                            where de.dept_id = us.dept_id
+                              and us.user_id = #{hbDataAuth_U})
+        </if>
+        <if test="hbDataAuth_D!= null">
+            and d.dept_id in (${hbDataAuth_D})
+        </if>
+		<if test="caseId != null and caseId != ''">
+			and c.case_id = #{caseId}
+		</if>
+		<if test="caseNo != null and caseNo != ''">
+			and c.case_no like '%'||#{caseNo}||'%'
+		</if>
+		<if test="caseName != null and caseName != ''">
+			and c.case_name like '%'||#{caseName}||'%'
+		</if>
+		<if test="criminalName != null and criminalName != ''">
+			and c.criminal_name like '%'||#{criminalName}||'%'
+		</if>
+		<if test="caseDateStart != null and caseDateStart != ''">
+			and c.case_date >= to_date(#{caseDateStart},'yyyy-mm-dd hh24:mi:ss')
+		</if>
+		<if test="caseDateEnd != null and caseDateEnd != ''">
+			and c.case_date &lt;= to_date(#{caseDateEnd},'yyyy-mm-dd hh24:mi:ss')
+		</if>
+		<if test="acceptUnit != null and acceptUnit != ''">
+			and c.accept_unit like '%'||#{acceptUnit}||'%'
+		</if>
+		<if test="undertakeAreaId != null and undertakeAreaId != ''">
+			and c.undertake_area_id = #{undertakeAreaId}
+		</if>
+        <if test="undertakeUnit != null and undertakeUnit != ''">
+            and c.undertake_unit like '%'||#{undertakeUnit}||'%'
+        </if>
+		<if test="undertakeArea != null and undertakeArea != ''">
+            and c.undertake_area like '%'||#{undertakeArea}||'%'
+        </if>
+		<if test="acceptDateStart != null and acceptDateStart != ''">
+			and c.accept_date >= to_date(#{acceptDateStart},'yyyy-mm-dd hh24:mi:ss')
+		</if>
+		<if test="acceptDateEnd != null and acceptDateEnd != ''">
+			and c.accept_date &lt;= to_date(#{acceptDateEnd},'yyyy-mm-dd
+			hh24:mi:ss')
+		</if>
+		<if test="handleUnit != null and handleUnit != ''">
+            and d1.dept_name like '%'||#{handleUnit}||'%'
+        </if>
+		<if test="handlePeople != null and handlePeople != ''">
+			and c.handle_people like '%'||#{handlePeople}||'%'
+		</if>
+		<if test="caseStatus != null and caseStatus != ''">
+			and c.case_status = #{caseStatus}
+		</if>
+		<if test="caseType != null and caseType != ''">
+			and c.case_type_imp like '%'||#{caseType}||'%'
+		</if>
+		<if test="callNo != null and callNo != ''">
+			and c.call_no = #{callNo}
+		</if>
+		<if test="sorter != null and sorter != ''">
+			order by ${sorter}
+		</if>
+		<if test="order != null and order != ''">
+			${order}
+		</if>
+	</select>
+	<!-- 获取案件数量 -->
+	<select id="getCount" parameterType="java.util.Map" resultType="Integer">
+		select count(1) as TOTAL
+		from CASE_INFO c left join au_t_dept d on c.undertake_unit = d.dept_no 
+    	left join (select * from sy_t_codevalue e where e.type_id=1005) y on y.code_value=c.case_status 
+    	left join au_t_dept d1 on d1.dept_id = c.handle_unit
+        where c.delete_by is null
+        <if test="hbDataAuth_U!= null">
+            and c.undertake_unit = (select de.dept_no
+                             from au_t_dept de, au_t_user us
+                            where de.dept_id = us.dept_id
+                              and us.user_id = #{hbDataAuth_U})
+        </if>
+        <if test="hbDataAuth_D!= null">
+            and d.dept_id in (${hbDataAuth_D})
+        </if>
+		<if test="caseId != null and caseId != ''">
+			and c.case_id = #{caseId}
+		</if>
+		<if test="caseNo != null and caseNo != ''">
+			and c.case_no like '%'||#{caseNo}||'%'
+		</if>
+		<if test="caseName != null and caseName != ''">
+			and c.case_name like '%'||#{caseName}||'%'
+		</if>
+		<if test="criminalName != null and criminalName != ''">
+			and c.criminal_name like '%'||#{criminalName}||'%'
+		</if>
+		<if test="caseDateStart != null and caseDateStart != ''">
+			and c.case_date >= to_date(#{caseDateStart},'yyyy-mm-dd hh24:mi:ss')
+		</if>
+		<if test="caseDateEnd != null and caseDateEnd != ''">
+			and c.case_date &lt;= to_date(#{caseDateEnd},'yyyy-mm-dd hh24:mi:ss')
+		</if>
+		<if test="acceptUnit != null and acceptUnit != ''">
+			and c.accept_unit like '%'||#{acceptUnit}||'%'
+		</if>
+		<if test="undertakeAreaId != null and undertakeAreaId != ''">
+			and c.undertake_area_id = #{undertakeAreaId}
+		</if>
+		<if test="undertakeArea != null and undertakeArea != ''">
+			and c.undertake_area like '%'||#{undertakeArea}||'%'
+		</if>
+		<if test="undertakeUnit != null and undertakeUnit != ''">
+			and c.undertake_unit like '%'||#{undertakeUnit}||'%'
+		</if>
+		<if test="acceptDateStart != null and acceptDateStart != ''">
+			and c.accept_date >= to_date(#{acceptDateStart},'yyyy-mm-dd hh24:mi:ss')
+		</if>
+		<if test="acceptDateEnd != null and acceptDateEnd != ''">
+			and c.accept_date &lt;= to_date(#{acceptDateEnd},'yyyy-mm-dd
+			hh24:mi:ss')
+		</if>
+		<if test="handleUnit != null and handleUnit != ''">
+			and d1.dept_name like '%'||#{handleUnit}||'%'
+		</if>
+		<if test="handlePeople != null and handlePeople != ''">
+			and c.handle_people like '%'||#{handlePeople}||'%'
+		</if>
+		<if test="caseStatus != null and caseStatus != ''">
+			and c.case_status = #{caseStatus}
+		</if>
+		<if test="caseType != null and caseType != ''">
+			and c.case_type_imp like '%'||#{caseType}||'%'
+		</if>
+		<if test="callNo != null and callNo != ''">
+			and c.call_no = #{callNo}
+		</if>
+	</select>
+	<insert id="add" parameterType="com.shield.hczz.base.domain.CaseInfo">
+		insert into CASE_INFO
+		(case_id,case_no,case_name,case_status,
+		INCIDENT_PLACE,CASE_TYPE,case_date,case_desc,
+		incident_date_begin,incident_date_end,punish_date,
+		handle_unit,handle_people,handle_people_id,handle_tel,accept_date,
+		accept_unit,undertake_unit,undertake_area,undertake_area_id,call_no,
+		criminal_name,case_type_imp,belong_area,edit_flag,create_dt,create_by,update_dt,update_by)
+		values (
+		#{caseId,jdbcType=VARCHAR},#{caseNo,jdbcType=VARCHAR},#{caseName,jdbcType=VARCHAR},
+		#{caseStatus,jdbcType=VARCHAR},#{incidentPlace,jdbcType=VARCHAR},#{caseType,jdbcType=VARCHAR},
+		to_date(#{caseDate,jdbcType=VARCHAR},'yyyy-mm-dd
+		hh24:mi:ss'),#{caseDesc,jdbcType=VARCHAR},
+		to_date(#{incidentDateBegin,jdbcType=VARCHAR},'yyyy-mm-dd
+		hh24:mi:ss'),
+		to_date(#{indidentDateEnd},'yyyy-mm-dd hh24:mi:ss'),to_date(#{punishDate},jdbcType=VARCHAR,'yyyy-mm-dd
+		hh24:mi:ss'),
+		#{handleUnit,jdbcType=VARCHAR},#{handlePeople,jdbcType=VARCHAR},#{handlePeopleId},
+		#{handleTel,jdbcType=VARCHAR},to_date(#{acceptDate,jdbcType=VARCHAR},'yyyy-mm-dd
+		hh24:mi:ss'),
+		#{acceptUnit,jdbcType=VARCHAR},#{undertakeUnit,jdbcType=VARCHAR},
+		#{undertakeArea,jdbcType=VARCHAR}#{undertakeAreaId,jdbcType=VARCHAR},#{callNo,jdbcType=VARCHAR},
+		#{criminalName,jdbcType=VARCHAR},#{caseTypeImp,jdbcType=VARCHAR},#{belongArea,jdbcType=VARCHAR},
+		#{editFlag,jdbcType=VARCHAR},sysdate,#{createBy,jdbcType=VARCHAR},sysdate,#{updateBy,jdbcType=VARCHAR}
+		)
+	</insert>
+	<insert id="adds" parameterType="java.util.Map">
+		insert into CASE_INFO
+		(case_id,case_no,case_name,case_status,
+		INCIDENT_PLACE,CASE_TYPE,case_date,case_desc,
+		incident_date_begin,incident_date_end,punish_date,
+		handle_unit,handle_people,handle_people_id,handle_tel,accept_date,
+		accept_unit,undertake_unit,undertake_area,undertake_area_id,call_no,
+		criminal_name,case_type_imp,belong_area,create_dt,create_by,update_dt,update_by)
+		<foreach collection="list" index="index" item="item" open=""
+			close="" separator="union all">
+			(select
+			#{item.caseId,jdbcType=VARCHAR},#{item.caseNo,jdbcType=VARCHAR},#{item.caseName,jdbcType=VARCHAR},
+			#{item.caseStatus,jdbcType=VARCHAR},#{item.incidentPlace,jdbcType=VARCHAR},#{item.caseType,jdbcType=VARCHAR},
+			to_date(#{item.caseDate,jdbcType=VARCHAR},'yyyy-mm-dd
+			hh24:mi:ss'),#{item.caseDesc,jdbcType=VARCHAR},
+			to_date(#{item.incidentDateBegin,jdbcType=VARCHAR},'yyyy-mm-dd
+			hh24:mi:ss'),
+			to_date(#{item.indidentDateEnd,jdbcType=VARCHAR},'yyyy-mm-dd
+			hh24:mi:ss'),
+			to_date(#{item.punishDate,jdbcType=VARCHAR},'yyyy-mm-dd hh24:mi:ss'),#{item.handleUnit,jdbcType=VARCHAR},
+			#{item.handlePeople,jdbcType=VARCHAR},#{item.handlePeopleId,jdbcType=VARCHAR},#{item.handleTel,jdbcType=VARCHAR},
+			to_date(#{item.acceptDate,jdbcType=VARCHAR},'yyyy-mm-dd hh24:mi:ss'),
+			#{item.acceptUnit,jdbcType=VARCHAR},#{item.undertakeUnit,jdbcType=VARCHAR},
+			#{item.undertakeArea,jdbcType=VARCHAR},#{item.undertakeAreaId,jdbcType=VARCHAR},
+			#{item.callNo,jdbcType=VARCHAR},#{item.criminalName,jdbcType=VARCHAR},#{item.caseTypeImp,jdbcType=VARCHAR},
+			#{item.belongArea,jdbcType=VARCHAR},sysdate,#{item.createBy,jdbcType=VARCHAR},sysdate,#{item.updateBy,jdbcType=VARCHAR}
+			from dual)
+		</foreach>
+
+	</insert>
+
+	<insert id="insertSelective" parameterType="com.shield.hczz.base.domain.CaseInfo">
+		insert into CASE_INFO
+		<trim prefix="(" suffix=")" suffixOverrides=",">
+			<if test="caseId != null">
+				CASE_ID,
+			</if>
+			<if test="caseNo != null">
+				CASE_NO,
+			</if>
+			<if test="caseName != null">
+				CASE_NAME,
+			</if>
+			<if test="caseStatus != null">
+				CASE_STATUS,
+			</if>
+			<if test="caseType != null">
+				CASE_TYPE,
+			</if>
+			<if test="caseDate != null">
+				CASE_DATE,
+			</if>
+			<if test="caseDesc != null">
+				CASE_DESC,
+			</if>
+			<if test="belongArea != null">
+				BELONG_AREA,
+			</if>
+			<if test="incidentPlace != null">
+				INCIDENT_PLACE,
+			</if>
+			<if test="incidentDateBegin != null">
+				INCIDENT_DATE_BEGIN,
+			</if>
+			<if test="incidentDateEnd != null">
+				INCIDENT_DATE_END,
+			</if>
+			<if test="punishDate != null">
+				PUNISH_DATE,
+			</if>
+			<if test="handleUnit != null">
+				HANDLE_UNIT,
+			</if>
+			<if test="handlePeople != null">
+				HANDLE_PEOPLE,
+			</if>
+			<if test="handlePeopleId != null">
+				HANDLE_PEOPLE_ID,
+			</if>
+			<if test="handleTel != null">
+				HANDLE_TEL,
+			</if>
+			<if test="acceptDate != null">
+				ACCEPT_DATE,
+			</if>
+			<if test="acceptUnit != null">
+				ACCEPT_UNIT,
+			</if>
+			<if test="undertakeUnit != null">
+				UNDERTAKE_UNIT,
+			</if>
+			<if test="undertakeArea != null">
+				UNDERTAKE_AREA,
+			</if>
+			<if test="undertakeAreaId != null">
+				UNDERTAKE_AREA_ID,
+			</if>
+			<if test="callNo != null">
+				CALL_NO,
+			</if>
+			<if test="criminalName != null">
+				CRIMINAL_NAME,
+			</if>
+			<if test="editFlag != null">
+				EDIT_FLAG,
+			</if>
+			<if test="createBy != null">
+				CREATE_BY,
+			</if>
+			CREATE_DT,
+			UPDATE_DT,
+			<if test="updateBy != null">
+				UPDATE_BY,
+			</if>
+			<if test="deleteBy != null">
+				DELETE_BY,
+			</if>
+			<if test="actByType != null">
+				ACT_BY_TYPE,
+			</if>
+			<if test="incidentDate != null">
+				INCIDENT_DATE,
+			</if>
+			<if test="jqNo != null">
+			    JQ_NO,
+			</if>
+			<if test="caseAjly != null">
+                CASE_AJLY,
+            </if>
+            <if test="latX != null">
+                LAT_X,
+            </if>
+            <if test="lonY != null">
+                LON_Y,
+            </if>
+            <if test="caseTypeImp != null">
+                CASE_TYPE_IMP,
+            </if>
+		</trim>
+		<trim prefix="values (" suffix=")" suffixOverrides=",">
+			<if test="caseId != null">
+				#{caseId,jdbcType=VARCHAR},
+			</if>
+			<if test="caseNo != null">
+				#{caseNo,jdbcType=VARCHAR},
+			</if>
+			<if test="caseName != null">
+				#{caseName,jdbcType=VARCHAR},
+			</if>
+			<if test="caseStatus != null">
+				#{caseStatus,jdbcType=VARCHAR},
+			</if>
+			<if test="caseType != null">
+				#{caseType,jdbcType=VARCHAR},
+			</if>
+			<if test="caseDate != null">
+				#{caseDate,jdbcType=TIMESTAMP},
+			</if>
+			<if test="caseDesc != null">
+				#{caseDesc,jdbcType=VARCHAR},
+			</if>
+			<if test="belongArea != null">
+				#{belongArea,jdbcType=VARCHAR},
+			</if>
+			<if test="incidentPlace != null">
+				#{incidentPlace,jdbcType=VARCHAR},
+			</if>
+			<if test="incidentDateBegin != null">
+				#{incidentDateBegin,jdbcType=TIMESTAMP},
+			</if>
+			<if test="incidentDateEnd != null">
+				#{incidentDateEnd,jdbcType=TIMESTAMP},
+			</if>
+			<if test="punishDate != null">
+				#{punishDate,jdbcType=TIMESTAMP},
+			</if>
+			<if test="handleUnit != null">
+				#{handleUnit,jdbcType=VARCHAR},
+			</if>
+			<if test="handlePeople != null">
+				#{handlePeople,jdbcType=VARCHAR},
+			</if>
+			<if test="handlePeopleId != null">
+				#{handlePeopleId,jdbcType=VARCHAR},
+			</if>
+			<if test="handleTel != null">
+				#{handleTel,jdbcType=VARCHAR},
+			</if>
+			<if test="acceptDate != null">
+				to_date(#{acceptDate,jdbcType=TIMESTAMP},'yyyy-mm-dd hh24:mi:ss'),
+			</if>
+			<if test="acceptUnit != null">
+				#{acceptUnit,jdbcType=VARCHAR},
+			</if>
+			<if test="undertakeUnit != null">
+				#{undertakeUnit,jdbcType=VARCHAR},
+			</if>
+			<if test="undertakeArea != null">
+				#{undertakeArea,jdbcType=VARCHAR},
+			</if>
+			<if test="undertakeAreaId != null">
+				#{undertakeAreaId,jdbcType=VARCHAR},
+			</if>
+			<if test="callNo != null">
+				#{callNo,jdbcType=VARCHAR},
+			</if>
+			<if test="criminalName != null">
+				#{criminalName,jdbcType=VARCHAR},
+			</if>
+			<if test="editFlag != null">
+				#{editFlag,jdbcType=VARCHAR},
+			</if>
+			<if test="createBy != null">
+				#{createBy,jdbcType=VARCHAR},
+			</if>
+			sysdate,
+			sysdate,
+			<if test="updateBy != null">
+				#{updateBy,jdbcType=VARCHAR},
+			</if>
+			<if test="deleteBy != null">
+				#{deleteBy,jdbcType=VARCHAR},
+			</if>
+			<if test="actByType != null">
+				#{actByType,jdbcType=VARCHAR},
+			</if>
+			<if test="incidentDate != null">
+			    to_date(#{incidentDate,jdbcType=TIMESTAMP},'yyyy-mm-dd hh24:mi:ss'),
+			</if>
+			<if test="jqNo != null">
+                #{jqNo},
+            </if>
+            <if test="caseAjly != null">
+                #{caseAjly},
+            </if>
+            <if test="latX != null">
+                #{latX},
+            </if>
+            <if test="lonY != null">
+                #{lonY},
+            </if>
+            <if test="caseTypeImp != null">
+                #{caseTypeImp},
+            </if>
+		</trim>
+	</insert>
+	
+	<!-- 依据案件编号，获取案件数信息-->
+	<select id="getCaseInfoByNo" parameterType="java.lang.String" resultType="com.shield.hczz.base.domain.CaseInfo">
+		select * from case_info c where c.case_no=#{caseNo} and rownum &lt; 2
+	</select>
+	
+	
+	
+</mapper>

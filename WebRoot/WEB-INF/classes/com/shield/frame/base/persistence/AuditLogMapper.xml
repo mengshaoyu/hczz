@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.shield.frame.base.persistence.AuditLogMapper">
+	<insert id="add" parameterType="com.shield.frame.sysmng.dto.AuditLogDTO">
+		insert into sy_t_auditlog(
+		uuid,
+		user_id,
+		user_ip,
+		function,
+		oper_type,
+		oper_content,
+		resource_id,
+		result,
+		create_by,
+		create_dt,
+		update_dt,
+		update_by,
+		act_by_type
+		)
+		values(
+		#{uuid},
+		#{userId},
+		#{userIp},
+		#{function},
+		#{operType},
+		#{operContent},
+		#{resourceId},
+		#{result},
+		#{createBy},
+		#{createDt,jdbcType=TIMESTAMP},
+		#{updateDt,jdbcType=TIMESTAMP},
+		#{updateBy},
+		#{actByType}
+		)
+	</insert>
+</mapper>

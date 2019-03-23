@@ -1,0 +1,145 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.shield.frame.base.persistence.DeptmentMapper">
+	<select id="getList" resultType="DepartRow" parameterType="hashMap">
+		select a.dept_id id, '['||a.dept_no||']'||a.dept_name name,
+		case when (select count(1) from au_t_dept c where c.parent_id = a.dept_id
+		and c.delete_by is null
+		) > 0 then 'closed' else 'open' end as state,
+		a.dept_no num, a.parent_id pid,
+		a.sort_no orderNum, a.address,
+		b.dept_name pname
+		from au_t_dept a left join au_t_dept b on a.parent_id = b.dept_id
+		where a.delete_by is null
+		<if test="name != null and name != ''">
+			and a.dept_name like '%${name}%'
+		</if>
+		<if test="id != null and id != ''">
+			and a.parent_id = #{id}
+		</if>
+		<if test="id == null or id == ''">
+			and a.parent_id=0
+		</if>
+		order by orderNum
+	</select>
+
+	<insert id="add" parameterType="DepartRow">
+		insert into au_t_dept (dept_id, dept_name,
+		dept_no, parent_id, create_by,
+		create_dt, update_dt, update_by, act_by_type,
+		sort_no,address)
+		values (sq_au_dept.NEXTVAL, #{name,jdbcType=NVARCHAR},
+		#{num,jdbcType=NVARCHAR}, #{pid,jdbcType=DECIMAL},
+		#{createBy,jdbcType=NVARCHAR}, #{createDt,jdbcType=TIMESTAMP},
+		#{updateDt,jdbcType=TIMESTAMP},
+		#{updateBy,jdbcType=NVARCHAR}, 'b', #{orderNum,jdbcType=DECIMAL}, #{name,jdbcType=NVARCHAR})
+	</insert>
+	<select id="checkById" parameterType="string" resultType="DepartRow">
+		select a.dept_id as id, a.dept_name as name,a.dept_no num,a.sort_no
+		orderNum,a.parent_id as pid
+		from au_t_dept a
+		where a.dept_no = #{no} and delete_by is null
+	</select>
+
+	<select id="checkNoById" parameterType="HashMap" resultType="DepartRow">
+		select a.dept_id as id, a.dept_name as name,a.dept_no num,a.sort_no
+		orderNum,a.parent_id as pid
+		from au_t_dept a
+		where a.dept_no = #{no} and a.dept_id != #{id} and delete_by is null
+	</select>
+    <select id="getDeptListByPrior" resultType="DepartRow" parameterType="HashMap">
+    select t.dept_no as id, t.dept_name as name, t1.dept_no as pid, 'open' state
+    from au_t_dept t,au_t_dept t1
+    where t.parent_id=t1.dept_id
+  connect by prior t.dept_id = t.parent_id
+	 start with t.dept_no = #{deptId}
+    </select>
+	   <select id="getDeptList" resultType="DepartRow" parameterType="HashMap">
+	    select d.dept_id  as id ,d.dept_name as name,d.parent_id as pid,
+	    	case when (select count(1) from au_t_dept c where c.parent_id = d.dept_id  and c.delete_by is null
+					) > 0 then 'closed' else 'open' end as state
+			, d.dept_name as shortName 
+	    from au_t_dept d
+	    where d.delete_by is null
+	    <if test="deptId != null">
+	    	and d.dept_id = #{deptId}
+	    </if>
+	    <if test="parent == '0'">
+	    	and d.parent_id = 0
+	    </if>
+	    <if test="parent != '0' and parent != null">
+	    	and d.parent_id = #{parent}
+	    </if>
+	     order by d.sort_no asc 
+	  </select>
+	<select id="getById" parameterType="string" resultType="DepartRow">
+		select a.dept_id as id, a.dept_name as name,a.dept_no num,a.sort_no
+		orderNum,a.parent_id as pid,b.dept_name pname
+		from au_t_dept a left join au_t_dept b
+		on a.parent_id = b.dept_id
+		where a.dept_id = #{id} and a.delete_by is null
+	</select>
+
+	<update id="updateByPK" parameterType="DepartRow">
+		update au_t_dept
+		set
+		dept_name=#{name,jdbcType=NVARCHAR},dept_no=#{num,jdbcType=DECIMAL},
+		parent_id=#{pid,jdbcType=DECIMAL},sort_no=#{orderNum,jdbcType=DECIMAL},
+		update_by=#{updateBy,jdbcType=NVARCHAR},update_dt=#{updateDt,jdbcType=TIMESTAMP}
+		where dept_id=#{id}
+
+	</update>
+
+	<select id="getDeptById" parameterType="string" resultType="HashMap">
+		select * from au_t_dept where parent_id=#{id} and delete_by is null
+	</select>
+
+	<select id="getUserById" parameterType="string" resultType="HashMap">
+		select * from au_t_user where dept_id=#{id}
+	</select>
+
+	<update id="delDept" parameterType="string">
+		update au_t_dept set delete_by='1' where dept_id=#{id}
+	</update>
+
+	<select id="getIdByName" parameterType="string" resultType="String">
+		select a.dept_id as id
+		from au_t_dept a
+		where a.dept_name like #{name} and a.delete_by is null
+	</select>
+	<select id="getDeptSelectTree" resultType="com.shield.frame.sysmng.dto.DeptDTO"
+		parameterType="Map">
+		<!-- sql中包含“<，>“时需要用<![CDATA[sql]]> -->
+	 <![CDATA[ 
+		 select 
+		    d.dept_id as deptId ,
+		    d.dept_name as deptName,
+		    d.parent_id as parentId,
+		    case when (select count(*) from au_t_dept dd where dd.parent_id=d.dept_id and dd.delete_by is null)<1 then 1 else 0 end as leaf
+		from au_t_dept d
+		where
+			d.parent_id = #{parent} and d.delete_by is null
+	        order by d.sort_no asc
+        ]]>
+	</select>
+	<select id="getAllDept" resultType="DepartRow">
+		select a.dept_id id, a.dept_name name,
+		case when (select count(1) from au_t_dept c where c.parent_id = a.dept_id
+		and c.delete_by is null
+		) > 0 then 'closed' else 'open' end as state,
+		a.dept_no num, a.parent_id pid,
+		a.sort_no orderNum, a.address,
+		b.dept_name pname
+		from au_t_dept a left join au_t_dept b on a.parent_id = b.dept_id
+		where a.delete_by is null
+	</select>
+
+	<select id="getDeptByName" resultType="com.shield.frame.sysmng.dto.DeptDTO"
+		parameterType="hashMap">
+		select dept_name name,dept_id id from au_t_dept
+		where dept_name = #{name} and delete_by is null
+		<if test="id!=null and id!=('')">
+			and dept_id !=#{id,jdbcType=DECIMAL}
+		</if>
+	</select>
+</mapper>

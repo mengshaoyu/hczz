@@ -1,0 +1,110 @@
+textarea{
+	font-size:14px;
+	font-family: "Microsoft YaHei";
+}
+.clueLabel {
+	font-size: 15px;
+	font-weight: bolder;
+	padding: 20px 0 10px 10px;
+}
+
+#fkContent {
+	padding-right: 12px;
+}
+
+#fkContent .panel.datagrid {
+	margin-bottom: 15px;
+	box-shadow: none;
+	border: 1px solid #eee;
+}
+
+.result-add {
+	width: 30px;
+	height: 20px;
+	vertical-align: bottom;
+	margin-left: 30px;
+	display: none;
+}
+
+#addTable {
+	width: 450px;
+}
+
+#addTable td {
+	height: 50px;
+}
+
+.deletebtn {
+    color:#f3a249;
+}
+.deletebtn:hover {
+    color: #777;
+}
+
+.xiansuo-container{
+	font-size: 14px;
+	position: relative;
+	margin-bottom: 20px;
+	padding:0 20px;
+}
+.xiansuo-container h3{
+	line-height: 45px;
+	font-size:16px;
+}
+.xiansuo-box{
+	padding: 5px;
+}
+.xiansuo-table{
+	border-collapse: collapse;
+	width: 100%;
+}
+.xiansuo-table td{
+	line-height: 35px;
+	font-size:14px;
+}
+.xiansuo-table td.left{
+	width: 8%;
+	padding-right: 15px;
+	text-indent:10px;
+}
+.xiansuo-table td.right{
+	width: 37%;
+}
+.yinzhang{
+	position:absolute;
+	top:50px;
+	right: 10%;
+	z-index: 1;
+	width:140px;
+}
+.yinzhang img{
+	/* position: absolute; */
+}
+.shuming {
+	margin-bottom:20px;
+	border-bottom:1px solid #f2f2f2;
+}
+.shuming p{
+	line-height:35px;
+}
+/* .xiansuo-container a{
+	margin: 20px 10px 20px 0;
+} */
+.clear{
+	margin:0;
+	padding:0;
+	width: 0;
+	height: 0;
+	overflow: hidden;
+	clear: both;
+}
+.gridStyle{
+	margin-top:10px!important;
+}
+
+.clue-textarea{
+	float:left;
+	border:1px solid #F2F2F2;
+	text-indent: 10px;
+	width:100%;
+}

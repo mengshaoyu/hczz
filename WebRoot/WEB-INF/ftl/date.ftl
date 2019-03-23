@@ -1,0 +1,1 @@
+<input id="${id}"<#if name??> name="${name}"</#if><#if style??> style="${style}"</#if> value="<#if value??>${value}</#if>" class="Wdate" type="text" onfocus="WdatePicker(<#if options??>${options}</#if>)"/>

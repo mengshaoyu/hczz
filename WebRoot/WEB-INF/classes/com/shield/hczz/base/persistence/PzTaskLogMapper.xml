@@ -1,0 +1,146 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.shield.hczz.base.persistence.PzTaskLogMapper">
+	<resultMap id="BaseResultMap" type="com.shield.hczz.base.domain.PzTaskLog">
+		<id column="FEATURE_PERSON_ID" jdbcType="DECIMAL" property="featurePersonId" />
+		<result column="CLUE_NO_REF" jdbcType="VARCHAR" property="clueNoRef" />
+		<result column="CASE_NO_REF" jdbcType="VARCHAR" property="caseNoRef" />
+		<result column="PZ_APPLY_ID" jdbcType="VARCHAR" property="pzApplyId" />
+		<result column="FLOW_ID" jdbcType="VARCHAR" property="flowId" />
+		<result column="TASK_STATUS" jdbcType="VARCHAR" property="taskStatus" />
+		<result column="NEXT_BY" jdbcType="VARCHAR" property="nextBy" />
+		<result column="TASK_DESC" jdbcType="VARCHAR" property="taskDesc" />
+		<result column="CREATE_BY" jdbcType="VARCHAR" property="createBy" />
+		<result column="CREATE_DT" jdbcType="TIMESTAMP" property="createDt" />
+		<result column="UPDATE_DT" jdbcType="TIMESTAMP" property="updateDt" />
+		<result column="UPDATE_BY" jdbcType="VARCHAR" property="updateBy" />
+		<result column="DELETE_BY" jdbcType="OTHER" property="deleteBy" />
+		<result column="ACT_BY_TYPE" jdbcType="VARCHAR" property="actByType" />
+	</resultMap>
+	<insert id="insert" parameterType="com.shield.hczz.base.domain.PzTaskLog">
+		insert into PZ_TASK_LOG
+		<trim prefix="(" suffix=")" suffixOverrides=",">
+			FEATURE_PERSON_ID,
+			<if test="clueNoRef != null">
+				CLUE_NO_REF,
+			</if>
+			<if test="caseNoRef != null">
+				CASE_NO_REF,
+			</if>
+			<if test="pzApplyId != null">
+				PZ_APPLY_ID,
+			</if>
+			<if test="flowId != null">
+				FLOW_ID,
+			</if>
+			<if test="taskStatus != null">
+				TASK_STATUS,
+			</if>
+			<if test="nextBy != null">
+				NEXT_BY,
+			</if>
+			<if test="taskDesc != null">
+				TASK_DESC,
+			</if>
+			<if test="createBy != null">
+				CREATE_BY,
+			</if>
+			CREATE_DT,
+			UPDATE_DT,
+			<if test="updateBy != null">
+				UPDATE_BY,
+			</if>
+			<if test="deleteBy != null">
+				DELETE_BY,
+			</if>
+			ACT_BY_TYPE,
+		</trim>
+		<trim prefix="values (" suffix=")" suffixOverrides=",">
+			sq_task_log.nextval,
+			<if test="clueNoRef != null">
+				#{clueNoRef,jdbcType=VARCHAR},
+			</if>
+			<if test="caseNoRef != null">
+				#{caseNoRef,jdbcType=VARCHAR},
+			</if>
+			<if test="pzApplyId != null">
+				#{pzApplyId,jdbcType=VARCHAR},
+			</if>
+			<if test="flowId != null">
+				#{flowId,jdbcType=VARCHAR},
+			</if>
+			<if test="taskStatus != null">
+				#{taskStatus,jdbcType=VARCHAR},
+			</if>
+			<if test="nextBy != null">
+				#{nextBy,jdbcType=VARCHAR},
+			</if>
+			<if test="taskDesc != null">
+				#{taskDesc,jdbcType=VARCHAR},
+			</if>
+			<if test="createBy != null">
+				#{createBy,jdbcType=VARCHAR},
+			</if>
+			sysdate,
+			sysdate,
+			<if test="updateBy != null">
+				#{updateBy,jdbcType=VARCHAR},
+			</if>
+			<if test="deleteBy != null">
+				#{deleteBy,jdbcType=OTHER},
+			</if>
+			'B',
+		</trim>
+	</insert>
+
+	<select id="getLogsById" parameterType="java.lang.String"
+		resultType="com.shield.hczz.flow.qvo.TaskFlowVO">
+		select
+		l.feature_person_id,to_char(l.create_dt,'yyyy-mm-dd hh24:mi:ss') createDt,e.value_desc task_status,
+		l.task_desc, d.dept_name,u.username,u.mobile_phone,to_char(l.task_status) status,u.user_id  ,u.police_type 
+		from
+		pz_task_log l
+		left join au_t_user u on u.user_id = l.create_by
+		left join
+		au_t_dept d on u.dept_id = d.dept_id
+    	left join(select c.pk,c.code_value,c.value_desc from sy_t_codevalue c where c.type_id=1011) e on e.code_value=l.task_status
+		where l.pz_apply_id =#{_parameter,jdbcType=VARCHAR}
+		order by l.create_dt desc
+	</select>
+
+	<select id="getDealNow" parameterType="java.lang.String"
+		resultType="com.shield.hczz.flow.qvo.TaskFlowVO">
+		select t.pz_apply_id,h.create_dt,e.value_desc task_status,e.act_by_type task_desc, d.dept_name,u.username,
+		u.mobile_phone  ,to_char(h.task_key) status,h.user_id,u.police_type 
+		from pz_t_apply t join PZ_V_FLOW_WAIT h on t.flow_id =h.proc_id 
+		join(select * from sy_t_codevalue c where c.type_id=1004)e on e.code_value=h.task_key
+ 		left join au_t_user u on u.user_id = h.user_id
+    	left join
+    	au_t_dept d on u.dept_id = d.dept_id
+ 		where  t.pz_apply_id =#{pzid,jdbcType=VARCHAR} order by u.user_id
+	</select>
+	
+	<!--  -->
+	<select id="getDealNowConnClue" parameterType="java.lang.String"
+		resultType="com.shield.hczz.flow.qvo.TaskFlowVO">
+		select * from (
+			select distinct t.pz_apply_id,h.create_dt,e.value_desc task_status,e.act_by_type||'，线索内容：'||c.clue_name task_desc, d.dept_name,u.username,
+			u.mobile_phone  ,to_char(h.task_key) status,h.user_id,u.police_type 
+			from pz_t_apply t join PZ_V_FLOW_WAIT h on t.flow_id =h.proc_id 
+	     left join pz_t_clue_info c on c.pz_id=t.pz_apply_id and c.clue_auxiliary=h.user_id
+			join(select * from sy_t_codevalue c where c.type_id=1004)e on e.code_value=h.task_key
+	 		left join au_t_user u on u.user_id = h.user_id
+	    	left join
+	    	au_t_dept d on u.dept_id = d.dept_id
+	 		where  t.pz_apply_id =#{pzid,jdbcType=VARCHAR}  and c.clue_sumup is null
+	    )o order by o.user_id
+	</select>
+
+    <select id="getPoliceByPzid" parameterType="java.util.Map" resultType="java.lang.Integer">
+    select distinct t.create_by
+    from pz_task_log t
+    where t.delete_by is null
+		and t.pz_apply_id = #{pzid}
+		and t.task_status = #{status}
+    </select>
+</mapper>
